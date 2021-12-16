@@ -1,0 +1,4 @@
+:root {
+  --font-mont: "Mont";
+  --font-brand: var(--font-mont);
+}
