@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "@emotion/styled";
+import styled from "styled-components";
 import { media } from "@/helpers/index";
 
 const StyledContent = styled.div`

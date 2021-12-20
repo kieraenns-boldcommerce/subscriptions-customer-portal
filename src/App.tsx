@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 // @ts-ignore
 import { ModalContext } from "@/contexts/ModalContext";
 import "./assets/css/styles.css";
+import IndexPage from "@/pages/index";
 
 const UNPROTECTED_ROUTES = ["/login", "/login/reset", "/reset", "/recovery"];
 
@@ -23,7 +24,7 @@ const App: React.VFC = (): JSX.Element => {
   return (
     <ModalContext.Provider value={[modalValue, setModalValue]}>
       <QueryClientProvider client={queryClient}>
-        <div>Hello!</div>
+        <IndexPage />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ModalContext.Provider>
