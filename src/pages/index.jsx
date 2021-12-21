@@ -2,6 +2,7 @@ import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
 import Tabs from "../components/Tabs";
 import Address from "../components/Address";
+import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 
 const tabs = [
@@ -79,8 +80,13 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Container>
+
         <Tabs tabs={tabs} />
+
+        <AddressForm type="shipping" />
+
         <ProductList products={products} />
+
       </Container>
     </DefaultLayout>
   );
