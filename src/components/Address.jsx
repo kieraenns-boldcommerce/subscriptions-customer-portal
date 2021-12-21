@@ -1,24 +1,26 @@
-import { VFC } from "react";
+import PT from "prop-types";
 import styled from "styled-components";
-import TitleWithEditButton from "@/components/TitleWithEditButton";
+import TitleWithEditButton from "./TitleWithEditButton";
 
-type AddressType = "shipping" | "billing"
+const AddressPropTypes = {
+  type: PT.oneOf(["shipping", "billing"]).isRequired,
+  firstName: PT.string.isRequired,
+  lastName: PT.string.isRequired,
+  addressLineFirst: PT.string.isRequired,
+  addressLineSecond: PT.string,
+  city: PT.string.isRequired,
+  stateOrProvince: PT.string.isRequired,
+  zipOrPostalCode: PT.string.isRequired,
+  country: PT.string.isRequired,
+  phoneNumber: PT.string.isRequired,
+  companyName: PT.string,
+  showEditButton: PT.bool,
+  onEdit: PT.func
+};
 
-interface IAddress {
-  type: AddressType
-  firstName: string
-  lastName: string
-  addressLineFirst: string
-  addressLineSecond?: string
-  city: string
-  stateOrProvince: string
-  zipOrPostalCode: string
-  country: string
-  phoneNumber: string
-  companyName?: string
-  showEditButton?: boolean
-  onEdit?: () => void
-}
+const AddressDefaultProps = {
+  showEditButton: false
+};
 
 const StyledAddress = styled.div`
   font-size: 14px;
@@ -35,7 +37,7 @@ const StyledFullName = styled.div`
   font-weight: 700;
 `;
 
-const Address: VFC<IAddress> = (props) => {
+const Address = (props) => {
   const {
     type,
     firstName,
@@ -79,5 +81,8 @@ const Address: VFC<IAddress> = (props) => {
     </StyledAddress>
   );
 };
+
+Address.propTypes = AddressPropTypes;
+Address.defaultProps = AddressDefaultProps;
 
 export default Address;

@@ -1,11 +1,10 @@
-import { VFC } from "react";
-import Container from "@/components/Container";
-import Tabs, { Tab } from "@/components/Tabs";
-import Address from "@/components/Address";
-import ProductList from "@/components/ProductList";
-import { IProductCard } from "@/components/ProductCard";
+import DefaultLayout from "../layouts/default";
+import Container from "../components/Container";
+import Tabs from "../components/Tabs";
+import Address from "../components/Address";
+import ProductList from "../components/ProductList";
 
-const tabs: Tab[] = [
+const tabs = [
   {
     content: (
       <Address
@@ -45,7 +44,7 @@ const tabs: Tab[] = [
   { content: "tab 3", isActive: false }
 ];
 
-const products: IProductCard[] = [
+const products = [
   {
     image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1640563200&Signature=U4U-T7ez1vomGF-dNFIy30586Lcxcowua3n7sCl78rS91j42IU1raDKo2Pxaoms7kwxfsy0Sg-lZZA3VJjb24v-IVPUb54kQ-muvfuecN4Q8GgzUQFS1HmC2KpSsYgkQNZUYvkpkoWIcor8EFEDDsXk-bhpvc84DB5pyW6PxKM6gvqMf6bCiyntkKE~ZTwPbmz8p4QfHC-mKccPLM3sM-2U~~e4hmpW7a1n83~DK6hO~XMcmqRKpG2rNdSPO4ufNLsifT3srOFaIt~d9INlfM6c5LYUE6K-7Z9XpbRSBdrhCFAqH8IqPYshvcrUcX6Nsx9uOPte0GfNIV3wHJkF2Wg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     name: "Product Name",
@@ -76,12 +75,14 @@ const products: IProductCard[] = [
   }
 ];
 
-const IndexPage: VFC = () => {
+const IndexPage = () => {
   return (
-    <Container>
-      <Tabs tabs={tabs} />
-      <ProductList products={products} />
-    </Container>
+    <DefaultLayout>
+      <Container>
+        <Tabs tabs={tabs} />
+        <ProductList products={products} />
+      </Container>
+    </DefaultLayout>
   );
 };
 

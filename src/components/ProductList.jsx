@@ -1,18 +1,17 @@
-import { VFC } from "react";
+import PT from "prop-types";
 import styled from "styled-components";
-import Section from "@/components/Section";
-import ProductCard, { IProductCard } from "@/components/ProductCard";
-import { media } from "@/helpers/index";
+import Section from "./Section";
+import ProductCard, { ProductCardPropTypes } from "./ProductCard";
 
-export interface IProductList {
-  products: IProductCard[]
-}
+const ProductListPropTypes = {
+  products: PT.arrayOf(PT.shape(ProductCardPropTypes)).isRequired
+};
 
 const StyledProductList = styled.div`
   display: grid;
   row-gap: 20px;
 
-  ${media.laptop} {
+  @media (min-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
   }
 `;
@@ -26,7 +25,7 @@ const StyledProduct = styled.div`
     padding-bottom: 0;
   }
 
-  ${media.laptop} {
+  @media (min-width: 1024px) {
     &:nth-last-child(1),
     &:nth-last-child(2) {
       border-bottom: none;
@@ -35,7 +34,7 @@ const StyledProduct = styled.div`
   }
 `;
 
-const ProductList: VFC<IProductList> = (props) => {
+const ProductList = (props) => {
   const { products } = props;
 
   return (
@@ -60,5 +59,7 @@ const ProductList: VFC<IProductList> = (props) => {
     </Section>
   );
 };
+
+ProductList.propTypes = ProductListPropTypes;
 
 export default ProductList;
