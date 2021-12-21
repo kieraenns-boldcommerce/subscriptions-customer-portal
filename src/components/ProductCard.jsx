@@ -1,16 +1,14 @@
-import { VFC } from "react";
+import PT from "prop-types";
 import styled from "styled-components";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Price } from "../../node_modules/@boldcommerce/stacks-ui/lib";
+import { Price } from "@boldcommerce/stacks-ui";
 
-export interface IProductCard {
-  image: string
-  name: string
-  variant: string
-  price: number
-  quantity: number
-}
+export const ProductCardPropTypes = {
+  image: PT.string.isRequired,
+  name: PT.string.isRequired,
+  variant: PT.string.isRequired,
+  price: PT.number.isRequired,
+  quantity: PT.number.isRequired
+};
 
 const StyledProductCard = styled.div`
   display: grid;
@@ -51,7 +49,7 @@ const StyledLink = styled.a`
   color: var(--color-text-link);
 `;
 
-const ProductCard: VFC<IProductCard> = (props) => {
+const ProductCard = (props) => {
   const { image, name, variant, price, quantity } = props;
 
   return (
@@ -70,5 +68,7 @@ const ProductCard: VFC<IProductCard> = (props) => {
     </StyledProductCard>
   );
 };
+
+ProductCard.propTypes = ProductCardPropTypes;
 
 export default ProductCard;

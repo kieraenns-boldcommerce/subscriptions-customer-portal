@@ -1,39 +1,36 @@
-import { VFC } from "react";
+import PT from "prop-types";
 import styled from "styled-components";
 
-type TabContent = boolean | number | string | JSX.Element
+const TabContentType = PT.oneOfType([
+  PT.bool,
+  PT.number,
+  PT.string,
+  PT.node
+]);
 
-export type Tab = {
-  content: TabContent
-  isActive?: boolean
-}
+const TabType = {
+  content: TabContentType.isRequired,
+  isActive: PT.bool
+};
 
-export interface ITabs {
-  tabs: Tab[]
-}
+const TabsPropTypes = {
+  tabs: PT.arrayOf(PT.shape(TabType)).isRequired
+};
 
-interface IStyledTabs {
-  tabsAmount: number
-}
-
-const StyledTabs = styled.div<IStyledTabs>`
+const StyledTabs = styled.div`
   display: grid;
   grid-template-columns: repeat(${({ tabsAmount }) => tabsAmount}, 1fr);
   column-gap: 16px;
 `;
 
-interface IStyledTab {
-  isActive: boolean
-}
-
-const StyledTab = styled.div<IStyledTab>`
+const StyledTab = styled.div`
   border-bottom: 8px solid ${({ isActive }) => isActive ? "rgba(0, 0, 0, 0.3)" : "transparent"};
   padding-bottom: 32px;
 
   transition: border-color 0.4s;
 `;
 
-const Tabs: VFC<ITabs> = (props) => {
+const Tabs = (props) => {
   const { tabs } = props;
 
   const tabsAmount = tabs.length;
@@ -52,5 +49,7 @@ const Tabs: VFC<ITabs> = (props) => {
     </StyledTabs>
   );
 };
+
+Tabs.propTypes = TabsPropTypes;
 
 export default Tabs;

@@ -1,11 +1,16 @@
-import { VFC } from "react";
+import PT from "prop-types";
 import styled from "styled-components";
 
-type Child = boolean | number | string | JSX.Element
+const ChildType = PT.oneOfType([
+  PT.bool,
+  PT.number,
+  PT.string,
+  PT.node
+]);
 
-export interface IContainer {
-  children: Child | Child[]
-}
+const ContainerPropTypes = {
+  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
+};
 
 const StyledContainer = styled.div`
   margin-right: auto;
@@ -16,7 +21,7 @@ const StyledContainer = styled.div`
   padding-left: 16px;
 `;
 
-const Container: VFC<IContainer> = (props) => {
+const Container = (props) => {
   const { children } = props;
 
   return (
@@ -25,5 +30,7 @@ const Container: VFC<IContainer> = (props) => {
     </StyledContainer>
   );
 };
+
+Container.propTypes = ContainerPropTypes;
 
 export default Container;

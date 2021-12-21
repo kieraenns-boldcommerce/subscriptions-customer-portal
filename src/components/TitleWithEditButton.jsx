@@ -1,12 +1,16 @@
-import { VFC } from "react";
+import PT from "prop-types";
 import styled from "styled-components";
-import Icon from "@/components/Icon";
+import editIcon from "../assets/icons/edit.svg";
 
-export interface ITitleWithEditButton {
-  title: string
-  showEditButton?: boolean
-  onEdit?: () => void
-}
+const TitleWithEditButtonPropTypes = {
+  title: PT.string.isRequired,
+  showEditButton: PT.bool,
+  onEdit: PT.func
+};
+
+const TitleWithEditButtonDefaultProps = {
+  showEditButton: false
+};
 
 const StyledTitleWithEditButton = styled.div`
   display: grid;
@@ -25,8 +29,13 @@ const StyledEditButton = styled.button`
   margin-left: 10px;
 `;
 
-const TitleWithEditButton: VFC<ITitleWithEditButton> = (props) => {
-  const { title, showEditButton = false, onEdit } = props;
+const StyledEditIcon = styled.img`
+  width: 18px;
+  height: 19px;
+`;
+
+const TitleWithEditButton = (props) => {
+  const { title, showEditButton, onEdit } = props;
 
   const handleEditButtonClick = () => onEdit && onEdit();
 
@@ -37,12 +46,15 @@ const TitleWithEditButton: VFC<ITitleWithEditButton> = (props) => {
 
       {showEditButton && (
         <StyledEditButton type="button" onClick={handleEditButtonClick}>
-          <Icon name="edit-20" color="var(--color-text-link)" />
+          <StyledEditIcon src={editIcon} />
         </StyledEditButton>
       )}
 
     </StyledTitleWithEditButton>
   );
 };
+
+TitleWithEditButton.propTypes = TitleWithEditButtonPropTypes;
+TitleWithEditButton.defaultProps = TitleWithEditButtonDefaultProps;
 
 export default TitleWithEditButton;
