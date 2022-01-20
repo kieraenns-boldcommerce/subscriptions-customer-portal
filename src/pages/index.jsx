@@ -4,6 +4,7 @@ import Tabs from "../components/Tabs";
 import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
+import Message from "../components/Message";
 
 const tabs = [
   {
@@ -80,6 +81,11 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Container>
+
+        <Message
+          text="This subscription has been paused."
+          buttonText="Resume subscription"
+        />
 
         <Tabs tabs={tabs} />
 
