@@ -11,24 +11,24 @@ const FrequencyAndPaymentPropTypes = {
 const FrequencyAndPaymentDefaultProps = {};
 
 
-const StyledFrequencyAndPayment = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+const StyledOrderFrequency = styled.div`
+  margin-bottom: 22px;
 `;
 
 const FrequencyAndPayment = (props) => {
   const { orderFrequency } = props;
-  const { options, onSave, showEditButton } = orderFrequency;
+  const { options, onSave, editMode } = orderFrequency;
 
   return (
-    <StyledFrequencyAndPayment>
-      <OrderFrequency 
-        options={options}
-        onSave={onSave}
-        showEditButton={showEditButton}
-      />
-    </StyledFrequencyAndPayment>
+    <div>
+      <StyledOrderFrequency>
+        <OrderFrequency
+          options={options}
+          onChange={onSave}
+          editMode={editMode}
+        />
+      </StyledOrderFrequency>
+    </div>
   );
 };
 

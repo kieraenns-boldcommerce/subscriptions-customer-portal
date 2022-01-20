@@ -4,35 +4,40 @@ import TitleWithEditButton from "./TitleWithEditButton";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 
-const OptionsPropTypes = {
+const OptionPropTypes = {
   name: PT.string.isRequired,
   value: PT.string.isRequired
 };
 
 export const OrderFrequencyPropTypes = {
-  options: PT.arrayOf(PT.shape(OptionsPropTypes)).isRequired,
-  onSave: PT.func.isRequired,
-  showEditButton: PT.bool
+  options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
+  onChange: PT.func.isRequired,
+  editMode: PT.bool
 };
 
 const OrderFrequencyDefaultProps = {
-  showEditButton: false
+  editMode: false
 };
 
-
-const StyledOrderFrequency = styled.div``;
 
 const StyledTitle = styled.div`
   margin-bottom: 11px;
 `;
 
-const StyledSelect = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+const StyledForm = styled.div`
+  display: grid;
+  grid-template-columns: 50% 0.5fr;
+  column-gap: 17px;
 
-  .frequency-select {
+  .frequency-select,
+  .stx-select,
+  .button {
     margin: 0;
+  }
+
+  @media (min-width: 576px) {
+    column-gap: 20px;
+    grid-template-columns: 2fr 1fr;
   }
 `;
 
@@ -43,9 +48,9 @@ const StyledDescription = styled.div`
 `;
 
 const OrderFrequency = (props) => {
-  const { options, showEditButton, onSave } = props;
+  const { options, editMode, onChange } = props;
 
-  const [showSelect, setShowSelect] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [activeOption, setActiveOption] = useState(options[0]);
   const [activeOptionValue, setActiveOptionValue] = useState(options[0].value);
 
@@ -53,38 +58,48 @@ const OrderFrequency = (props) => {
     const matchOption = options.find((option) => option.value === activeOptionValue);
     setActiveOption(matchOption);
   }, [activeOptionValue]);
+
+  const onSaveButtonClick = () => {
+    onChange(activeOption);
+    setShowForm(false);
+  };
+
+  const onChangeOption = (event) => setActiveOptionValue(event.target.value);
+
+  const onOpenForm = () => setShowForm(true);
   
 
   return (
-    <StyledOrderFrequency>
+    <div>
       <StyledTitle>
         <TitleWithEditButton
           title="Order frequency"
-          showEditButton={showEditButton}
+          showEditButton={editMode}
         />
       </StyledTitle>
 
-      {showSelect ? (
-        <StyledSelect>
+      {showForm ? (
+        <StyledForm>
           <SelectField
             className="frequency-select"
             value={activeOptionValue}
             options={options}
-            onChange={(e) => setActiveOptionValue(e.target.value)}
+            onChange={onChangeOption}
           />
-          <Button primary onClick={() => {
-            onSave(activeOption);
-            setShowSelect(false);
-          }}>
+          <Button 
+            className="button"
+            primary 
+            onClick={onSaveButtonClick}
+          >
             Save
           </Button>
-        </StyledSelect>
+        </StyledForm>
       ) : (
-        <StyledDescription onClick={() => setShowSelect(true)}>
+        <StyledDescription onClick={onOpenForm}>
           { activeOption.name }
         </StyledDescription>
       )}
-    </StyledOrderFrequency>
+    </div>
   );
 };
 

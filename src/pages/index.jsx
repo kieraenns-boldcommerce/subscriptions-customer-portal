@@ -59,7 +59,7 @@ const tabs = [
           onSave: (value) => {
             console.log(value);
           },
-          showEditButton: true
+          editMode: true
         }}
         paymentMethod={{}}
       />
