@@ -10,10 +10,15 @@ const ChildType = PT.oneOfType([
 ]);
 
 const ModalPropTypes = {
-  isVisible: PT.bool.isRequired,
-  onClose: PT.func.isRequired,
-  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
+  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired,
+  onClose: PT.func,
+  isVisible: PT.bool
 };
+
+const ModalDefaultProps = {
+  isVisible: false
+};
+
 
 const StyledModal = styled.div`
   position: fixed;
@@ -21,22 +26,36 @@ const StyledModal = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 7;
 
-  z-index: 6;
+  display: ${({ isVisible }) => !isVisible && "none"};
 
+  text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
 
-  visibility: ${({ isVisible }) => isVisible ? "visible" : "hidden"};
   overflow: auto;
+
+  &::after {
+    content: "";
+    
+    display: inline-block;
+    height: 100%;
+
+    vertical-align: middle;
+  }
+`;
+
+const StyledModalContainer = styled.div`
+  width: 100%;
+  max-width: 638px;
+  display: inline-block;
+
+  text-align: left;
+  vertical-align: middle;
 `;
 
 const StyledModalContent = styled.div`
-  width: 100%;
-  max-width: 606px;
-  min-height: 100px;
-  margin-top: 10px;
-
-  margin: 16px auto;
+  margin: 16px;
   padding: 32px;
 
   border-radius: 8px;
@@ -48,24 +67,27 @@ const StyledModalContent = styled.div`
 const Modal = (props) => {
   const { isVisible, onClose, children } = props;
 
-  const onLowestLayerClick = (e) => e.target === e.currentTarget && onClose();
+  const onOverlayClick = (event) => event.target === event.currentTarget && onClose();
 
   useEffect(() => {
-    const handleKey = (e) => e.key === "Escape" && onClose();
+    const handleKeydown = (event) => event.key === "Escape" && onClose();
 
-    if (isVisible) document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
+    if (isVisible) document.addEventListener("keydown", handleKeydown);
+    return () => document.removeEventListener("keydown", handleKeydown);
   }, [isVisible]);
 
   return (
-    <StyledModal isVisible={isVisible} onClick={onLowestLayerClick}>
-      <StyledModalContent>
-        { children }
-      </StyledModalContent>
+    <StyledModal isVisible={isVisible} onClick={onOverlayClick}>
+      <StyledModalContainer>
+        <StyledModalContent>
+          { children }
+        </StyledModalContent>
+      </StyledModalContainer>
     </StyledModal>
   );
 };
 
 Modal.propTypes = ModalPropTypes;
+Modal.defaultProps = ModalDefaultProps;
 
 export default Modal;

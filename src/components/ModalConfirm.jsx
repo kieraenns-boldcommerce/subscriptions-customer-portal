@@ -5,19 +5,21 @@ import styled from "styled-components";
 
 
 const ModalConfirmPropTypes = {
-  title: PT.string.isRequired,
+  title: PT.string,
   description: PT.string,
   textButtonCancel: PT.string,
   textButtonConfirm: PT.string,
-  isVisible: PT.bool.isRequired,
-  onClose: PT.func.isRequired,
-  onConfirm: PT.func.isRequired,
-  onCancel: PT.func.isRequired
+  isVisible: PT.bool,
+  onClose: PT.func,
+  onConfirm: PT.func,
+  onCancel: PT.func
 };
 
 const ModalConfirmDefaultProps = {
+  title: "Are you sure you want to continue?",
   textButtonCancel: "Cancel",
-  textButtonConfirm: "Confirm"
+  textButtonConfirm: "Confirm",
+  isVisible: false
 };
 
 
@@ -38,7 +40,26 @@ const StyledDescription = styled.p`
 `;
 
 const StyledButtons = styled.div`
-  margin-left: auto;
+  display: grid;
+  row-gap: 12px;
+  grid-template-columns: 1fr;
+
+  .button {
+    display: block;
+    margin: 0;
+  }
+
+  @media (min-width: 400px) {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+
+    .button {
+      &:not(:last-child) {
+        margin-right: 8px;
+      }
+    }
+  }
 `;
 
 const ModalConfirm = (props) => {
