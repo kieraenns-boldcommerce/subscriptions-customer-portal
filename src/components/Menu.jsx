@@ -6,17 +6,18 @@ import ellipsis from "../assets/icons/ellipsis.svg";
 
 const MenuItemPropTypes = {
   name: PT.string.isRequired,
-  dismiss: PT.bool.isRequired
+  dismiss: PT.bool
 };
 
 const MenuPropTypes = {
   data: PT.arrayOf(PT.shape(MenuItemPropTypes)).isRequired,
-  onClickItem: PT.func.isRequired
+  onClickItem: PT.func
 };
 
 
 const StyledMenu = styled.div`
   position: relative;
+  z-index: 2;
 `;
 
 const StyledMenuList = styled.div`
@@ -32,7 +33,28 @@ const StyledMenuList = styled.div`
   background-color: #ffffff;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
 
-  z-index: 6;
+  &::after,
+  &::before {
+    content: "";
+
+    position: absolute;
+    bottom: 88%;
+    right: 15px;
+
+    width: 30px;
+    height: 30px;
+    border-radius: 3px;
+
+    background-color: #ffffff;
+
+    transform: rotate(45deg);
+  }
+
+  &::after {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    z-index: -1;
+  }
 `;
 
 const StyledMenuItem = styled.button`
