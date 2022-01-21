@@ -13,7 +13,6 @@ const OptionPropTypes = {
 const TopSectionPropTypes = {
   options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
   label: PT.string.isRequired,
-  title: PT.string.isRequired,
   date: PT.string.isRequired,
   onChange: PT.func,
   onMenuItemClick: PT.func
@@ -31,54 +30,32 @@ const StyledTopSection = styled.div`
   row-gap: 32px;
 `;
 
-const StyledSelect = styled.div`
-  .select {
-    margin: 0;
-
-    display: grid;
-    row-gap: 4px;
-  }
-
-  @media (min-width: 576px) {
-    .select {
-      max-width: 326px;
-    }
-  }
-`;
-
-const StyledInfo = styled.div`
+const StyledSubscriptionInfo = styled.div`
   display: grid;
   row-gap: 10px;
 `;
 
-const StyledInfoTop = styled.div`
-  display: flex;
+const StyledSubscriptionInfoTop = styled.div`
+  display: grid;
   align-items: center;
-
-  > :not(:last-child) {
-    margin-right: 30px;
-  }
+  grid-auto-flow: column;
+  column-gap: 30px;
+  justify-content: start;
 `;
 
-const StyledTitle = styled.h2`
-  margin: 0;
-
+const StyledSubscriptionName = styled.h2`
   font-weight: 700;
   font-size: 20px;
   line-height: 24px;
-
-  @media (min-width: 576px) {
-    line-height: 20px;
-  }
 `;
 
-const StyledDate = styled.p`
+const StyledSubscriptionDate = styled.p`
   font-size: 14px;
   line-height: 20px;
+`;
 
-  span {
-    font-weight: 700;
-  }
+const StyledDateTitle = styled.span`
+  font-weight: 700;
 `;
 
 const TopSection = (props) => {
@@ -97,29 +74,27 @@ const TopSection = (props) => {
 
   return (
     <StyledTopSection>
-      <StyledSelect>
-        <SelectField
-          className="select"
-          options={options}
-          value={activeOption.value}
-          label={label}
-          onChange={onOptionChange}
-        />
-      </StyledSelect>
+      <SelectField
+        className="subscription-select-TopSection"
+        options={options}
+        value={activeOption.value}
+        label={label}
+        onChange={onOptionChange}
+      />
 
-      <StyledInfo>
-        <StyledInfoTop>
-          <StyledTitle>
+      <StyledSubscriptionInfo>
+        <StyledSubscriptionInfoTop>
+          <StyledSubscriptionName>
             { activeOption.name } Subscription — #{ activeOption.value }
-          </StyledTitle>
+          </StyledSubscriptionName>
 
           <Menu items={MENU_ITEMS} onItemClick={onMenuItemClick} />
-        </StyledInfoTop>
+        </StyledSubscriptionInfoTop>
 
-        <StyledDate>
-          <span>Next Order:</span> { date }
-        </StyledDate>
-      </StyledInfo>
+        <StyledSubscriptionDate>
+          <StyledDateTitle>Next Order:</StyledDateTitle> { date }
+        </StyledSubscriptionDate>
+      </StyledSubscriptionInfo>
     </StyledTopSection>
   );
 };

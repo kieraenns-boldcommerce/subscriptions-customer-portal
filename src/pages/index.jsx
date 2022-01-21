@@ -110,13 +110,12 @@ const products = [
 
 
 const StyledTitle = styled.h1`
-  margin: 0;
   margin-bottom: 38px;
 
   text-align: center;
   font-weight: 700;
   font-size: 32px;
-  line-height: 24px;
+  line-height: 34px;
 
   @media (min-width: 576px) {
     margin-bottom: 60px;

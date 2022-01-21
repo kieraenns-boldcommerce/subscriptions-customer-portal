@@ -29,16 +29,6 @@ const StyledTextWrapper = styled.div`
   font-weight: 400;
   line-height: 20px;
   color: var(--color-text-default);
-
-  .price {
-    .stx-price__amount {
-      font-size: inherit;
-      font-weight: inherit;
-      line-height: inherit;
-      text-align: left;
-      color: inherit;
-    }
-  }
 `;
 
 const StyledLink = styled.a`
@@ -61,7 +51,7 @@ const ProductCard = (props) => {
         <StyledLink>
           { name } - { variant }
         </StyledLink>
-        <Price className="price" amount={price} />
+        <Price amount={price} />
         Quantity: { quantity }
       </StyledTextWrapper>
 

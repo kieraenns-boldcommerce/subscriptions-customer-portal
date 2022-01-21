@@ -29,12 +29,6 @@ const StyledForm = styled.div`
   grid-template-columns: 50% max-content;
   column-gap: 16px;
 
-  .frequency-select,
-  .stx-select,
-  .button {
-    margin: 0;
-  }
-
   @media (min-width: 576px) {
     column-gap: 20px;
     grid-template-columns: 2fr 1fr;

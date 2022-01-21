@@ -58,15 +58,6 @@ const StyledMessage = styled.div`
     }
   }}
 
-  .confirm-button {
-    margin: 0;
-    padding: 8px 30px;
-
-    text-transform: none;
-    font-size: 14px;
-    line-height: 20px;
-  }
-
   @media (min-width: 576px) {
     grid-template-columns: 1fr max-content;
     align-items: center;
@@ -87,7 +78,7 @@ const Message = (props) => {
       {showButton && (
         <Button
           size="large"
-          className="confirm-button"
+          className="confirm-button-Message"
           onClick={onButtonClick}
         >
           { buttonText }

@@ -44,21 +44,10 @@ const StyledButtons = styled.div`
   row-gap: 12px;
   grid-template-columns: 1fr;
 
-  .button {
-    display: block;
-    margin: 0;
-  }
-
   @media (min-width: 400px) {
     display: flex;
     align-items: center;
     margin-left: auto;
-
-    .button {
-      &:not(:last-child) {
-        margin-right: 8px;
-      }
-    }
   }
 `;
 
@@ -88,10 +77,10 @@ const ModalConfirm = (props) => {
         )}
 
         <StyledButtons>
-          <Button className="button" onClick={onCancel}>
+          <Button className="button-ModalConfirm" block onClick={onCancel}>
             { textButtonCancel }
           </Button>
-          <Button className="button" primary onClick={onConfirm}>
+          <Button className="button-ModalConfirm" block primary onClick={onConfirm}>
             { textButtonConfirm }
           </Button>
         </StyledButtons>

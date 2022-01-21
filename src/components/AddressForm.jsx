@@ -18,10 +18,6 @@ const StyledButtonsWrapper = styled.div`
   grid-template-columns: repeat(2, max-content);
   justify-content: end;
   column-gap: 16px;
-
-  .button {
-    margin: 0;
-  }
 `;
 
 const AddressForm = (props) => {
@@ -56,10 +52,10 @@ const AddressForm = (props) => {
           </FieldsLayout>
 
           <StyledButtonsWrapper>
-            <Button className="button">
+            <Button className="button-AddressForm">
               Discard changes
             </Button>
-            <Button className="button" primary>
+            <Button className="button-AddressForm" primary>
               Save changes
             </Button>
           </StyledButtonsWrapper>
