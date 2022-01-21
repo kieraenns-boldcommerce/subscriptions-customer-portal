@@ -14,6 +14,14 @@ export const Resets = createGlobalStyle`
     background-color: transparent;
     cursor: pointer;
   }
+
+  .stx-field {
+    position: static;
+  }
+
+  .stx-select__select-element {
+    z-index: 1;
+  }
 `;
 
 export const Vars = createGlobalStyle`
