@@ -5,13 +5,14 @@ import ellipsis from "../assets/icons/ellipsis.svg";
 
 
 const MenuItemPropTypes = {
+  type: PT.oneOf(["default", "alert"]),
   name: PT.string.isRequired,
-  dismiss: PT.bool
+  value: PT.string.isRequired
 };
 
 const MenuPropTypes = {
-  data: PT.arrayOf(PT.shape(MenuItemPropTypes)).isRequired,
-  onClickItem: PT.func
+  items: PT.arrayOf(PT.shape(MenuItemPropTypes)).isRequired,
+  onItemClick: PT.func
 };
 
 
@@ -26,7 +27,7 @@ const StyledMenuList = styled.div`
   right: -15px;
 
   width: 100%;
-  max-width: 281px;
+  max-width: 280px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 
@@ -38,7 +39,7 @@ const StyledMenuList = styled.div`
     content: "";
 
     position: absolute;
-    bottom: 88%;
+    top: 0;
     right: 15px;
 
     width: 30px;
@@ -47,7 +48,7 @@ const StyledMenuList = styled.div`
 
     background-color: #ffffff;
 
-    transform: rotate(45deg);
+    transform: rotate(45deg) translateY(-50%);
   }
 
   &::after {
@@ -59,14 +60,23 @@ const StyledMenuList = styled.div`
 
 const StyledMenuItem = styled.button`
   width: 100%;
-  padding: 20px 23px;
+  padding: 20px 24px;
 
   text-align: left;
   font-size: 14px;
   line-height: 24px;
-  ${({ dismiss }) => dismiss && css`
-    color: #d91626;
-  `}
+  ${({ type }) => {
+    switch (type) {
+    case "alert":
+      return css`
+        color: #d91626;
+      `;
+    default:
+      return css`
+        color: rgba(0, 0, 0, 0.8);
+      `;
+    }
+  }}
 
   &:not(:last-child) {
     border-bottom: 1px solid rgba(108, 112, 114, 0.1);
@@ -91,35 +101,39 @@ const StyledIcon = styled.img`
 
 
 const Menu = (props) => {
-  const { data, onClickItem } = props;
+  const { items, onItemClick } = props;
 
-  const [openMenu, setOpenMenu] = useState(false);
+  const [showMenuList, setShowMenuList] = useState(false);
 
   const menuListRef = useRef(null);
 
+  const onShowMenuListButtonClick = () => setShowMenuList((v) => !v);
+
   useEffect(() => {
-    const onClose = (e) => !menuListRef?.current.contains(e.target) && openMenu && setOpenMenu(false);
+    const onClose = (e) => !menuListRef?.current.contains(e.target) && showMenuList && setShowMenuList(false);
 
     document.addEventListener("click", onClose);
     return () => document.removeEventListener("click", onClose);
-  }, [openMenu]);
+  }, [showMenuList]);
 
   return (
     <StyledMenu>
-      <StyledMenuButton onClick={() => setOpenMenu((v) => !v)}>
+      <StyledMenuButton onClick={onShowMenuListButtonClick}>
         <StyledIcon src={ellipsis} />
       </StyledMenuButton>
 
-      {openMenu && (
+      {showMenuList && (
         <StyledMenuList ref={menuListRef}>
-          {data.map((item, index) => {
-            const { name, dismiss } = item;
+          {items.map((item) => {
+            const { type = "default", name, value } = item;
+
+            const onMenuItemClick = () => onItemClick(item);
 
             return (
               <StyledMenuItem
-                key={index}
-                onClick={() => onClickItem(item)}
-                dismiss={dismiss}
+                key={value}
+                type={type}
+                onClick={onMenuItemClick}
               >
                 { name }
               </StyledMenuItem>
