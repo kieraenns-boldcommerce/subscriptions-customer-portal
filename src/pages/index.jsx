@@ -4,6 +4,16 @@ import Tabs from "../components/Tabs";
 import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
+import FrequencyAndPayment from "../components/FrequencyAndPayment";
+import Message from "../components/Message";
+
+
+const OPTIONS_ORDER_FREQUENCE = [
+  { name: "Every 1 week", value: "every-one-week" },
+  { name: "Every 2 weeks", value: "every-two-weeks" },
+  { name: "Every month", value: "every-month" }
+];
+
 
 const tabs = [
   {
@@ -42,7 +52,21 @@ const tabs = [
     ),
     isActive: false
   },
-  { content: "tab 3", isActive: false }
+  { 
+    content: (
+      <FrequencyAndPayment 
+        orderFrequency={{
+          options: OPTIONS_ORDER_FREQUENCE,
+          onSave: (value) => {
+            console.log(value);
+          },
+          editMode: true
+        }}
+        paymentMethod={{}}
+      />
+    ),
+    isActive: false 
+  }
 ];
 
 const products = [
@@ -80,6 +104,11 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Container>
+
+        <Message
+          text="This subscription has been paused."
+          buttonText="Resume subscription"
+        />
 
         <Tabs tabs={tabs} />
 
