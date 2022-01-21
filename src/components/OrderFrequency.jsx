@@ -21,13 +21,13 @@ const OrderFrequencyDefaultProps = {
 
 
 const StyledTitle = styled.div`
-  margin-bottom: 11px;
+  margin-bottom: 12px;
 `;
 
 const StyledForm = styled.div`
   display: grid;
-  grid-template-columns: 50% 0.5fr;
-  column-gap: 17px;
+  grid-template-columns: 50% max-content;
+  column-gap: 16px;
 
   .frequency-select,
   .stx-select,
