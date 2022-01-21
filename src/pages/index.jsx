@@ -1,3 +1,4 @@
+import { useState } from "react";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
 import Tabs from "../components/Tabs";
@@ -6,12 +7,19 @@ import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 import FrequencyAndPayment from "../components/FrequencyAndPayment";
 import Message from "../components/Message";
+import TopSection from "../components/TopSection";
+import styled from "styled-components";
 
 
 const OPTIONS_ORDER_FREQUENCE = [
   { name: "Every 1 week", value: "every-one-week" },
   { name: "Every 2 weeks", value: "every-two-weeks" },
   { name: "Every month", value: "every-month" }
+];
+
+const OPTIONS_SUBSCRIPTIONS = [
+  { name: "<product name>", value: "1035489" },
+  { name: "<product name2>", value: "2145590" }
 ];
 
 
@@ -100,10 +108,42 @@ const products = [
   }
 ];
 
+
+const StyledTitle = styled.h1`
+  margin: 0;
+  margin-bottom: 38px;
+
+  text-align: center;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 24px;
+
+  @media (min-width: 576px) {
+    margin-bottom: 60px;
+  }
+`;
+
+
 const IndexPage = () => {
+  const [activeSubscription, setActiveSubscription] = useState();
+  const [activeMenuItem, setActiveMenuItem] = useState();
+
+  console.log(activeSubscription);
+  console.log(activeMenuItem);
+
   return (
     <DefaultLayout>
       <Container>
+
+        <StyledTitle>My Subscriptions</StyledTitle>
+
+        <TopSection
+          options={OPTIONS_SUBSCRIPTIONS}
+          label="Subscriptions"
+          date="December 25, 2020"
+          onChange={setActiveSubscription}
+          onMenuItemClick={setActiveMenuItem}
+        />
 
         <Message
           text="This subscription has been paused."

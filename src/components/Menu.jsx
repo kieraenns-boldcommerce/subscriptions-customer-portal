@@ -24,10 +24,9 @@ const StyledMenu = styled.div`
 const StyledMenuList = styled.div`
   position: absolute;
   top: calc(100% + 20px);
-  right: -15px;
+  right: calc(100% - 38px);
 
-  width: 100%;
-  max-width: 280px;
+  width: 280px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 
@@ -127,7 +126,10 @@ const Menu = (props) => {
           {items.map((item) => {
             const { type = "default", name, value } = item;
 
-            const onMenuItemClick = () => onItemClick(item);
+            const onMenuItemClick = () => {
+              onItemClick(item);
+              setShowMenuList(false);
+            };
 
             return (
               <StyledMenuItem
