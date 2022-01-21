@@ -11,7 +11,7 @@ variables:
   DOCKER_IMAGE: git.kodix.ru/kodix/build/docker:stable-git
   NODE_IMAGE: git.kodix.ru/kodix/build/node:12.6-alpine
   NGINX_IMAGE: git.kodix.ru/kodix/build/nginx:stable-alpine
-  DIST_DIR: dist
+  DIST_DIR: build
 
 include:
   - local: .gitlab/pipeline/checkout.yml
