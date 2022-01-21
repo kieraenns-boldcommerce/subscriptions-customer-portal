@@ -5,6 +5,7 @@ import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 import FrequencyAndPayment from "../components/FrequencyAndPayment";
+import Message from "../components/Message";
 
 
 const OPTIONS_ORDER_FREQUENCE = [
@@ -103,6 +104,11 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Container>
+
+        <Message
+          text="This subscription has been paused."
+          buttonText="Resume subscription"
+        />
 
         <Tabs tabs={tabs} />
 
