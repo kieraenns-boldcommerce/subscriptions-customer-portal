@@ -68,17 +68,17 @@ const AddressForm = (props) => {
             <InputField label="First name" />
             <InputField label="Last name" />
             <InputField label="Address line 1" />
+            <InputField label="Address line 2" />
           </FieldsLayout>
 
           <FieldsLayout>
-            <InputField label="Address line 2" />
             <SelectField options={CITY_OPTIONS} label="City" />
             <SelectField options={STATE_OPTIONS} label="State/Province" />
-            <InputField label="Zip/Postal code" />
+            <SelectField options={COUNTRY_OPTIONS} label="Country" />
           </FieldsLayout>
 
           <FieldsLayout>
-            <SelectField options={COUNTRY_OPTIONS} label="Country" />
+            <InputField label="Zip/Postal code" />
             <InputField label="Phone number" />
             <InputField label="Company name (optional)" />
           </FieldsLayout>

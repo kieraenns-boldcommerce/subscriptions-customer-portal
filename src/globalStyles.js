@@ -32,7 +32,7 @@ export const Resets = createGlobalStyle`
   }
 
   body {
-    font-family: "SF Pro Display";
+    font-family: "SF Pro Display", sans-serif;
   }
 
   h1,
