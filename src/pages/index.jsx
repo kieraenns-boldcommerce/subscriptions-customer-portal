@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
 import Tabs from "../components/Tabs";
@@ -6,8 +6,9 @@ import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 import FrequencyAndPayment from "../components/FrequencyAndPayment";
-import Message from "../components/Message";
 import TopSection from "../components/TopSection";
+import Section from "../components/Section";
+import ModalConfirm from "../components/ModalConfirm";
 import styled from "styled-components";
 
 
@@ -22,92 +23,36 @@ const OPTIONS_SUBSCRIPTIONS = [
   { name: "<product name2>", value: "2145590" }
 ];
 
-
-const tabs = [
-  {
-    content: (
-      <Address
-        type="shipping"
-        firstName="Jodeci"
-        lastName="Correa"
-        addressLineFirst="27 Main Street"
-        city="Winnipeg"
-        stateOrProvince="Manitoba"
-        zipOrPostalCode="R3W 4S5"
-        country="Canada"
-        phoneNumber="204-123-1234"
-        companyName="Queens Gambit"
-        showEditButton={true}
-      />
-    ),
-    isActive: true
-  },
-  {
-    content: (
-      <Address
-        type="billing"
-        firstName="Jodeci"
-        lastName="Correa"
-        addressLineFirst="27 Main Street"
-        city="Winnipeg"
-        stateOrProvince="Manitoba"
-        zipOrPostalCode="R3W 4S5"
-        country="Canada"
-        phoneNumber="204-123-1234"
-        companyName="Queens Gambit"
-        showEditButton={true}
-      />
-    ),
-    isActive: false
-  },
-  { 
-    content: (
-      <FrequencyAndPayment 
-        orderFrequency={{
-          options: OPTIONS_ORDER_FREQUENCE,
-          onSave: (value) => {
-            console.log(value);
-          },
-          editMode: true
-        }}
-        paymentMethod={{}}
-      />
-    ),
-    isActive: false 
-  }
-];
-
 const products = [
   {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1640563200&Signature=U4U-T7ez1vomGF-dNFIy30586Lcxcowua3n7sCl78rS91j42IU1raDKo2Pxaoms7kwxfsy0Sg-lZZA3VJjb24v-IVPUb54kQ-muvfuecN4Q8GgzUQFS1HmC2KpSsYgkQNZUYvkpkoWIcor8EFEDDsXk-bhpvc84DB5pyW6PxKM6gvqMf6bCiyntkKE~ZTwPbmz8p4QfHC-mKccPLM3sM-2U~~e4hmpW7a1n83~DK6hO~XMcmqRKpG2rNdSPO4ufNLsifT3srOFaIt~d9INlfM6c5LYUE6K-7Z9XpbRSBdrhCFAqH8IqPYshvcrUcX6Nsx9uOPte0GfNIV3wHJkF2Wg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     name: "Product Name",
     variant: "Variant Name",
     price: 2499,
     quantity: 1
   },
   {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1640563200&Signature=U4U-T7ez1vomGF-dNFIy30586Lcxcowua3n7sCl78rS91j42IU1raDKo2Pxaoms7kwxfsy0Sg-lZZA3VJjb24v-IVPUb54kQ-muvfuecN4Q8GgzUQFS1HmC2KpSsYgkQNZUYvkpkoWIcor8EFEDDsXk-bhpvc84DB5pyW6PxKM6gvqMf6bCiyntkKE~ZTwPbmz8p4QfHC-mKccPLM3sM-2U~~e4hmpW7a1n83~DK6hO~XMcmqRKpG2rNdSPO4ufNLsifT3srOFaIt~d9INlfM6c5LYUE6K-7Z9XpbRSBdrhCFAqH8IqPYshvcrUcX6Nsx9uOPte0GfNIV3wHJkF2Wg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     name: "Product Name",
     variant: "Variant Name",
     price: 2499,
     quantity: 1
   },
   {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1640563200&Signature=U4U-T7ez1vomGF-dNFIy30586Lcxcowua3n7sCl78rS91j42IU1raDKo2Pxaoms7kwxfsy0Sg-lZZA3VJjb24v-IVPUb54kQ-muvfuecN4Q8GgzUQFS1HmC2KpSsYgkQNZUYvkpkoWIcor8EFEDDsXk-bhpvc84DB5pyW6PxKM6gvqMf6bCiyntkKE~ZTwPbmz8p4QfHC-mKccPLM3sM-2U~~e4hmpW7a1n83~DK6hO~XMcmqRKpG2rNdSPO4ufNLsifT3srOFaIt~d9INlfM6c5LYUE6K-7Z9XpbRSBdrhCFAqH8IqPYshvcrUcX6Nsx9uOPte0GfNIV3wHJkF2Wg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     name: "Product Name",
     variant: "Variant Name",
     price: 2499,
     quantity: 1
   },
   {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1640563200&Signature=U4U-T7ez1vomGF-dNFIy30586Lcxcowua3n7sCl78rS91j42IU1raDKo2Pxaoms7kwxfsy0Sg-lZZA3VJjb24v-IVPUb54kQ-muvfuecN4Q8GgzUQFS1HmC2KpSsYgkQNZUYvkpkoWIcor8EFEDDsXk-bhpvc84DB5pyW6PxKM6gvqMf6bCiyntkKE~ZTwPbmz8p4QfHC-mKccPLM3sM-2U~~e4hmpW7a1n83~DK6hO~XMcmqRKpG2rNdSPO4ufNLsifT3srOFaIt~d9INlfM6c5LYUE6K-7Z9XpbRSBdrhCFAqH8IqPYshvcrUcX6Nsx9uOPte0GfNIV3wHJkF2Wg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     name: "Product Name",
     variant: "Variant Name",
     price: 2499,
     quantity: 1
   }
 ];
-
 
 const StyledTitle = styled.h1`
   margin-bottom: 38px;
@@ -122,13 +67,120 @@ const StyledTitle = styled.h1`
   }
 `;
 
+const StyledPaymentContent = styled.div`
+  min-height: 120px;
+  background-color: rgba(0, 0, 0, 0.2);
+`;
+
 
 const IndexPage = () => {
-  const [activeSubscription, setActiveSubscription] = useState();
   const [activeMenuItem, setActiveMenuItem] = useState();
+  const [showBillingForm, setShowBillingForm] = useState(false);
+  const [showShippingForm, setShowShippingForm] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [showSubscriptionMessage, setShowSubscriptionMessage] = useState(false);
 
-  console.log(activeSubscription);
-  console.log(activeMenuItem);
+  const [modalConfirmData, setModalConfirmData] = useState({});
+  const { title, description, textButtonCancel, textButtonConfirm } = modalConfirmData;
+
+  const showModal = Boolean(activeMenuItem);
+
+  const onMenuItemChange = (item) => setActiveMenuItem(item);
+  const onCloseFormButtonClick = () => {
+    setShowBillingForm(false);
+    setShowPaymentForm(false);
+    setShowShippingForm(false);
+  };
+  const onCloseModalButtonClick = () => setActiveMenuItem(null);
+  const onConfirmModalButtonClick = () => {
+    setActiveMenuItem(null);
+    setShowSubscriptionMessage(true);
+  };
+
+  const onEditShippingAddress = () => {
+    setShowShippingForm((v) => !v);
+    setShowBillingForm(false);
+    setShowPaymentForm(false);
+  };
+
+  const onEditBillingAddress = () => {
+    setShowBillingForm((v) => !v);
+    setShowShippingForm(false);
+    setShowPaymentForm(false);
+  };
+
+  const onEditPaymentMethod = () => {
+    setShowPaymentForm((v) => !v);
+    setShowShippingForm(false);
+    setShowBillingForm(false);
+  };
+
+  useEffect(() => {
+    if (!activeMenuItem) return;
+
+    const { value } = activeMenuItem;
+    
+    setModalConfirmData({
+      title: `Are you sure you want to ${value} this subscription?`,
+      description: value === "pause" ? 
+        "This will pause all orders until the subscription is resumed." : 
+        "This will cancel your subscription and all unprocessed orders.",
+      textButtonCancel: `No, don’t ${value}`,
+      textButtonConfirm: `Yes, ${value}`
+    });
+  }, [activeMenuItem]);
+
+
+  const tabs = [
+    {
+      content: (
+        <Address
+          type="shipping"
+          firstName="Jodeci"
+          lastName="Correa"
+          addressLineFirst="27 Main Street"
+          city="Winnipeg"
+          stateOrProvince="Manitoba"
+          zipOrPostalCode="R3W 4S5"
+          country="Canada"
+          phoneNumber="204-123-1234"
+          companyName="Queens Gambit"
+          showEditButton={true}
+          onEdit={onEditShippingAddress}
+        />
+      ),
+      isActive: showShippingForm
+    },
+    {
+      content: (
+        <Address
+          type="billing"
+          firstName="Jodeci"
+          lastName="Correa"
+          addressLineFirst="27 Main Street"
+          city="Winnipeg"
+          stateOrProvince="Manitoba"
+          zipOrPostalCode="R3W 4S5"
+          country="Canada"
+          phoneNumber="204-123-1234"
+          companyName="Queens Gambit"
+          showEditButton={true}
+          onEdit={onEditBillingAddress}
+        />
+      ),
+      isActive: showBillingForm
+    },
+    { 
+      content: (
+        <FrequencyAndPayment 
+          options={OPTIONS_ORDER_FREQUENCE}
+          editMode={true}
+          onPaymentEdit={onEditPaymentMethod}
+        />
+      ),
+      isActive: showPaymentForm 
+    }
+  ];
 
   return (
     <DefaultLayout>
@@ -140,20 +192,42 @@ const IndexPage = () => {
           options={OPTIONS_SUBSCRIPTIONS}
           label="Subscriptions"
           date="December 25, 2020"
-          onChange={setActiveSubscription}
-          onMenuItemClick={setActiveMenuItem}
+          onMenuItemChange={onMenuItemChange}
+          showMessage={showSubscriptionMessage}
+          onMessageButtonClick={() => setShowSubscriptionMessage(false)}
         />
 
-        <Message
-          text="This subscription has been paused."
-          buttonText="Resume subscription"
-        />
+        <Section>
+          <Tabs tabs={tabs} />
+        </Section>
 
-        <Tabs tabs={tabs} />
-
-        <AddressForm type="shipping" />
+        {showBillingForm && (
+          <AddressForm
+            type="billing"
+            onCancel={onCloseFormButtonClick}
+          />
+        )}
+        {showShippingForm && (
+          <AddressForm
+            type="shipping"
+            onCancel={onCloseFormButtonClick}
+          />
+        )}
+        {showPaymentForm && (
+          <StyledPaymentContent />
+        )}
 
         <ProductList products={products} />
+
+        <ModalConfirm
+          title={title}
+          description={description}
+          textButtonCancel={textButtonCancel}
+          textButtonConfirm={textButtonConfirm}
+          isVisible={showModal}
+          onCancel={onCloseModalButtonClick}
+          onConfirm={onConfirmModalButtonClick}
+        />
 
       </Container>
     </DefaultLayout>

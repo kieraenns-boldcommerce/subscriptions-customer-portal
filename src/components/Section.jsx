@@ -10,7 +10,7 @@ const ChildType = PT.oneOfType([
 ]);
 
 const SectionPropTypes = {
-  title: PT.string.isRequired,
+  title: PT.string,
   children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
 };
 
@@ -29,9 +29,11 @@ const Section = (props) => {
   return (
     <StyledSection>
 
-      <StyledTitle>
-        <TitleWithEditButton title={title} />
-      </StyledTitle>
+      {title && (
+        <StyledTitle>
+          <TitleWithEditButton title={title} />
+        </StyledTitle>
+      )}
 
       { children }
 

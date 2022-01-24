@@ -12,7 +12,7 @@ const MenuItemPropTypes = {
 
 const MenuPropTypes = {
   items: PT.arrayOf(PT.shape(MenuItemPropTypes)).isRequired,
-  onItemClick: PT.func
+  onItemChange: PT.func
 };
 
 
@@ -99,16 +99,20 @@ const StyledIcon = styled.img`
 
 
 const Menu = (props) => {
-  const { items, onItemClick } = props;
+  const { items, onItemChange } = props;
 
   const [showMenuList, setShowMenuList] = useState(false);
 
   const menuListRef = useRef(null);
 
   const onShowMenuListButtonClick = () => setShowMenuList((v) => !v);
+  const onMenuItemClick = (item) => {
+    onItemChange(item);
+    setShowMenuList(false);
+  };
 
   useEffect(() => {
-    const onClose = (e) => !menuListRef?.current.contains(e.target) && showMenuList && setShowMenuList(false);
+    const onClose = (event) => menuListRef.current && !menuListRef.current.contains(event.target) && showMenuList && setShowMenuList(false);
 
     document.addEventListener("click", onClose);
     return () => document.removeEventListener("click", onClose);
@@ -125,16 +129,11 @@ const Menu = (props) => {
           {items.map((item) => {
             const { type = "default", name, value } = item;
 
-            const onMenuItemClick = () => {
-              onItemClick(item);
-              setShowMenuList(false);
-            };
-
             return (
               <StyledMenuItem
                 key={value}
                 type={type}
-                onClick={onMenuItemClick}
+                onClick={() => onMenuItemClick(item)}
               >
                 { name }
               </StyledMenuItem>

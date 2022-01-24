@@ -1,6 +1,40 @@
 import { createGlobalStyle } from "styled-components";
 
 export const Resets = createGlobalStyle`
+  @font-face {
+    font-family: "SF Pro Display";
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src:
+      url("./assets/fonts/SF-Pro-Display-Regular.woff2") format("woff2"),
+      url("./assets/fonts/SF-Pro-Display-Regular.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "SF Pro Display";
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    src:
+      url("./assets/fonts/SF-Pro-Display-Semibold.woff2") format("woff2"),
+      url("./assets/fonts/SF-Pro-Display-Semibold.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "SF Pro Display";
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src:
+      url("./assets/fonts/SF-Pro-Display-Bold.woff2") format("woff2"),
+      url("./assets/fonts/SF-Pro-Display-Bold.woff") format("woff");
+  }
+
+  body {
+    font-family: "SF Pro Display";
+  }
+
   h1,
   h2,
   h3,
@@ -56,6 +90,8 @@ export const Resets = createGlobalStyle`
 
   @media (min-width: 400px) {
     .button-ModalConfirm {
+      width: max-content;
+
       &:not(:last-child) {
         margin-right: 8px;
       }

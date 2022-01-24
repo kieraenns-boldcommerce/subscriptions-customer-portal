@@ -77,7 +77,6 @@ const Message = (props) => {
 
       {showButton && (
         <Button
-          size="large"
           className="confirm-button-Message"
           onClick={onButtonClick}
         >

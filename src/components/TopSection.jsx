@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PT from "prop-types";
 import { SelectField } from "@boldcommerce/stacks-ui";
 import Menu from "./Menu";
+import Message from "./Message";
 import styled from "styled-components";
 
 
@@ -14,8 +15,10 @@ const TopSectionPropTypes = {
   options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
   label: PT.string.isRequired,
   date: PT.string.isRequired,
-  onChange: PT.func,
-  onMenuItemClick: PT.func
+  showMessage: PT.bool,
+  onMessageButtonClick: PT.func,
+  onSubscriptionChange: PT.func,
+  onMenuItemChange: PT.func
 };
 
 
@@ -28,6 +31,8 @@ const MENU_ITEMS = [
 const StyledTopSection = styled.div`
   display: grid;
   row-gap: 32px;
+
+  margin-bottom: 30px;
 `;
 
 const StyledSubscriptionInfo = styled.div`
@@ -49,19 +54,22 @@ const StyledSubscriptionName = styled.h2`
   line-height: 24px;
 `;
 
-const StyledSubscriptionDate = styled.p`
+const StyledSubscriptionInfoBottom = styled.div`
   font-size: 14px;
   line-height: 20px;
 `;
 
-const StyledDateTitle = styled.span`
+const StyledSubscriptionDate = styled.span`
   font-weight: 700;
 `;
 
 const TopSection = (props) => {
-  const { options, label, date, onChange, onMenuItemClick } = props;
+  const { options, label, date, showMessage, onMessageButtonClick, onSubscriptionChange, onMenuItemChange } = props;
 
+  const [activeMenuItem, setActiveMenuItem] = useState(options[0]);
   const [activeOption, setActiveOption] = useState(options[0]);
+  const [messageData, setMessageData] = useState({});
+  const { text, buttonText } = messageData;
 
   const onOptionChange = (event) => {
     const { target } = event;
@@ -69,8 +77,26 @@ const TopSection = (props) => {
     const matchOption = options.find((option) => option.value === target.value);
 
     setActiveOption(matchOption);
-    onChange(matchOption);
+    onSubscriptionChange && onSubscriptionChange(matchOption);
   };
+
+  const onMenuItemClick = (item) => {
+    onMenuItemChange(item);
+    setActiveMenuItem(item);
+  };
+
+
+  useEffect(() => {
+    if (!activeMenuItem) return;
+
+    const { value } = activeMenuItem;
+    
+    setMessageData({
+      text: `This subscription has been ${value === "pause" ? "paused" : "canceled"}.`,
+      buttonText: `${value === "pause" ? "Resume" : "Reactivate"} subscription`
+    });
+  }, [activeMenuItem]);
+
 
   return (
     <StyledTopSection>
@@ -88,12 +114,22 @@ const TopSection = (props) => {
             { activeOption.name } Subscription — #{ activeOption.value }
           </StyledSubscriptionName>
 
-          <Menu items={MENU_ITEMS} onItemClick={onMenuItemClick} />
+          <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
         </StyledSubscriptionInfoTop>
 
-        <StyledSubscriptionDate>
-          <StyledDateTitle>Next Order:</StyledDateTitle> { date }
-        </StyledSubscriptionDate>
+        {showMessage ? (
+          <StyledSubscriptionInfoBottom>
+            <Message
+              text={text}
+              buttonText={buttonText}
+              onButtonClick={onMessageButtonClick}
+            />
+          </StyledSubscriptionInfoBottom>
+        ) : (
+          <StyledSubscriptionInfoBottom>
+            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate> { date }
+          </StyledSubscriptionInfoBottom>
+        )}
       </StyledSubscriptionInfo>
     </StyledTopSection>
   );
