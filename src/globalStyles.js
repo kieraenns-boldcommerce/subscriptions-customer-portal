@@ -1,40 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
 export const Resets = createGlobalStyle`
-  @font-face {
-    font-family: "SF Pro Display";
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-    src:
-      url("./assets/fonts/SF-Pro-Display-Regular.woff2") format("woff2"),
-      url("./assets/fonts/SF-Pro-Display-Regular.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "SF Pro Display";
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-    src:
-      url("./assets/fonts/SF-Pro-Display-Semibold.woff2") format("woff2"),
-      url("./assets/fonts/SF-Pro-Display-Semibold.woff") format("woff");
-  }
-
-  @font-face {
-    font-family: "SF Pro Display";
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-    src:
-      url("./assets/fonts/SF-Pro-Display-Bold.woff2") format("woff2"),
-      url("./assets/fonts/SF-Pro-Display-Bold.woff") format("woff");
-  }
-
-  body {
-    font-family: "SF Pro Display", sans-serif;
-  }
-
   h1,
   h2,
   h3,
@@ -115,5 +81,44 @@ export const Vars = createGlobalStyle`
   :root {
     --color-text-default: rgba(0, 0, 0, 0.9);
     --color-text-link: #0a75c2;
+  }
+`;
+
+
+export const Fonts = createGlobalStyle`
+  @font-face {
+    font-family: 'SF Pro Display';
+    src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'),
+        url('./assets/fonts/SFProDisplay-Bold.woff2') format('woff2'),
+        url('./assets/fonts/SFProDisplay-Bold.woff') format('woff'),
+        url('./assets/fonts/SFProDisplay-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'SF Pro Display';
+    src: local('SF Pro Display Semibold'), local('SFProDisplay-Semibold'),
+        url('./assets/fonts/SFProDisplay-Semibold.woff2') format('woff2'),
+        url('./assets/fonts/SFProDisplay-Semibold.woff') format('woff'),
+        url('./assets/fonts/SFProDisplay-Semibold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'SF Pro Display';
+    src: local('SF Pro Display Regular'), local('SFProDisplay-Regular'),
+        url('./assets/fonts/SFProDisplay-Regular.woff2') format('woff2'),
+        url('./assets/fonts/SFProDisplay-Regular.woff') format('woff'),
+        url('./assets/fonts/SFProDisplay-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  body {
+    font-family: "SF Pro Display", sans-serif;
   }
 `;
