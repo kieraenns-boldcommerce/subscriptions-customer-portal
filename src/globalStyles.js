@@ -7,8 +7,8 @@ export const Resets = createGlobalStyle`
     font-style: normal;
     font-display: swap;
     src:
-      url("./assets/fonts/SF-Pro-Display-Regular.woff2") format("woff2"),
-      url("./assets/fonts/SF-Pro-Display-Regular.woff") format("woff");
+      url("./assets/fonts/SF-Pro-Display-Regular.woff2") format("font-woff2"),
+      url("./assets/fonts/SF-Pro-Display-Regular.woff") format("font-woff");
   }
 
   @font-face {
@@ -17,8 +17,8 @@ export const Resets = createGlobalStyle`
     font-style: normal;
     font-display: swap;
     src:
-      url("./assets/fonts/SF-Pro-Display-Semibold.woff2") format("woff2"),
-      url("./assets/fonts/SF-Pro-Display-Semibold.woff") format("woff");
+      url("./assets/fonts/SF-Pro-Display-Semibold.woff2") format("font-woff2"),
+      url("./assets/fonts/SF-Pro-Display-Semibold.woff") format("font-woff");
   }
 
   @font-face {
@@ -27,8 +27,8 @@ export const Resets = createGlobalStyle`
     font-style: normal;
     font-display: swap;
     src:
-      url("./assets/fonts/SF-Pro-Display-Bold.woff2") format("woff2"),
-      url("./assets/fonts/SF-Pro-Display-Bold.woff") format("woff");
+      url("./assets/fonts/SF-Pro-Display-Bold.woff2") format("font-woff2"),
+      url("./assets/fonts/SF-Pro-Display-Bold.woff") format("font-woff");
   }
 
   body {
