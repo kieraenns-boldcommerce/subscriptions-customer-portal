@@ -45,8 +45,15 @@ export const Resets = createGlobalStyle`
   .frequency-select,
   .stx-select,
   .stx-button,
-  .button {
+  .button,
+  .frequency-select .stx-select {
     margin: 0;
+  }
+
+  *::before,
+  *::after,
+  .stx-select__icon {
+    pointer-events: none;
   }
 
   button {
@@ -64,6 +71,11 @@ export const Resets = createGlobalStyle`
     text-transform: none;
     font-size: 14px;
     line-height: 20px;
+  }
+
+  .button-AddressForm {
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .stx-field {

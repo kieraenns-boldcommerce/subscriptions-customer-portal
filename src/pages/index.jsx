@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
 import Tabs from "../components/Tabs";
@@ -72,47 +72,84 @@ const StyledPaymentContent = styled.div`
   background-color: rgba(0, 0, 0, 0.2);
 `;
 
+const StyledFormContainer = styled.div`
+  max-height: ${({ showForm }) => showForm ? 450 : 0}px;
+
+  transition: max-height 0.4s;
+  overflow: hidden;
+`;
+
 
 const IndexPage = () => {
-  const [activeMenuItem, setActiveMenuItem] = useState();
-  const [showBillingForm, setShowBillingForm] = useState(false);
-  const [showShippingForm, setShowShippingForm] = useState(false);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [activeMenuItem, setActiveMenuItem] = useState(null);
+  // eslint-disable-next-line no-unused-vars
+  const [activeFrequency, setActiveFrequency] = useState(null);
+  const [showBillingAddress, setShowBillingAddress] = useState(false);
+  const [showShippingAddress, setShowShippingAddress] = useState(false);
+  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
+  const [showOrderFrequency, setShowOrderFrequency] = useState(false);
   const [showSubscriptionMessage, setShowSubscriptionMessage] = useState(false);
+  const [showAnyForm, setShowAnyForm] = useState(false);
 
   const [modalConfirmData, setModalConfirmData] = useState({});
   const { title, description, textButtonCancel, textButtonConfirm } = modalConfirmData;
 
+  const formContainerRef = useRef(null);
+
   const showModal = Boolean(activeMenuItem);
 
   const onMenuItemChange = (item) => setActiveMenuItem(item);
-  const onCloseFormButtonClick = () => {
-    setShowBillingForm(false);
-    setShowPaymentForm(false);
-    setShowShippingForm(false);
-  };
-  const onCloseModalButtonClick = () => setActiveMenuItem(null);
+
+  const onCloseFormButtonClick = () => setShowAnyForm(false);
+
+  const onCancelModalButtonClick = () => setActiveMenuItem(null);
+
   const onConfirmModalButtonClick = () => {
     setActiveMenuItem(null);
     setShowSubscriptionMessage(true);
+    setShowShippingAddress(false);
+    setShowBillingAddress(false);
+    setShowPaymentMethod(false);
+    setShowOrderFrequency(false);
   };
 
   const onEditShippingAddress = () => {
-    setShowShippingForm((v) => !v);
-    setShowBillingForm(false);
-    setShowPaymentForm(false);
+    setShowAnyForm(true);
+    setShowShippingAddress(true);
+    setShowBillingAddress(false);
+    setShowPaymentMethod(false);
+    setShowOrderFrequency(false);
   };
 
   const onEditBillingAddress = () => {
-    setShowBillingForm((v) => !v);
-    setShowShippingForm(false);
-    setShowPaymentForm(false);
+    setShowAnyForm(true);
+    setShowBillingAddress(true);
+    setShowShippingAddress(false);
+    setShowPaymentMethod(false);
+    setShowOrderFrequency(false);
   };
 
   const onEditPaymentMethod = () => {
-    setShowPaymentForm((v) => !v);
-    setShowShippingForm(false);
-    setShowBillingForm(false);
+    setShowAnyForm(true);
+    setShowPaymentMethod(true);
+    setShowShippingAddress(false);
+    setShowBillingAddress(false);
+    setShowOrderFrequency(false);
+  };
+
+  const onEditOrderFrequency = (option) => {
+    setActiveFrequency(option);
+    setShowPaymentMethod(false);
+    setShowShippingAddress(false);
+    setShowBillingAddress(false);
+  };
+
+  const onFormCollapse = () => {
+    if (showAnyForm) return;
+
+    setShowBillingAddress(false);
+    setShowPaymentMethod(false);
+    setShowShippingAddress(false);
   };
 
   useEffect(() => {
@@ -145,11 +182,12 @@ const IndexPage = () => {
           country="Canada"
           phoneNumber="204-123-1234"
           companyName="Queens Gambit"
-          showEditButton={true}
+          showEditButton={!showShippingAddress && !showSubscriptionMessage}
+          altTextEditButton="Edit shipping address"
           onEdit={onEditShippingAddress}
         />
       ),
-      isActive: showShippingForm
+      isActive: showShippingAddress
     },
     {
       content: (
@@ -164,21 +202,24 @@ const IndexPage = () => {
           country="Canada"
           phoneNumber="204-123-1234"
           companyName="Queens Gambit"
-          showEditButton={true}
+          showEditButton={!showBillingAddress && !showSubscriptionMessage}
+          altTextEditButton="Edit billing address"
           onEdit={onEditBillingAddress}
         />
       ),
-      isActive: showBillingForm
+      isActive: showBillingAddress
     },
     { 
       content: (
         <FrequencyAndPayment 
           options={OPTIONS_ORDER_FREQUENCE}
-          editMode={true}
-          onPaymentEdit={onEditPaymentMethod}
+          editModeFrequency={!showOrderFrequency && !showSubscriptionMessage}
+          editModePayment={!showPaymentMethod && !showSubscriptionMessage}
+          onEditFrequency={onEditOrderFrequency}
+          onEditPayment={onEditPaymentMethod}
         />
       ),
-      isActive: showPaymentForm 
+      isActive: showPaymentMethod || showOrderFrequency
     }
   ];
 
@@ -200,32 +241,33 @@ const IndexPage = () => {
         <Section>
           <Tabs tabs={tabs} />
         </Section>
-
-        {showBillingForm && (
-          <AddressForm
-            type="billing"
-            onCancel={onCloseFormButtonClick}
-          />
-        )}
-        {showShippingForm && (
-          <AddressForm
-            type="shipping"
-            onCancel={onCloseFormButtonClick}
-          />
-        )}
-        {showPaymentForm && (
-          <StyledPaymentContent />
-        )}
+        <StyledFormContainer showForm={showAnyForm} ref={formContainerRef} onTransitionEnd={onFormCollapse}>
+          {showBillingAddress && (
+            <AddressForm
+              type="billing"
+              onCancel={onCloseFormButtonClick}
+            />
+          )}
+          {showShippingAddress && (
+            <AddressForm
+              type="shipping"
+              onCancel={onCloseFormButtonClick}
+            />
+          )}
+          {showPaymentMethod && (
+            <StyledPaymentContent />
+          )}
+        </StyledFormContainer>
 
         <ProductList products={products} />
 
         <ModalConfirm
+          isVisible={showModal}
           title={title}
           description={description}
           textButtonCancel={textButtonCancel}
           textButtonConfirm={textButtonConfirm}
-          isVisible={showModal}
-          onCancel={onCloseModalButtonClick}
+          onCancel={onCancelModalButtonClick}
           onConfirm={onConfirmModalButtonClick}
         />
 

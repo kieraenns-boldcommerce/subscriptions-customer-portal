@@ -120,7 +120,7 @@ const Menu = (props) => {
 
   return (
     <StyledMenu>
-      <StyledMenuButton onClick={onShowMenuListButtonClick}>
+      <StyledMenuButton aria-label="Subscription quick action menu" onClick={onShowMenuListButtonClick}>
         <StyledIcon src={ellipsis} />
       </StyledMenuButton>
 

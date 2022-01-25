@@ -52,6 +52,14 @@ const StyledButtonsWrapper = styled.div`
   column-gap: 16px;
 `;
 
+const StyledAddressFormSecondRow = styled.div`
+  width: 48%;
+
+  @media (min-width: 576px) {
+    width: 100%;
+  }
+`;
+
 const AddressForm = (props) => {
   const { type, onConfirm, onCancel } = props;
 
@@ -71,11 +79,13 @@ const AddressForm = (props) => {
             <InputField label="Address line 2" />
           </FieldsLayout>
 
-          <FieldsLayout>
-            <SelectField options={CITY_OPTIONS} label="City" />
-            <SelectField options={STATE_OPTIONS} label="State/Province" />
-            <SelectField options={COUNTRY_OPTIONS} label="Country" />
-          </FieldsLayout>
+          <StyledAddressFormSecondRow>
+            <FieldsLayout>
+              <SelectField options={CITY_OPTIONS} label="City" />
+              <SelectField options={STATE_OPTIONS} label="State/Province" />
+              <SelectField options={COUNTRY_OPTIONS} label="Country" />
+            </FieldsLayout>
+          </StyledAddressFormSecondRow>
 
           <FieldsLayout>
             <InputField label="Zip/Postal code" />

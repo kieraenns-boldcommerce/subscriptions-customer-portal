@@ -22,7 +22,7 @@ const OrderFrequencyDefaultProps = {
 
 
 const StyledTitle = styled.div`
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 `;
 
 const StyledForm = styled.div`
@@ -73,6 +73,7 @@ const OrderFrequency = (props) => {
         <TitleWithEditButton
           title="Order frequency"
           showEditButton={editMode}
+          altTextButton="Change frequency"
           onEdit={onOpenForm}
         />
       </StyledTitle>

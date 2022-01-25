@@ -44,6 +44,7 @@ const PaymentMethod = (props) => {
         <TitleWithEditButton
           title="Payment method"
           showEditButton={editMode}
+          altTextButton="Change payment method"
           onEdit={onOpenForm}
         />
       </StyledTitle>

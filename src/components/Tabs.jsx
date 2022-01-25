@@ -26,12 +26,19 @@ const StyledTabs = styled.div`
 `;
 
 const StyledTab = styled.div`
+  display: grid;
+
+  padding-bottom: 32px;
+  
+  transition: border-color 0.4s;
+  
   @media (min-width: 768px) {
     border-bottom: 8px solid ${({ isActive }) => isActive ? "rgba(0, 0, 0, 0.3)" : "transparent"};
   }
-  padding-bottom: 32px;
 
-  transition: border-color 0.4s;
+  @media (min-width: 576px) {
+    padding-bottom: 26px;
+  }
 `;
 
 const Tabs = (props) => {

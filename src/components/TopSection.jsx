@@ -21,6 +21,10 @@ const TopSectionPropTypes = {
   onMenuItemChange: PT.func
 };
 
+const TopSectionDefaultProps = {
+  showMessage: false
+};
+
 
 const MENU_ITEMS = [
   { name: "Pause subscription", value: "pause" },
@@ -30,21 +34,29 @@ const MENU_ITEMS = [
 
 const StyledTopSection = styled.div`
   display: grid;
-  row-gap: 32px;
+  row-gap: 20px;
 
   margin-bottom: 30px;
+
+  @media (min-width: 576px) {
+    row-gap: 10px;
+  }
 `;
 
 const StyledSubscriptionInfo = styled.div`
   display: grid;
   row-gap: 10px;
+
+  @media (min-width: 576px) {
+    display: block;
+  }
 `;
 
 const StyledSubscriptionInfoTop = styled.div`
   display: grid;
   align-items: center;
   grid-auto-flow: column;
-  column-gap: 30px;
+  column-gap: 20px;
   justify-content: start;
 `;
 
@@ -61,6 +73,10 @@ const StyledSubscriptionInfoBottom = styled.div`
 
 const StyledSubscriptionDate = styled.span`
   font-weight: 700;
+`;
+
+const StyledSubscriptionMessage = styled.div`
+  margin-top: 14px;
 `;
 
 const TopSection = (props) => {
@@ -119,11 +135,13 @@ const TopSection = (props) => {
 
         {showMessage ? (
           <StyledSubscriptionInfoBottom>
-            <Message
-              text={text}
-              buttonText={buttonText}
-              onButtonClick={onMessageButtonClick}
-            />
+            <StyledSubscriptionMessage>
+              <Message
+                text={text}
+                buttonText={buttonText}
+                onButtonClick={onMessageButtonClick}
+              />
+            </StyledSubscriptionMessage>
           </StyledSubscriptionInfoBottom>
         ) : (
           <StyledSubscriptionInfoBottom>
@@ -136,6 +154,7 @@ const TopSection = (props) => {
 };
 
 TopSection.propTypes = TopSectionPropTypes;
+TopSection.defaultProps = TopSectionDefaultProps;
 
 export default TopSection;
 

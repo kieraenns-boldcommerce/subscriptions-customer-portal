@@ -14,10 +14,10 @@ export const FormLayoutPropTypes = {
 
 const StyledFormLayout = styled.div`
   display: grid;
-  row-gap: 16px;
+  row-gap: 18px;
 
   @media (min-width: 1024px) {
-    row-gap: 20px;
+    row-gap: 14px;
   }
 `;
 
