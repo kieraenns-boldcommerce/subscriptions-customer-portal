@@ -73,10 +73,14 @@ const StyledPaymentContent = styled.div`
 `;
 
 const StyledFormContainer = styled.div`
-  max-height: ${({ showForm }) => showForm ? 450 : 0}px;
+  max-height: ${({ showForm }) => showForm ? 960 : 0}px;
 
   transition: max-height 0.4s;
   overflow: hidden;
+
+  @media (min-width: 768px) {
+    max-height: ${({ showForm }) => showForm ? 450 : 0}px;
+  }
 `;
 
 

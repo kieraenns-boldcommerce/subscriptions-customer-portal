@@ -42,7 +42,7 @@ const StyledButtons = styled.div`
   display: grid;
   row-gap: 12px;
 
-  @media (min-width: 400px) {
+  @media (min-width: 375px) {
     display: flex;
     align-items: center;
     margin-left: auto;

@@ -37,7 +37,7 @@ const StyledTab = styled.div`
   }
 
   @media (min-width: 576px) {
-    padding-bottom: 26px;
+    padding-bottom: 29px;
   }
 `;
 

@@ -21,7 +21,7 @@ const FrequencyAndPaymentDefaultProps = {
 const StyledFrequencyAndPayment = styled.div`
   display: grid;
   align-content: space-between;
-  row-gap: 20px;
+  row-gap: 32px;
 `;
 
 const FrequencyAndPayment = (props) => {

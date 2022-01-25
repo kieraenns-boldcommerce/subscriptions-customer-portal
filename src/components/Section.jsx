@@ -27,7 +27,7 @@ const StyledTitle = styled.div`
   margin-bottom: 32px;
 
   @media (min-width: 576px) {
-    margin-bottom: 28px;
+    margin-bottom: 26px;
   }
 `;
 

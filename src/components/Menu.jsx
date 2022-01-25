@@ -24,7 +24,7 @@ const StyledMenu = styled.div`
 const StyledMenuList = styled.div`
   position: absolute;
   top: calc(100% + 20px);
-  right: calc(100% - 46px);
+  right: -12px;
 
   width: 280px;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -41,12 +41,12 @@ const StyledMenuList = styled.div`
     top: 4px;
     right: 22px;
 
-    width: 30px;
+    width: 31px;
     height: 28px;
 
     background-color: #ffffff;
 
-    transform: rotate(45deg) translateY(-50%) matrix(1, 0, 0, -1, 0, 0);
+    transform: rotate(45deg) translateY(-50%);
   }
 
   &::after {

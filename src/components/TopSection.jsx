@@ -39,7 +39,7 @@ const StyledTopSection = styled.div`
   margin-bottom: 30px;
 
   @media (min-width: 576px) {
-    row-gap: 10px;
+    row-gap: 26px;
   }
 `;
 

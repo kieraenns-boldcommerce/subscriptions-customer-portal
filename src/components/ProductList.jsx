@@ -9,10 +9,10 @@ const ProductListPropTypes = {
 
 const StyledProductList = styled.div`
   display: grid;
-  gap: 14px 16px;
+  row-gap: 14px;
 
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 51%);
   }
 `;
 
@@ -25,7 +25,7 @@ const StyledProduct = styled.div`
     padding-bottom: 0;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     &:nth-last-child(1),
     &:nth-last-child(2) {
       border-bottom: none;

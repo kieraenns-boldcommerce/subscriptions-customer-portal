@@ -81,7 +81,6 @@ const OrderFrequency = (props) => {
       {showForm ? (
         <StyledForm>
           <SelectField
-            className="frequency-select"
             value={activeOptionValue}
             options={options}
             onChange={onChangeOption}

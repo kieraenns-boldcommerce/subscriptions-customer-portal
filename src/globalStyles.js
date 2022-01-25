@@ -8,11 +8,11 @@ export const Resets = createGlobalStyle`
   h5,
   h6,
   p,
-  .frequency-select,
   .stx-select,
   .stx-button,
   .button,
-  .frequency-select .stx-select {
+  .stx-field--with-select .stx-select,
+  .stx-field--with-input .stx-input {
     margin: 0;
   }
 
@@ -45,7 +45,23 @@ export const Resets = createGlobalStyle`
   }
 
   .stx-field {
+    display: grid;
     position: static;
+    margin: 0;
+
+    .stx-field__label {
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+  }
+
+  .stx-input__input-element {
+    line-height: 20px;
+  }
+
+  .stx-field--with-select {
+    display: grid;
+    align-content: center;
   }
 
   .stx-select__select-element {
@@ -66,7 +82,7 @@ export const Resets = createGlobalStyle`
     }
   }
 
-  @media (min-width: 400px) {
+  @media (min-width: 375px) {
     .button-ModalConfirm {
       width: max-content;
 

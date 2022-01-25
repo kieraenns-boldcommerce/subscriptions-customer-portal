@@ -16,8 +16,8 @@ const StyledFormLayout = styled.div`
   display: grid;
   row-gap: 18px;
 
-  @media (min-width: 1024px) {
-    row-gap: 14px;
+  @media (min-width: 768px) {
+    row-gap: 32px;
   }
 `;
 

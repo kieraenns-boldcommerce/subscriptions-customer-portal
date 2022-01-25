@@ -24,18 +24,18 @@ const AddressDefaultProps = {
 };
 
 const StyledAddress = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 18px;
   color: var(--color-text-default);
 
   @media (min-width: 576px) {
-    line-height: 20px;
+    line-height: 18px;
   }
 `;
 
 const StyledTitle = styled.div`
-  margin-bottom: 6px;
+  margin-bottom: 9px;
 `;
 
 const StyledFullName = styled.div`
