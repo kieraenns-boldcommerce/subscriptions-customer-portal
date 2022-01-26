@@ -16,8 +16,6 @@ export const Resets = createGlobalStyle`
     margin: 0;
   }
 
-  *::before,
-  *::after,
   .stx-select__icon {
     pointer-events: none;
   }
@@ -76,12 +74,6 @@ export const Resets = createGlobalStyle`
     color: inherit;
   }
 
-  @media (min-width: 576px) {
-    .subscription-select-TopSection {
-      max-width: 326px;
-    }
-  }
-
   @media (min-width: 375px) {
     .button-ModalConfirm {
       width: max-content;
@@ -89,6 +81,12 @@ export const Resets = createGlobalStyle`
       &:not(:last-child) {
         margin-right: 8px;
       }
+    }
+  }
+
+  @media (min-width: 576px) {
+    .subscription-select-TopSection {
+      max-width: 326px;
     }
   }
 `;

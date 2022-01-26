@@ -36,8 +36,6 @@ const StyledTopSection = styled.div`
   display: grid;
   row-gap: 20px;
 
-  margin-bottom: 30px;
-
   @media (min-width: 576px) {
     row-gap: 26px;
   }
@@ -56,8 +54,8 @@ const StyledSubscriptionInfoTop = styled.div`
   display: grid;
   align-items: center;
   grid-auto-flow: column;
-  column-gap: 20px;
   justify-content: start;
+  column-gap: 20px;
 `;
 
 const StyledSubscriptionName = styled.h2`

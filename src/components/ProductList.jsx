@@ -12,7 +12,7 @@ const StyledProductList = styled.div`
   row-gap: 14px;
 
   @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 51%);
+    grid-template-columns: repeat(2, 1fr);
   }
 `;
 
@@ -25,16 +25,24 @@ const StyledProduct = styled.div`
     padding-bottom: 0;
   }
 
+  @media (min-width: 576px) {
+    padding-bottom: 20px;
+  }
+
   @media (min-width: 768px) {
+    &:nth-child(even) {
+      padding-left: 5px;
+    }
+
+    &:nth-child(odd) {
+      padding-right: 5px;
+    }
+
     &:nth-last-child(1),
     &:nth-last-child(2) {
       border-bottom: none;
       padding-bottom: 0;
     }
-  }
-
-  @media (min-width: 576px) {
-    padding-bottom: 20px;
   }
 `;
 

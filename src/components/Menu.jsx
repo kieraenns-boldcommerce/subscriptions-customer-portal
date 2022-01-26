@@ -47,6 +47,7 @@ const StyledMenuList = styled.div`
     background-color: #ffffff;
 
     transform: rotate(45deg) translateY(-50%);
+    pointer-events: none;
   }
 
   &::after {
@@ -107,7 +108,7 @@ const Menu = (props) => {
 
   const onShowMenuListButtonClick = () => setShowMenuList((v) => !v);
   const onMenuItemClick = (item) => {
-    onItemChange(item);
+    onItemChange && onItemChange(item);
     setShowMenuList(false);
   };
 

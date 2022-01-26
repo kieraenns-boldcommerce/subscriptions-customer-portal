@@ -83,6 +83,10 @@ const StyledFormContainer = styled.div`
   }
 `;
 
+const StyledTopSectionContainer = styled.div`
+  margin-bottom: 30px;
+`;
+
 
 const IndexPage = () => {
   const [activeMenuItem, setActiveMenuItem] = useState(null);
@@ -229,14 +233,16 @@ const IndexPage = () => {
 
         <StyledTitle>My Subscriptions</StyledTitle>
 
-        <TopSection
-          options={OPTIONS_SUBSCRIPTIONS}
-          label="Subscriptions"
-          date="December 25, 2020"
-          onMenuItemChange={onMenuItemChange}
-          showMessage={showSubscriptionMessage}
-          onMessageButtonClick={() => setShowSubscriptionMessage(false)}
-        />
+        <StyledTopSectionContainer>
+          <TopSection
+            options={OPTIONS_SUBSCRIPTIONS}
+            label="Subscriptions"
+            date="December 25, 2020"
+            onMenuItemChange={onMenuItemChange}
+            showMessage={showSubscriptionMessage}
+            onMessageButtonClick={() => setShowSubscriptionMessage(false)}
+          />
+        </StyledTopSectionContainer>
 
         <Section>
           <Tabs tabs={tabs} />

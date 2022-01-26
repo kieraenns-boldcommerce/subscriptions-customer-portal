@@ -31,13 +31,13 @@ const StyledTab = styled.div`
   padding-bottom: 32px;
   
   transition: border-color 0.4s;
-  
-  @media (min-width: 768px) {
-    border-bottom: 8px solid ${({ isActive }) => isActive ? "rgba(0, 0, 0, 0.3)" : "transparent"};
-  }
 
   @media (min-width: 576px) {
     padding-bottom: 29px;
+  }
+  
+  @media (min-width: 768px) {
+    border-bottom: 8px solid ${({ isActive }) => isActive ? "rgba(0, 0, 0, 0.3)" : "transparent"};
   }
 `;
 
