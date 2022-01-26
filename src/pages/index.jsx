@@ -118,7 +118,7 @@ const IndexPage = () => {
   };
 
   const onEditShippingAddress = () => {
-    setShowAnyForm(true);
+    setShowAnyForm((v) => !v);
     setShowShippingAddress(true);
     setShowBillingAddress(false);
     setShowPaymentMethod(false);
@@ -126,7 +126,7 @@ const IndexPage = () => {
   };
 
   const onEditBillingAddress = () => {
-    setShowAnyForm(true);
+    setShowAnyForm((v) => !v);
     setShowBillingAddress(true);
     setShowShippingAddress(false);
     setShowPaymentMethod(false);
@@ -134,7 +134,7 @@ const IndexPage = () => {
   };
 
   const onEditPaymentMethod = () => {
-    setShowAnyForm(true);
+    setShowAnyForm((v) => !v);
     setShowPaymentMethod(true);
     setShowShippingAddress(false);
     setShowBillingAddress(false);
@@ -186,7 +186,7 @@ const IndexPage = () => {
           country="Canada"
           phoneNumber="204-123-1234"
           companyName="Queens Gambit"
-          showEditButton={!showShippingAddress && !showSubscriptionMessage}
+          showEditButton={!showSubscriptionMessage}
           altTextEditButton="Edit shipping address"
           onEdit={onEditShippingAddress}
         />
@@ -206,7 +206,7 @@ const IndexPage = () => {
           country="Canada"
           phoneNumber="204-123-1234"
           companyName="Queens Gambit"
-          showEditButton={!showBillingAddress && !showSubscriptionMessage}
+          showEditButton={!showSubscriptionMessage}
           altTextEditButton="Edit billing address"
           onEdit={onEditBillingAddress}
         />
@@ -217,8 +217,8 @@ const IndexPage = () => {
       content: (
         <FrequencyAndPayment 
           options={OPTIONS_ORDER_FREQUENCE}
-          editModeFrequency={!showOrderFrequency && !showSubscriptionMessage}
-          editModePayment={!showPaymentMethod && !showSubscriptionMessage}
+          editModeFrequency={!showSubscriptionMessage}
+          editModePayment={!showSubscriptionMessage}
           onEditFrequency={onEditOrderFrequency}
           onEditPayment={onEditPaymentMethod}
         />
