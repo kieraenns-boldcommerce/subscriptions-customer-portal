@@ -15,6 +15,7 @@ const AddressPropTypes = {
   phoneNumber: PT.string.isRequired,
   companyName: PT.string,
   showEditButton: PT.bool,
+  altTextEditButton: PT.string,
   onEdit: PT.func
 };
 
@@ -23,14 +24,18 @@ const AddressDefaultProps = {
 };
 
 const StyledAddress = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 18px;
   color: var(--color-text-default);
+
+  @media (min-width: 576px) {
+    line-height: 18px;
+  }
 `;
 
 const StyledTitle = styled.div`
-  margin-bottom: 4px;
+  margin-bottom: 9px;
 `;
 
 const StyledFullName = styled.div`
@@ -51,6 +56,7 @@ const Address = (props) => {
     phoneNumber,
     companyName,
     showEditButton,
+    altTextEditButton,
     onEdit
   } = props;
 
@@ -63,6 +69,7 @@ const Address = (props) => {
         <TitleWithEditButton
           title={title}
           showEditButton={showEditButton}
+          altTextButton={altTextEditButton}
           onEdit={onEdit}
         />
       </StyledTitle>

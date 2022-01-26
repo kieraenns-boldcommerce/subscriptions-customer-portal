@@ -1,34 +1,53 @@
 import PT from "prop-types";
 import styled from "styled-components";
-import OrderFrequency, { OrderFrequencyPropTypes } from "./OrderFrequency";
+import OrderFrequency, { OptionPropTypes } from "./OrderFrequency";
+import PaymentMethod from "./PaymentMethod";
 
 
 const FrequencyAndPaymentPropTypes = {
-  orderFrequency: PT.shape(OrderFrequencyPropTypes).isRequired,
-  paymentMethod: PT.shape({}).isRequired
+  options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
+  editModeFrequency: PT.bool,
+  editModePayment: PT.bool,
+  onEditFrequency: PT.func,
+  onEditPayment: PT.func
 };
 
-const FrequencyAndPaymentDefaultProps = {};
+const FrequencyAndPaymentDefaultProps = {
+  editModeFrequency: false,
+  editModePayment: false
+};
 
 
-const StyledOrderFrequency = styled.div`
-  margin-bottom: 22px;
+const StyledFrequencyAndPayment = styled.div`
+  display: grid;
+  align-content: space-between;
+  row-gap: 32px;
 `;
 
 const FrequencyAndPayment = (props) => {
-  const { orderFrequency } = props;
-  const { options, onSave, editMode } = orderFrequency;
+  const {
+    options,
+    editModeFrequency,
+    editModePayment,
+    onEditFrequency,
+    onEditPayment
+  } = props;
+
+  const onFrequencyChangeButtonClick = (option) => onEditFrequency && onEditFrequency(option);
 
   return (
-    <div>
-      <StyledOrderFrequency>
-        <OrderFrequency
-          options={options}
-          onChange={onSave}
-          editMode={editMode}
-        />
-      </StyledOrderFrequency>
-    </div>
+    <StyledFrequencyAndPayment>
+      <OrderFrequency
+        options={options}
+        onChange={onFrequencyChangeButtonClick}
+        onEdit={onEditFrequency}
+        editMode={editModeFrequency}
+      />
+      <PaymentMethod
+        onEdit={onEditPayment}
+        editMode={editModePayment}
+      />
+    </StyledFrequencyAndPayment>
   );
 };
 

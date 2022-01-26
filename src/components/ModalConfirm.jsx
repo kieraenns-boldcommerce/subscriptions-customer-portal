@@ -10,7 +10,6 @@ const ModalConfirmPropTypes = {
   textButtonCancel: PT.string,
   textButtonConfirm: PT.string,
   isVisible: PT.bool,
-  onClose: PT.func,
   onConfirm: PT.func,
   onCancel: PT.func
 };
@@ -42,23 +41,11 @@ const StyledDescription = styled.p`
 const StyledButtons = styled.div`
   display: grid;
   row-gap: 12px;
-  grid-template-columns: 1fr;
 
-  .button {
-    display: block;
-    margin: 0;
-  }
-
-  @media (min-width: 400px) {
+  @media (min-width: 375px) {
     display: flex;
     align-items: center;
     margin-left: auto;
-
-    .button {
-      &:not(:last-child) {
-        margin-right: 8px;
-      }
-    }
   }
 `;
 
@@ -69,13 +56,12 @@ const ModalConfirm = (props) => {
     textButtonCancel,
     textButtonConfirm,
     isVisible,
-    onClose,
     onConfirm,
     onCancel
   } = props;
 
   return (
-    <Modal isVisible={isVisible} onClose={onClose}>
+    <Modal isVisible={isVisible} onClose={onCancel}>
       <StyledModalConfirm>
         <StyledTitle>
           { title }
@@ -88,10 +74,10 @@ const ModalConfirm = (props) => {
         )}
 
         <StyledButtons>
-          <Button className="button" onClick={onCancel}>
+          <Button className="button-ModalConfirm" block onClick={onCancel}>
             { textButtonCancel }
           </Button>
-          <Button className="button" primary onClick={onConfirm}>
+          <Button className="button-ModalConfirm" block primary onClick={onConfirm}>
             { textButtonConfirm }
           </Button>
         </StyledButtons>

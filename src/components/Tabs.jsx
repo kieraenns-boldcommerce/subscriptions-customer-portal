@@ -18,16 +18,27 @@ const TabsPropTypes = {
 };
 
 const StyledTabs = styled.div`
-  display: grid;
-  grid-template-columns: repeat(${({ tabsAmount }) => tabsAmount}, 1fr);
-  column-gap: 16px;
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(${({ tabsAmount }) => tabsAmount}, 1fr);
+    column-gap: 16px;
+  }
 `;
 
 const StyledTab = styled.div`
-  border-bottom: 8px solid ${({ isActive }) => isActive ? "rgba(0, 0, 0, 0.3)" : "transparent"};
-  padding-bottom: 32px;
+  display: grid;
 
+  padding-bottom: 32px;
+  
   transition: border-color 0.4s;
+
+  @media (min-width: 576px) {
+    padding-bottom: 29px;
+  }
+  
+  @media (min-width: 768px) {
+    border-bottom: 8px solid ${({ isActive }) => isActive ? "rgba(0, 0, 0, 0.3)" : "transparent"};
+  }
 `;
 
 const Tabs = (props) => {

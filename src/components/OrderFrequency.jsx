@@ -4,14 +4,15 @@ import TitleWithEditButton from "./TitleWithEditButton";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 
-const OptionPropTypes = {
+export const OptionPropTypes = {
   name: PT.string.isRequired,
   value: PT.string.isRequired
 };
 
 export const OrderFrequencyPropTypes = {
   options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
-  onChange: PT.func.isRequired,
+  onChange: PT.func,
+  onEdit: PT.func,
   editMode: PT.bool
 };
 
@@ -21,19 +22,13 @@ const OrderFrequencyDefaultProps = {
 
 
 const StyledTitle = styled.div`
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 `;
 
 const StyledForm = styled.div`
   display: grid;
   grid-template-columns: 50% max-content;
   column-gap: 16px;
-
-  .frequency-select,
-  .stx-select,
-  .button {
-    margin: 0;
-  }
 
   @media (min-width: 576px) {
     column-gap: 20px;
@@ -48,7 +43,7 @@ const StyledDescription = styled.div`
 `;
 
 const OrderFrequency = (props) => {
-  const { options, editMode, onChange } = props;
+  const { options, editMode, onChange, onEdit } = props;
 
   const [showForm, setShowForm] = useState(false);
   const [activeOption, setActiveOption] = useState(options[0]);
@@ -60,13 +55,16 @@ const OrderFrequency = (props) => {
   }, [activeOptionValue]);
 
   const onSaveButtonClick = () => {
-    onChange(activeOption);
+    onChange && onChange(activeOption);
     setShowForm(false);
   };
 
   const onChangeOption = (event) => setActiveOptionValue(event.target.value);
 
-  const onOpenForm = () => setShowForm(true);
+  const onOpenForm = () => {
+    setShowForm(true);
+    onEdit && onEdit();
+  };
   
 
   return (
@@ -75,13 +73,14 @@ const OrderFrequency = (props) => {
         <TitleWithEditButton
           title="Order frequency"
           showEditButton={editMode}
+          altTextButton="Change frequency"
+          onEdit={onOpenForm}
         />
       </StyledTitle>
 
       {showForm ? (
         <StyledForm>
           <SelectField
-            className="frequency-select"
             value={activeOptionValue}
             options={options}
             onChange={onChangeOption}
@@ -95,7 +94,7 @@ const OrderFrequency = (props) => {
           </Button>
         </StyledForm>
       ) : (
-        <StyledDescription onClick={onOpenForm}>
+        <StyledDescription>
           { activeOption.name }
         </StyledDescription>
       )}

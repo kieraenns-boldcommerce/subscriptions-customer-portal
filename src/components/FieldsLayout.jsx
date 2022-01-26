@@ -16,7 +16,7 @@ const StyledFieldsLayout = styled.div`
   display: grid;
   gap: 16px;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     grid-template-columns: repeat(${({ fieldsAmount }) => fieldsAmount}, 1fr);
   }
 `;

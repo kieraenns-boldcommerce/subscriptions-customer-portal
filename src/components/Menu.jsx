@@ -12,7 +12,7 @@ const MenuItemPropTypes = {
 
 const MenuPropTypes = {
   items: PT.arrayOf(PT.shape(MenuItemPropTypes)).isRequired,
-  onItemClick: PT.func
+  onItemChange: PT.func
 };
 
 
@@ -24,10 +24,9 @@ const StyledMenu = styled.div`
 const StyledMenuList = styled.div`
   position: absolute;
   top: calc(100% + 20px);
-  right: -15px;
+  right: -12px;
 
-  width: 100%;
-  max-width: 280px;
+  width: 280px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 
@@ -39,21 +38,21 @@ const StyledMenuList = styled.div`
     content: "";
 
     position: absolute;
-    top: 0;
-    right: 15px;
+    top: 4px;
+    right: 22px;
 
-    width: 30px;
-    height: 30px;
-    border-radius: 3px;
+    width: 31px;
+    height: 28px;
 
     background-color: #ffffff;
 
     transform: rotate(45deg) translateY(-50%);
+    pointer-events: none;
   }
 
   &::after {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.14);
     z-index: -1;
   }
 `;
@@ -101,16 +100,20 @@ const StyledIcon = styled.img`
 
 
 const Menu = (props) => {
-  const { items, onItemClick } = props;
+  const { items, onItemChange } = props;
 
   const [showMenuList, setShowMenuList] = useState(false);
 
   const menuListRef = useRef(null);
 
   const onShowMenuListButtonClick = () => setShowMenuList((v) => !v);
+  const onMenuItemClick = (item) => {
+    onItemChange && onItemChange(item);
+    setShowMenuList(false);
+  };
 
   useEffect(() => {
-    const onClose = (e) => !menuListRef?.current.contains(e.target) && showMenuList && setShowMenuList(false);
+    const onClose = (event) => menuListRef.current && !menuListRef.current.contains(event.target) && showMenuList && setShowMenuList(false);
 
     document.addEventListener("click", onClose);
     return () => document.removeEventListener("click", onClose);
@@ -118,7 +121,7 @@ const Menu = (props) => {
 
   return (
     <StyledMenu>
-      <StyledMenuButton onClick={onShowMenuListButtonClick}>
+      <StyledMenuButton aria-label="Subscription quick action menu" onClick={onShowMenuListButtonClick}>
         <StyledIcon src={ellipsis} />
       </StyledMenuButton>
 
@@ -127,13 +130,11 @@ const Menu = (props) => {
           {items.map((item) => {
             const { type = "default", name, value } = item;
 
-            const onMenuItemClick = () => onItemClick(item);
-
             return (
               <StyledMenuItem
                 key={value}
                 type={type}
-                onClick={onMenuItemClick}
+                onClick={() => onMenuItemClick(item)}
               >
                 { name }
               </StyledMenuItem>

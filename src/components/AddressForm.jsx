@@ -6,8 +6,40 @@ import FormLayout from "./FormLayout";
 import FieldsLayout from "./FieldsLayout";
 
 const AddressFormPropTypes = {
-  type: PT.oneOf(["shipping", "billing"]).isRequired
+  type: PT.oneOf(["shipping", "billing"]).isRequired,
+  onConfirm: PT.func,
+  onCancel: PT.func
 };
+
+
+const STATE_OPTIONS = [
+  { name: "Idaho", value: "idaho" },
+  { name: "Alabama", value: "alabama" },
+  { name: "Alaska", value: "alaska" },
+  { name: "Arizona", value: "arizona" },
+  { name: "Indiana", value: "indiana" },
+  { name: "Virginia", value: "virginia" },
+  { name: "Michigan", value: "michigan" }
+];
+
+const CITY_OPTIONS = [
+  { name: "Houston", value: "houston" },
+  { name: "Chicago", value: "chicago" },
+  { name: "Los Angeles", value: "los-angeles" },
+  { name: "New York", value: "new-york" },
+  { name: "Dallas", value: "dallas" }
+];
+
+const COUNTRY_OPTIONS = [
+  { name: "Russia", value: "russia" },
+  { name: "USA", value: "usa" },
+  { name: "China", value: "china" },
+  { name: "India", value: "india" },
+  { name: "Spain", value: "spain" },
+  { name: "Japan", value: "japan" },
+  { name: "Kazakhstan", value: "kazakhstan" }
+];
+
 
 const StyledAddressForm = styled.div`
   padding-bottom: 30px;
@@ -18,14 +50,18 @@ const StyledButtonsWrapper = styled.div`
   grid-template-columns: repeat(2, max-content);
   justify-content: end;
   column-gap: 16px;
+`;
 
-  .button {
-    margin: 0;
+const StyledAddressFormSecondRow = styled.div`
+  width: 48%;
+
+  @media (min-width: 576px) {
+    width: 100%;
   }
 `;
 
 const AddressForm = (props) => {
-  const { type } = props;
+  const { type, onConfirm, onCancel } = props;
 
   const title = type === "shipping"
     ? "Editing shipping address"
@@ -43,11 +79,13 @@ const AddressForm = (props) => {
             <InputField label="Address line 2" />
           </FieldsLayout>
 
-          <FieldsLayout>
-            <SelectField label="Country" />
-            <SelectField label="State/Province" />
-            <SelectField label="City" />
-          </FieldsLayout>
+          <StyledAddressFormSecondRow>
+            <FieldsLayout>
+              <SelectField options={CITY_OPTIONS} label="City" />
+              <SelectField options={STATE_OPTIONS} label="State/Province" />
+              <SelectField options={COUNTRY_OPTIONS} label="Country" />
+            </FieldsLayout>
+          </StyledAddressFormSecondRow>
 
           <FieldsLayout>
             <InputField label="Zip/Postal code" />
@@ -56,10 +94,10 @@ const AddressForm = (props) => {
           </FieldsLayout>
 
           <StyledButtonsWrapper>
-            <Button className="button">
+            <Button className="button-AddressForm" onClick={onCancel}>
               Discard changes
             </Button>
-            <Button className="button" primary>
+            <Button className="button-AddressForm" primary onClick={onConfirm}>
               Save changes
             </Button>
           </StyledButtonsWrapper>

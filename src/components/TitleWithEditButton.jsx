@@ -5,6 +5,7 @@ import editIcon from "../assets/icons/edit.svg";
 const TitleWithEditButtonPropTypes = {
   title: PT.string.isRequired,
   showEditButton: PT.bool,
+  altTextButton: PT.string,
   onEdit: PT.func
 };
 
@@ -35,7 +36,7 @@ const StyledEditIcon = styled.img`
 `;
 
 const TitleWithEditButton = (props) => {
-  const { title, showEditButton, onEdit } = props;
+  const { title, showEditButton, onEdit, altTextButton } = props;
 
   const handleEditButtonClick = () => onEdit && onEdit();
 
@@ -45,7 +46,7 @@ const TitleWithEditButton = (props) => {
       { title }
 
       {showEditButton && (
-        <StyledEditButton type="button" onClick={handleEditButtonClick}>
+        <StyledEditButton aria-label={altTextButton} type="button" onClick={handleEditButtonClick}>
           <StyledEditIcon src={editIcon} />
         </StyledEditButton>
       )}

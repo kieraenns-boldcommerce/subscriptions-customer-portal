@@ -1,10 +1,11 @@
-import { Resets, Vars } from "./globalStyles";
+import { Resets, Vars, Fonts } from "./globalStyles";
 import IndexPage from "./pages/index";
 
 const App = () => {
   return (
     <div>
 
+      <Fonts />
       <Resets />
       <Vars />
 
