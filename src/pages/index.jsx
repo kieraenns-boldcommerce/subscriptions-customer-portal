@@ -111,14 +111,11 @@ const IndexPage = () => {
   const onConfirmModalButtonClick = () => {
     setActiveMenuItem(null);
     setShowSubscriptionMessage(true);
-    setShowShippingAddress(false);
-    setShowBillingAddress(false);
-    setShowPaymentMethod(false);
-    setShowOrderFrequency(false);
+    setShowAnyForm(false);
   };
 
   const onEditShippingAddress = () => {
-    setShowAnyForm((v) => !v);
+    setShowAnyForm(true);
     setShowShippingAddress(true);
     setShowBillingAddress(false);
     setShowPaymentMethod(false);
@@ -126,7 +123,7 @@ const IndexPage = () => {
   };
 
   const onEditBillingAddress = () => {
-    setShowAnyForm((v) => !v);
+    setShowAnyForm(true);
     setShowBillingAddress(true);
     setShowShippingAddress(false);
     setShowPaymentMethod(false);
@@ -134,7 +131,7 @@ const IndexPage = () => {
   };
 
   const onEditPaymentMethod = () => {
-    setShowAnyForm((v) => !v);
+    setShowAnyForm(true);
     setShowPaymentMethod(true);
     setShowShippingAddress(false);
     setShowBillingAddress(false);
@@ -143,9 +140,8 @@ const IndexPage = () => {
 
   const onEditOrderFrequency = (option) => {
     setActiveFrequency(option);
-    setShowPaymentMethod(false);
-    setShowShippingAddress(false);
-    setShowBillingAddress(false);
+    setShowOrderFrequency((v) => !v);
+    setShowAnyForm(false);
   };
 
   const onFormCollapse = () => {
@@ -186,7 +182,7 @@ const IndexPage = () => {
           country="Canada"
           phoneNumber="204-123-1234"
           companyName="Queens Gambit"
-          showEditButton={!showSubscriptionMessage}
+          showEditButton={!showShippingAddress && !showSubscriptionMessage}
           altTextEditButton="Edit shipping address"
           onEdit={onEditShippingAddress}
         />
@@ -206,7 +202,7 @@ const IndexPage = () => {
           country="Canada"
           phoneNumber="204-123-1234"
           companyName="Queens Gambit"
-          showEditButton={!showSubscriptionMessage}
+          showEditButton={!showBillingAddress && !showSubscriptionMessage}
           altTextEditButton="Edit billing address"
           onEdit={onEditBillingAddress}
         />
@@ -217,8 +213,8 @@ const IndexPage = () => {
       content: (
         <FrequencyAndPayment 
           options={OPTIONS_ORDER_FREQUENCE}
-          editModeFrequency={!showSubscriptionMessage}
-          editModePayment={!showSubscriptionMessage}
+          editModeFrequency={!showOrderFrequency && !showSubscriptionMessage}
+          editModePayment={!showPaymentMethod && !showSubscriptionMessage}
           onEditFrequency={onEditOrderFrequency}
           onEditPayment={onEditPaymentMethod}
         />
