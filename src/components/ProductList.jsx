@@ -51,6 +51,8 @@ const ProductList = () => {
   const [innerProducts, setInnerProducts] = useState([]);
 
   useEffect(() => {
+    if (!activeSubscription) return;
+
     const { products } = activeSubscription;
 
     if (!products) return;

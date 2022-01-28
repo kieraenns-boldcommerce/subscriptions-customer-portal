@@ -13,18 +13,6 @@ export const INITIAL_ADDRESS_STATE = {
   zipOrPostalCode: ""
 };
 
-export const OPTIONS_ORDER_FREQUENCE = [
-  { name: "Every 1 week", value: "every-one-week" },
-  { name: "Every 2 weeks", value: "every-two-weeks" },
-  { name: "Every month", value: "every-month" }
-];
-
-export const INITIAL_SUBSCRIPTION_OPTION_STATE = {
-  name: "",
-  value: "",
-  date: ""
-};
-
 export const STATE_OPTIONS = [
   { name: "Alabama", value: "Alabama" },
   { name: "Alaska", value: "Alaska" },

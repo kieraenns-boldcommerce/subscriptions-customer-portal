@@ -96,12 +96,10 @@ const AppStateProvider = (props) => {
   // * States
   const [activeShop, setActiveShop] = useState({});
   const [activeShopId, setActiveShopId] = useState("");
-  const [activeSubscription, setActiveSubscription] = useState({});
+  const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
   const [activeAddressData, setActiveAddressData] = useState({});
   const [innerSubscriptions, setInnerSubscriptions] = useState([]);
-  const [serverSubscriptions, setServerSubscriptions] = useState([]);
   const [innerSubscriptionIntervals, setInnerSubscriptionIntervals] = useState([]);
-  const [serverSubscriptionIntervals, setServerSubscriptionIntervals] = useState([]);
 
 
   // * Handlers
@@ -151,7 +149,7 @@ const AppStateProvider = (props) => {
     fetchSubscriptionIntervals
   } = useGetSubscriptionIntervals({
     shopIdentifier: activeShopId,
-    subscriptionId: activeSubscription && activeSubscription.id
+    subscriptionId: activeSubscriptionId
   });
 
   const {
@@ -256,7 +254,6 @@ const AppStateProvider = (props) => {
     });
 
     setInnerSubscriptions(innerSubscriptions);
-    setServerSubscriptions(subscriptions.subscriptions);
   }, [subscriptions]);
 
 
@@ -276,9 +273,9 @@ const AppStateProvider = (props) => {
     });
 
     setInnerSubscriptionIntervals(innerSubscriptionIntervals);
-    setServerSubscriptionIntervals(intervals);
   }, [subscriptionIntervals]);
 
+  const activeSubscription = innerSubscriptions.find((subscription) => subscription.id === activeSubscriptionId);
 
   const mainState = {
     state: {
@@ -286,14 +283,13 @@ const AppStateProvider = (props) => {
       isShopInfoLoading,
       activeShopId,
       activeSubscription,
+      activeSubscriptionId,
       isSubscriptionIntervalsLoading,
       activeAddressData,
       isChangeAddressLoading,
       subscriptions: innerSubscriptions,
-      serverSubscriptions,
       isSubscriptionsLoading,
       subscriptionIntervals: innerSubscriptionIntervals,
-      serverSubscriptionIntervals,
       isPauseSubscriptionLoading,
       isReactivateSubscriptionLoading,
       isCancelSubscriptionLoading,
@@ -302,7 +298,7 @@ const AppStateProvider = (props) => {
     methods: {
       formatAddressData,
       formatAddressDataForServer,
-      setActiveSubscription,
+      setActiveSubscriptionId,
       fetchSubscriptionIntervals,
       setActiveAddressData,
       changeAddress,

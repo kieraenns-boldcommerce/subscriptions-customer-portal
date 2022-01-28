@@ -198,6 +198,8 @@ const IndexPage = () => {
 
 
   useEffect(() => {
+    if (!activeSubscription) return;
+
     if (activeSubscription.status === "inactive" ||
         activeSubscription.status === "paused") {
       setShowSubscriptionMessage(true);

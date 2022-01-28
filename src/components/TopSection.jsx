@@ -5,7 +5,6 @@ import Menu from "./Menu";
 import Message from "./Message";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
-import { INITIAL_SUBSCRIPTION_OPTION_STATE } from "../constants";
 
 
 const TopSectionPropTypes = {
@@ -76,11 +75,12 @@ const TopSection = (props) => {
   } = props;
 
   const { state, methods } = useContext(AppContext);
-  const { subscriptions } = state;
-  const { setActiveSubscription } = methods;
+
+  const { subscriptions, activeSubscriptionId } = state;
+  const { setActiveSubscriptionId } = methods;
 
   const [subscriptionOptions, setSubscriptionOptions] = useState([]);
-  const [activeSubscriptionOption, setActiveSubscriptionOption] = useState(INITIAL_SUBSCRIPTION_OPTION_STATE);
+  const [activeSubscriptionOption, setActiveSubscriptionOption] = useState(null);
   const [activeMenuItem, setActiveMenuItem] = useState();
   const [messageData, setMessageData] = useState({
     text: "This subscription has been canceled.",
@@ -90,7 +90,7 @@ const TopSection = (props) => {
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
   const { text, buttonText } = messageData;
-  const { title, value, date } = activeSubscriptionOption;
+  // const { title, value, date } = activeSubscriptionOption;
 
   const onOptionChange = (event) => {
     const { target } = event;
@@ -99,7 +99,7 @@ const TopSection = (props) => {
     const matchSubscription = subscriptions && subscriptions.find((subscription) => String(subscription.id) === target.value);
 
     setActiveSubscriptionOption(matchOption);
-    setActiveSubscription(matchSubscription);
+    setActiveSubscriptionId(matchSubscription.id);
 
     onSubscriptionChange && onSubscriptionChange(matchOption);
   };
@@ -134,8 +134,8 @@ const TopSection = (props) => {
     });
 
     setSubscriptionOptions(options);
-    setActiveSubscriptionOption(options[0]);
-    setActiveSubscription(subscriptions[0]);
+    if (!activeSubscriptionOption) setActiveSubscriptionOption(options[0]);
+    if (!activeSubscriptionId) setActiveSubscriptionId(subscriptions[0].id);
   }, [subscriptions]);
 
   useEffect(() => {
@@ -162,7 +162,7 @@ const TopSection = (props) => {
         <SelectField
           className="subscription-select-TopSection"
           options={subscriptionOptions}
-          value={value}
+          value={activeSubscriptionOption?.value}
           label={label}
           onChange={onOptionChange}
         />
@@ -171,7 +171,7 @@ const TopSection = (props) => {
       <StyledSubscriptionInfo>
         <StyledSubscriptionInfoTop>
           <StyledSubscriptionName>
-            { title }
+            { activeSubscriptionOption?.title }
           </StyledSubscriptionName>
 
           <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
@@ -189,7 +189,7 @@ const TopSection = (props) => {
           </StyledSubscriptionInfoBottom>
         ) : (
           <StyledSubscriptionInfoBottom>
-            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate> { date }
+            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate> { activeSubscriptionOption?.date }
           </StyledSubscriptionInfoBottom>
         )}
       </StyledSubscriptionInfo>
