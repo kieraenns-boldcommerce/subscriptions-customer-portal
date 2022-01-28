@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import PT from "prop-types";
 import { Button, SelectField, LoadingSpinner } from "@boldcommerce/stacks-ui";
 import TitleWithEditButton from "./TitleWithEditButton";
@@ -51,19 +50,19 @@ const OrderFrequency = (props) => {
   } = state;
   const {
     fetchSubscriptionIntervals,
-    changeSubscription
+    changeSubscriptionInterval
   } = methods;
 
   const [showForm, setShowForm] = useState(false);
   const [intervalOptions, setIntervalOptions] = useState([]);
-  const [activeOption, setActiveOption] = useState();
+  const [activeIntervalOption, setActiveIntervalOption] = useState();
   const [activeOrder, setActiveOrder] = useState();
 
   useEffect(() => {
-    if (!intervalOptions) return;
+    if (!subscriptionIntervals) return;
 
-    const matchOption = intervalOptions.find((option) => option.value === activeOrder);
-    setActiveOption(matchOption);
+    const matchOption = subscriptionIntervals.find((option) => option.name === activeOrder);
+    setActiveIntervalOption(matchOption);
   }, [activeOrder]);
 
   useEffect(() => {
@@ -85,12 +84,20 @@ const OrderFrequency = (props) => {
       };
     });
 
+    setActiveIntervalOption(subscriptionIntervals[0]);
     setIntervalOptions(innerIntervalOptions);
   }, [subscriptionIntervals]);
   
 
   const onSaveButtonClick = () => {
-    onChange && onChange(activeOption);
+    onChange && onChange(activeIntervalOption);
+
+    changeSubscriptionInterval({
+      shopIdentifier: activeShopId,
+      subscriptionIntervalId: activeIntervalOption.id,
+      subscriptionId: activeSubscription.id
+    });
+
     setShowForm(false);
   };
 

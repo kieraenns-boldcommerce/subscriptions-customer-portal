@@ -9,6 +9,7 @@ import { useChangeAddress } from "../hooks/queries/subscriptions/useChangeAddres
 import { usePauseSubscription } from "../hooks/queries/subscriptions/usePauseSubscription";
 import { useReactivateSubscription } from "../hooks/queries/subscriptions/useReactivateSubscription";
 import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
+import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/useChangeSubscriptionInterval";
 
 
 const ChildType = PT.oneOfType([
@@ -125,6 +126,13 @@ const AppStateProvider = (props) => {
     console.log(error);
   };
 
+  const onSuccessChangeSubscriptionInterval = (response) => {
+    if (response) fetchSubscriptions();
+  };
+  const onErrorChangeSubscriptionInterval = (error) => {
+    console.log(error);
+  };
+
 
   // * Hooks
   const { shopInfo, isShopInfoLoading } = useGetShopInfo();
@@ -136,8 +144,6 @@ const AppStateProvider = (props) => {
   } = useGetSubscriptions({
     shopIdentifier: activeShopId
   });
-
-  console.log(subscriptions);
 
   const {
     subscriptionIntervals,
@@ -178,6 +184,14 @@ const AppStateProvider = (props) => {
   } = useCancelSubscription({
     onSuccess: onSuccessCancelSubscription,
     onError: onErrorCancelSubscription
+  });
+
+  const {
+    changeSubscriptionInterval,
+    isChangeSubscriptionIntervalLoading
+  } = useChangeSubscriptionInterval({
+    onSuccess: onSuccessChangeSubscriptionInterval,
+    onError: onErrorChangeSubscriptionInterval
   });
 
 
@@ -252,7 +266,6 @@ const AppStateProvider = (props) => {
 
     const { intervals } = subscriptionIntervals;
 
-    // eslint-disable-next-line no-unused-vars
     const innerSubscriptionIntervals = intervals.map((interval) => {
       const { interval_name, id } = interval;
 
@@ -283,7 +296,8 @@ const AppStateProvider = (props) => {
       serverSubscriptionIntervals,
       isPauseSubscriptionLoading,
       isReactivateSubscriptionLoading,
-      isCancelSubscriptionLoading
+      isCancelSubscriptionLoading,
+      isChangeSubscriptionIntervalLoading
     },
     methods: {
       formatAddressData,
@@ -294,11 +308,10 @@ const AppStateProvider = (props) => {
       changeAddress,
       pauseSubscription,
       reactivateSubscription,
-      cancelSubscription
+      cancelSubscription,
+      changeSubscriptionInterval
     }
   };
-
-  console.log(mainState);
 
   return (
     <AppContext.Provider value={mainState}>

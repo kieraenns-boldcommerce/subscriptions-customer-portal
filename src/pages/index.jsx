@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef, useContext } from "react";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
@@ -101,7 +100,7 @@ const IndexPage = () => {
   const onCancelFormButtonClick = () => setShowAnyForm(false);
   const onConfirmFormButtonClick = () => setShowAnyForm(false);
 
-  const onCancelModalButtonClick = () => setActiveMenuItem(null);
+  const onCancelModalButtonClick = () => setShowModal(false);
 
   const onConfirmModalButtonClick = () => {
     setShowModal(false);

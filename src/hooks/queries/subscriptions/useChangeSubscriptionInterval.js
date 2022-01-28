@@ -10,7 +10,7 @@ export const useChangeSubscriptionInterval = (props) => {
       shopIdentifier,
       subscriptionIntervalId,
       subscriptionId
-    }) => SubscriptionsService.changeSubscription({ shopIdentifier, subscriptionIntervalId, subscriptionId }), 
+    }) => SubscriptionsService.changeSubscriptionInterval({ shopIdentifier, subscriptionIntervalId, subscriptionId }), 
     {
       onSuccess,
       onError: async (error) => {

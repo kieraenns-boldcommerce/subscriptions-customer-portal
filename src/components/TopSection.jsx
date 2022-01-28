@@ -137,8 +137,6 @@ const TopSection = (props) => {
     setActiveSubscriptionOption(options[0]);
     setActiveSubscription(subscriptions[0]);
   }, [subscriptions]);
-  
-  // НЕ РАБОТАЕТ onCancel в модалках при паузе и закрытии подписки
 
   useEffect(() => {
     if (!activeMenuItem) return;
