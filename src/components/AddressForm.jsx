@@ -40,19 +40,20 @@ const AddressForm = (props) => {
   const { state, methods } = useContext(AppContext);
   const {
     activeAddressData,
-    activeShopId,
-    activeSubscription
+    activeShopId
   } = state;
   const {
     setActiveAddressData,
     formatAddressDataForServer,
-    changeSubscription
+    changeAddress
   } = methods;
 
   const [addressDataForm, setAddressDataForm] = useState(activeAddressData);
 
   const {
     type,
+    id,
+    customerId,
     city,
     companyName,
     country,
@@ -69,19 +70,16 @@ const AddressForm = (props) => {
     ? "Editing shipping address"
     : "Editing billing address";
 
-  const keyForm = type === "shipping" ? "shippingAddress" : "billingAddress";
-
   const onConfirmAddressButtonClick = () => {
     setActiveAddressData(addressDataForm);
 
-    // ! НЕ СОХРАНЯЕТ ДАННЫЕ, ХОТЯ СТАТУС 200
-
-    changeSubscription({
+    changeAddress({
       shopIdentifier: activeShopId,
-      id: activeSubscription.id,
+      customerId,
+      addressId: id,
       data: {
-        subscription: {
-          [keyForm]: formatAddressDataForServer(addressDataForm)
+        customer_address: {
+          ...formatAddressDataForServer(addressDataForm)
         }
       }
     });

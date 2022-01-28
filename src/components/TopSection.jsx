@@ -90,7 +90,7 @@ const TopSection = (props) => {
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
   const { text, buttonText } = messageData;
-  const { name, value, date } = activeSubscriptionOption;
+  const { title, value, date } = activeSubscriptionOption;
 
   const onOptionChange = (event) => {
     const { target } = event;
@@ -126,7 +126,8 @@ const TopSection = (props) => {
         });
 
       return {
-        name: "Name",
+        name: `Name Subscription - ${String(id)}`,
+        title: `Name Subscription - #${String(id)}`,
         value: String(id),
         date: nextOrder
       };
@@ -137,6 +138,7 @@ const TopSection = (props) => {
     setActiveSubscription(subscriptions[0]);
   }, [subscriptions]);
   
+  // НЕ РАБОТАЕТ onCancel в модалках при паузе и закрытии подписки
 
   useEffect(() => {
     if (!activeMenuItem) return;
@@ -171,7 +173,7 @@ const TopSection = (props) => {
       <StyledSubscriptionInfo>
         <StyledSubscriptionInfoTop>
           <StyledSubscriptionName>
-            { name } Subscription — #{ value }
+            { title }
           </StyledSubscriptionName>
 
           <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />

@@ -5,7 +5,7 @@ import AppContext from "../contexts/AppContext";
 import { useGetShopInfo } from "../hooks/queries/shops/useGetShopInfo";
 import { useGetSubscriptions } from "../hooks/queries/subscriptions/useGetSubscriptions";
 import { useGetSubscriptionIntervals } from "../hooks/queries/subscriptions/useGetSubscriptionIntervals";
-import { useChangeSubscription } from "../hooks/queries/subscriptions/useChangeSubscription";
+import { useChangeAddress } from "../hooks/queries/subscriptions/useChangeAddress";
 import { usePauseSubscription } from "../hooks/queries/subscriptions/usePauseSubscription";
 import { useReactivateSubscription } from "../hooks/queries/subscriptions/useReactivateSubscription";
 import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
@@ -25,6 +25,8 @@ const AppStateProviderPropTypes = {
 
 const formatAddressData = (data) => {
   const {
+    id,
+    customer_id: customerId,
     city,
     company: companyName,
     country,
@@ -38,6 +40,9 @@ const formatAddressData = (data) => {
   } = data;
 
   return {
+    ...data,
+    id,
+    customerId,
     city,
     companyName,
     country,
@@ -53,6 +58,8 @@ const formatAddressData = (data) => {
 
 const formatAddressDataForServer = (data) => {
   const {
+    id,
+    customerId: customer_id,
     city,
     companyName: company,
     country,
@@ -66,6 +73,8 @@ const formatAddressDataForServer = (data) => {
   } = data;
 
   return {
+    id,
+    customer_id,
     city,
     company,
     country,
@@ -95,10 +104,10 @@ const AppStateProvider = (props) => {
 
 
   // * Handlers
-  const onSuccessChangeSubscription = (response) => {
+  const onSuccessChangeAddress = (response) => {
     if (response) fetchSubscriptions();
   };
-  const onErrorChangeSubscription = (error) => {
+  const onErrorChangeAddress = (error) => {
     console.log(error);
   };
 
@@ -128,6 +137,8 @@ const AppStateProvider = (props) => {
     shopIdentifier: activeShopId
   });
 
+  console.log(subscriptions);
+
   const {
     subscriptionIntervals,
     isSubscriptionIntervalsLoading,
@@ -138,11 +149,11 @@ const AppStateProvider = (props) => {
   });
 
   const {
-    changeSubscription,
-    isChangeSubscriptionLoading
-  } = useChangeSubscription({
-    onSuccess: onSuccessChangeSubscription,
-    onError: onErrorChangeSubscription
+    changeAddress,
+    isChangeAddressLoading
+  } = useChangeAddress({
+    onSuccess: onSuccessChangeAddress,
+    onError: onErrorChangeAddress
   });
 
   const {
@@ -264,7 +275,7 @@ const AppStateProvider = (props) => {
       activeSubscription,
       isSubscriptionIntervalsLoading,
       activeAddressData,
-      isChangeSubscriptionLoading,
+      isChangeAddressLoading,
       subscriptions: innerSubscriptions,
       serverSubscriptions,
       isSubscriptionsLoading,
@@ -275,11 +286,12 @@ const AppStateProvider = (props) => {
       isCancelSubscriptionLoading
     },
     methods: {
+      formatAddressData,
       formatAddressDataForServer,
       setActiveSubscription,
       fetchSubscriptionIntervals,
       setActiveAddressData,
-      changeSubscription,
+      changeAddress,
       pauseSubscription,
       reactivateSubscription,
       cancelSubscription

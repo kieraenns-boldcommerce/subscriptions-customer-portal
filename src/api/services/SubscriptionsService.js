@@ -267,11 +267,11 @@ class SubscriptionsService {
     return response;
   }
 
-  static async changeSubscription(params) {
-    const { shopIdentifier, id, data } = params;
+  static async changeAddress(params) {
+    const { shopIdentifier, customerId, addressId, data } = params;
 
-    const method = "PATCH";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${id}`;
+    const method = "PUT";
+    const url = `/subscriptions/v1/shops/${shopIdentifier}/customers/${customerId}/addresses/${addressId}`;
 
     const response = await ServiceBase.callApi({ data, method, url });
 

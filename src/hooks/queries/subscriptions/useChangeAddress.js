@@ -2,11 +2,11 @@ import { useMutation } from "react-query";
 import SubscriptionsService from "../../../api/services/SubscriptionsService";
 
 
-export const useChangeSubscription = (props) => {
+export const useChangeAddress = (props) => {
   const { onSuccess, onError } = props;
 
   const { mutate, isLoading } = useMutation(
-    ({ shopIdentifier, id, data }) => SubscriptionsService.changeSubscription({ shopIdentifier, id, data }), 
+    ({ shopIdentifier, customerId, addressId, data }) => SubscriptionsService.changeAddress({ shopIdentifier, customerId, addressId, data }), 
     {
       onSuccess,
       onError: async (error) => {
@@ -18,5 +18,5 @@ export const useChangeSubscription = (props) => {
     }
   );
 
-  return { changeSubscription: mutate, isChangeSubscriptionLoading: isLoading };
+  return { changeAddress: mutate, isChangeAddressLoading: isLoading };
 };
