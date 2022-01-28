@@ -47,8 +47,7 @@ const Address = (props) => {
   const title = type === "shipping" ? "Shipping address" : "Billing address";
 
   const { state, methods } = useContext(AppContext);
-  // eslint-disable-next-line no-unused-vars
-  const { activeSubscription, activeSubscriptionId } = state;
+  const { activeSubscription } = state;
   const { setActiveAddressData } = methods;
 
   const [innerAddressData, setInnerAddressData] = useState(INITIAL_ADDRESS_STATE);
@@ -59,14 +58,9 @@ const Address = (props) => {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line no-debugger
-    debugger;
     if (!activeSubscription) return;
 
     const { billingAddress, shippingAddress } = activeSubscription;
-
-    console.log(billingAddress);
-    console.log(shippingAddress);
 
     type === "shipping" ? setInnerAddressData(shippingAddress) : setInnerAddressData(billingAddress);
   }, [activeSubscription]);

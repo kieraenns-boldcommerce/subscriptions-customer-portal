@@ -76,21 +76,14 @@ const TopSection = (props) => {
 
   const { state, methods } = useContext(AppContext);
 
-  const { subscriptions, activeSubscriptionId } = state;
+  const { subscriptions, activeSubscriptionId, activeSubscription } = state;
   const { setActiveSubscriptionId } = methods;
 
   const [subscriptionOptions, setSubscriptionOptions] = useState([]);
   const [activeSubscriptionOption, setActiveSubscriptionOption] = useState(null);
-  const [activeMenuItem, setActiveMenuItem] = useState();
-  const [messageData, setMessageData] = useState({
-    text: "This subscription has been canceled.",
-    buttonText: "Reactivate subscription"
-  });
+  const [messageData, setMessageData] = useState();
 
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
-
-  const { text, buttonText } = messageData;
-  // const { title, value, date } = activeSubscriptionOption;
 
   const onOptionChange = (event) => {
     const { target } = event;
@@ -104,18 +97,14 @@ const TopSection = (props) => {
     onSubscriptionChange && onSubscriptionChange(matchOption);
   };
 
-  const onMenuItemClick = (item) => {
-    onMenuItemChange(item);
-    setActiveMenuItem(item);
-  };
+  const onMenuItemClick = (item) => onMenuItemChange(item);
 
 
   useEffect(() => {
     if (!subscriptions.length) return;
 
-
     const options = subscriptions.map((subscription) => {
-      const { id, nextOrderDatetime } = subscription;
+      const { id, nextOrderDatetime, products } = subscription;
 
       const nextOrder = new Date(nextOrderDatetime).toLocaleString(
         "en-US",
@@ -126,8 +115,8 @@ const TopSection = (props) => {
         });
 
       return {
-        name: `Name Subscription - ${String(id)}`,
-        title: `Name Subscription - #${String(id)}`,
+        name: `${products.length > 1 ? `${products.length} Products` : products[0].product_name} Subscription - ${String(id)}`,
+        title: `${products.length > 1 ? `${products.length} Products` : products[0].product_name} Subscription - #${String(id)}`,
         value: String(id),
         date: nextOrder
       };
@@ -139,16 +128,15 @@ const TopSection = (props) => {
   }, [subscriptions]);
 
   useEffect(() => {
-    if (!activeMenuItem) return;
+    if (!activeSubscription) return;
 
-    const { value } = activeMenuItem;
+    const { status } = activeSubscription;
     
     setMessageData({
-      text: `This subscription has been ${value === "pause" ? "paused" : "canceled"}.`,
-      buttonText: `${value === "pause" ? "Resume" : "Reactivate"} subscription`
+      text: `This subscription has been ${status === "paused" ? "paused" : "canceled"}.`,
+      buttonText: `${status === "paused" ? "Resume" : "Reactivate"} subscription`
     });
-  }, [activeMenuItem]);
-
+  }, [activeSubscription]);
 
   const MENU_ITEMS = [
     { name: `${showMessage ? "Resume" : "Pause"} subscription`, value: showMessage ? "resume" : "pause" },
@@ -181,8 +169,8 @@ const TopSection = (props) => {
           <StyledSubscriptionInfoBottom>
             <StyledSubscriptionMessage>
               <Message
-                text={text}
-                buttonText={buttonText}
+                text={messageData?.text}
+                buttonText={messageData?.buttonText}
                 onButtonClick={onMessageButtonClick}
               />
             </StyledSubscriptionMessage>
