@@ -1,17 +1,33 @@
+import { QueryClient, QueryClientProvider } from "react-query";
 import { Resets, Vars, Fonts } from "./globalStyles";
 import IndexPage from "./pages/index";
+import AppStateProvider from "./providers/AppStateProvider";
+
+
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      retryOnMount: false,
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 const App = () => {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
 
-      <Fonts />
-      <Resets />
-      <Vars />
+      <AppStateProvider>
+        <Fonts />
+        <Resets />
+        <Vars />
+  
+        <IndexPage />
+      </AppStateProvider>
 
-      <IndexPage />
-
-    </div>
+    </QueryClientProvider>
   );
 };
 

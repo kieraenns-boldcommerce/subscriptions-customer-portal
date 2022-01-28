@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import PT from "prop-types";
 import styled, { css } from "styled-components";
 import ellipsis from "../assets/icons/ellipsis.svg";
+import AppContext from "../contexts/AppContext";
 
 
 const MenuItemPropTypes = {
@@ -104,6 +105,9 @@ const Menu = (props) => {
 
   const [showMenuList, setShowMenuList] = useState(false);
 
+  const { state } = useContext(AppContext);
+  const { activeSubscription } = state;
+
   const menuListRef = useRef(null);
 
   const onShowMenuListButtonClick = () => setShowMenuList((v) => !v);
@@ -125,7 +129,7 @@ const Menu = (props) => {
         <StyledIcon src={ellipsis} />
       </StyledMenuButton>
 
-      {showMenuList && (
+      {showMenuList && activeSubscription.status !== "inactive" && (
         <StyledMenuList ref={menuListRef}>
           {items.map((item) => {
             const { type = "default", name, value } = item;
