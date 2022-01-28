@@ -1,44 +1,18 @@
+/* eslint-disable no-unused-vars */
+import { useContext, useState } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
 import { Button, InputField, SelectField } from "@boldcommerce/stacks-ui";
 import Section from "./Section";
 import FormLayout from "./FormLayout";
 import FieldsLayout from "./FieldsLayout";
+import AppContext from "../contexts/AppContext";
+import { STATE_OPTIONS, CITY_OPTIONS, COUNTRY_OPTIONS } from "../constants";
 
 const AddressFormPropTypes = {
-  type: PT.oneOf(["shipping", "billing"]).isRequired,
   onConfirm: PT.func,
   onCancel: PT.func
 };
-
-
-const STATE_OPTIONS = [
-  { name: "Idaho", value: "idaho" },
-  { name: "Alabama", value: "alabama" },
-  { name: "Alaska", value: "alaska" },
-  { name: "Arizona", value: "arizona" },
-  { name: "Indiana", value: "indiana" },
-  { name: "Virginia", value: "virginia" },
-  { name: "Michigan", value: "michigan" }
-];
-
-const CITY_OPTIONS = [
-  { name: "Houston", value: "houston" },
-  { name: "Chicago", value: "chicago" },
-  { name: "Los Angeles", value: "los-angeles" },
-  { name: "New York", value: "new-york" },
-  { name: "Dallas", value: "dallas" }
-];
-
-const COUNTRY_OPTIONS = [
-  { name: "Russia", value: "russia" },
-  { name: "USA", value: "usa" },
-  { name: "China", value: "china" },
-  { name: "India", value: "india" },
-  { name: "Spain", value: "spain" },
-  { name: "Japan", value: "japan" },
-  { name: "Kazakhstan", value: "kazakhstan" }
-];
 
 
 const StyledAddressForm = styled.div`
@@ -61,11 +35,59 @@ const StyledAddressFormSecondRow = styled.div`
 `;
 
 const AddressForm = (props) => {
-  const { type, onConfirm, onCancel } = props;
+  const { onConfirm, onCancel } = props;
+
+  const { state, methods } = useContext(AppContext);
+  const {
+    activeAddressData,
+    activeShopId,
+    activeSubscription
+  } = state;
+  const {
+    setActiveAddressData,
+    formatAddressDataForServer,
+    changeSubscription
+  } = methods;
+
+  const [addressDataForm, setAddressDataForm] = useState(activeAddressData);
+
+  const {
+    type,
+    city,
+    companyName,
+    country,
+    firstName,
+    lastName,
+    phoneNumber,
+    stateOrProvince,
+    addressLineFirst,
+    addressLineSecond,
+    zipOrPostalCode
+  } = addressDataForm;
 
   const title = type === "shipping"
     ? "Editing shipping address"
     : "Editing billing address";
+
+  const keyForm = type === "shipping" ? "shippingAddress" : "billingAddress";
+
+  const onConfirmAddressButtonClick = () => {
+    setActiveAddressData(addressDataForm);
+
+    // ! НЕ СОХРАНЯЕТ ДАННЫЕ, ХОТЯ СТАТУС 200
+
+    changeSubscription({
+      shopIdentifier: activeShopId,
+      id: activeSubscription.id,
+      data: {
+        subscription: {
+          [keyForm]: formatAddressDataForServer(addressDataForm)
+        }
+      }
+    });
+
+    onConfirm && onConfirm();
+  };
 
   return (
     <Section title={title}>
@@ -73,31 +95,106 @@ const AddressForm = (props) => {
         <FormLayout>
 
           <FieldsLayout>
-            <InputField label="First name" />
-            <InputField label="Last name" />
-            <InputField label="Address line 1" />
-            <InputField label="Address line 2" />
+            <InputField
+              value={firstName}
+              label="First name"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                firstName: event.target.value
+              }))}
+            />
+            <InputField
+              value={lastName}
+              label="Last name"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                lastName: event.target.value
+              }))}
+            />
+            <InputField
+              value={addressLineFirst}
+              label="Address line 1"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                addressLineFirst: event.target.value
+              }))}
+            />
+            <InputField
+              value={addressLineSecond}
+              label="Address line 2"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                addressLineSecond: event.target.value
+              }))}
+            />
           </FieldsLayout>
 
           <StyledAddressFormSecondRow>
             <FieldsLayout>
-              <SelectField options={CITY_OPTIONS} label="City" />
-              <SelectField options={STATE_OPTIONS} label="State/Province" />
-              <SelectField options={COUNTRY_OPTIONS} label="Country" />
+              <SelectField
+                options={CITY_OPTIONS}
+                value={city}
+                label="City"
+                onChange={(event) => {
+                  setAddressDataForm((prev) => ({
+                    ...prev,
+                    city: event.target.value
+                  }));
+                }}
+              />
+              <SelectField
+                options={STATE_OPTIONS}
+                value={stateOrProvince}
+                label="State/Province"
+                onChange={(event) => setAddressDataForm((prev) => ({
+                  ...prev,
+                  stateOrProvince: event.target.value
+                }))}
+              />
+              <SelectField
+                options={COUNTRY_OPTIONS}
+                value={country}
+                label="Country"
+                onChange={(event) => setAddressDataForm((prev) => ({
+                  ...prev,
+                  country: event.target.value
+                }))}
+              />
             </FieldsLayout>
           </StyledAddressFormSecondRow>
 
           <FieldsLayout>
-            <InputField label="Zip/Postal code" />
-            <InputField label="Phone number" />
-            <InputField label="Company name (optional)" />
+            <InputField
+              value={zipOrPostalCode}
+              label="Zip/Postal code"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                zipOrPostalCode: event.target.value
+              }))}
+            />
+            <InputField
+              value={phoneNumber}
+              label="Phone number"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                phoneNumber: event.target.value
+              }))}
+            />
+            <InputField
+              value={companyName}
+              label="Company name (optional)"
+              onInput={(event) => setAddressDataForm((prev) => ({
+                ...prev,
+                companyName: event.target.value
+              }))}
+            />
           </FieldsLayout>
 
           <StyledButtonsWrapper>
             <Button className="button-AddressForm" onClick={onCancel}>
               Discard changes
             </Button>
-            <Button className="button-AddressForm" primary onClick={onConfirm}>
+            <Button className="button-AddressForm" primary onClick={onConfirmAddressButtonClick}>
               Save changes
             </Button>
           </StyledButtonsWrapper>

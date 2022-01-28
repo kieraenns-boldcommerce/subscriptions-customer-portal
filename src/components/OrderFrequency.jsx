@@ -1,16 +1,13 @@
+/* eslint-disable no-unused-vars */
 import PT from "prop-types";
-import { Button, SelectField } from "@boldcommerce/stacks-ui";
+import { Button, SelectField, LoadingSpinner } from "@boldcommerce/stacks-ui";
 import TitleWithEditButton from "./TitleWithEditButton";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import AppContext from "../contexts/AppContext";
 
-export const OptionPropTypes = {
-  name: PT.string.isRequired,
-  value: PT.string.isRequired
-};
 
 export const OrderFrequencyPropTypes = {
-  options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
   onChange: PT.func,
   onEdit: PT.func,
   editMode: PT.bool
@@ -43,27 +40,66 @@ const StyledDescription = styled.div`
 `;
 
 const OrderFrequency = (props) => {
-  const { options, editMode, onChange, onEdit } = props;
+  const { editMode, onChange, onEdit } = props;
+
+  const { state, methods } = useContext(AppContext);
+  const {
+    subscriptionIntervals,
+    isSubscriptionIntervalsLoading,
+    activeSubscription,
+    activeShopId
+  } = state;
+  const {
+    fetchSubscriptionIntervals,
+    changeSubscription
+  } = methods;
 
   const [showForm, setShowForm] = useState(false);
-  const [activeOption, setActiveOption] = useState(options[0]);
-  const [activeOptionValue, setActiveOptionValue] = useState(options[0].value);
+  const [intervalOptions, setIntervalOptions] = useState([]);
+  const [activeOption, setActiveOption] = useState();
+  const [activeOrder, setActiveOrder] = useState();
 
   useEffect(() => {
-    const matchOption = options.find((option) => option.value === activeOptionValue);
+    if (!intervalOptions) return;
+
+    const matchOption = intervalOptions.find((option) => option.value === activeOrder);
     setActiveOption(matchOption);
-  }, [activeOptionValue]);
+  }, [activeOrder]);
+
+  useEffect(() => {
+    if (!activeSubscription) return;
+
+    setActiveOrder(activeSubscription.orderText);
+  }, [activeSubscription]);
+  
+
+  useEffect(() => {
+    if (!subscriptionIntervals) return;
+
+    const innerIntervalOptions = subscriptionIntervals.map((interval) => {
+      const { name } = interval;
+
+      return {
+        name,
+        value: name
+      };
+    });
+
+    setIntervalOptions(innerIntervalOptions);
+  }, [subscriptionIntervals]);
+  
 
   const onSaveButtonClick = () => {
     onChange && onChange(activeOption);
     setShowForm(false);
   };
 
-  const onChangeOption = (event) => setActiveOptionValue(event.target.value);
+  const onChangeOption = (event) => setActiveOrder(event.target.value);
 
   const onOpenForm = () => {
     setShowForm(true);
     onEdit && onEdit();
+    fetchSubscriptionIntervals();
   };
   
 
@@ -78,11 +114,13 @@ const OrderFrequency = (props) => {
         />
       </StyledTitle>
 
-      {showForm ? (
+      {showForm && isSubscriptionIntervalsLoading ? (
+        <LoadingSpinner />
+      ) : showForm && !isSubscriptionIntervalsLoading ? (
         <StyledForm>
           <SelectField
-            value={activeOptionValue}
-            options={options}
+            value={activeOrder}
+            options={intervalOptions}
             onChange={onChangeOption}
           />
           <Button 
@@ -95,7 +133,7 @@ const OrderFrequency = (props) => {
         </StyledForm>
       ) : (
         <StyledDescription>
-          { activeOption.name }
+          { activeOrder }
         </StyledDescription>
       )}
     </div>
