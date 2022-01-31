@@ -8,7 +8,7 @@ export const useGetSubscriptionById = (props) => {
   const { data, isLoading, refetch, isFetching } = useQuery(
     ["subscription", id],
     () => SubscriptionsService.getSubscriptionById({ id, shopIdentifier }),
-    { onSuccess, enabled: false }
+    { onSuccess }
   );
 
   return {

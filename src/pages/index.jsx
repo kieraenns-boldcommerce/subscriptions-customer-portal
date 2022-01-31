@@ -64,7 +64,6 @@ const StyledSpinner = styled.div`
 
 const IndexPage = () => {
   // * States
-  const [activeMenuItem, setActiveMenuItem] = useState(null);
   const [showBillingAddress, setShowBillingAddress] = useState(false);
   const [showShippingAddress, setShowShippingAddress] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
@@ -72,9 +71,6 @@ const IndexPage = () => {
   const [showSubscriptionMessage, setShowSubscriptionMessage] = useState(false);
   const [showAnyForm, setShowAnyForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  
-  const [modalConfirmData, setModalConfirmData] = useState({});
-  const { title, description, textButtonCancel, textButtonConfirm } = modalConfirmData;
 
   const formContainerRef = useRef(null);
 
@@ -82,18 +78,21 @@ const IndexPage = () => {
   const {
     activeShopId,
     activeSubscription,
+    activeSubscriptionId,
     isPauseSubscriptionLoading,
     isReactivateSubscriptionLoading,
     isCancelSubscriptionLoading,
     isSubscriptionsLoading,
-    isShopInfoLoading
+    isShopInfoLoading,
+    modalConfirmData,
+    activeMenuValue
   } = state;
-  const { pauseSubscription, reactivateSubscription, cancelSubscription } = methods;
+  const { pauseSubscription, reactivateSubscription, cancelSubscription, setActiveMenuValue } = methods;
 
 
   // * Handlers
   const onMenuItemChange = (item) => {
-    setActiveMenuItem(item);
+    setActiveMenuValue(item.value);
     setShowModal(true);
   };
 
@@ -101,12 +100,11 @@ const IndexPage = () => {
   const onConfirmFormButtonClick = () => setShowAnyForm(false);
 
   const onCancelModalButtonClick = () => setShowModal(false);
-
   const onConfirmModalButtonClick = () => {
     setShowModal(false);
     setShowAnyForm(false);
 
-    if (activeMenuItem.value === "resume") {
+    if (activeMenuValue === "resume") {
       reactivateSubscription({
         shopIdentifier: activeShopId,
         subscriptionId: activeSubscription.id
@@ -116,12 +114,13 @@ const IndexPage = () => {
       return;
     }
 
-    if (activeMenuItem.value === "cancel") {
+    if (activeMenuValue === "inactive") {
       cancelSubscription({
         shopIdentifier: activeShopId,
         subscriptionId: activeSubscription.id
       });
 
+      setShowSubscriptionMessage(true);
       return;
     }
 
@@ -182,29 +181,12 @@ const IndexPage = () => {
 
   // * Effects
   useEffect(() => {
-    if (!activeMenuItem) return;
+    if (!activeSubscriptionId) return;
 
-    const { value } = activeMenuItem;
-    
-    setModalConfirmData({
-      title: `Are you sure you want to ${value} this subscription?`,
-      description: value === "pause" ? 
-        "This will pause all orders until the subscription is resumed." : 
-        value === "cancel" ? "This will cancel your subscription and all unprocessed orders." : null,
-      textButtonCancel: `No, don’t ${value}`,
-      textButtonConfirm: `Yes, ${value}`
-    });
-  }, [activeMenuItem]);
+    const isInactiveSubscription = activeSubscription.status === "inactive" || activeSubscription.status === "paused";
 
-
-  useEffect(() => {
-    if (!activeSubscription) return;
-
-    if (activeSubscription.status === "inactive" ||
-        activeSubscription.status === "paused") {
-      setShowSubscriptionMessage(true);
-    }
-  }, [activeSubscription]);
+    setShowSubscriptionMessage(isInactiveSubscription);
+  }, [activeSubscriptionId]);
 
 
   const tabs = [
@@ -293,10 +275,10 @@ const IndexPage = () => {
       
               <ModalConfirm
                 isVisible={showModal}
-                title={title}
-                description={description}
-                textButtonCancel={textButtonCancel}
-                textButtonConfirm={textButtonConfirm}
+                title={modalConfirmData?.title}
+                description={modalConfirmData?.description}
+                textButtonCancel={modalConfirmData?.textButtonCancel}
+                textButtonConfirm={modalConfirmData?.textButtonConfirm}
                 onCancel={onCancelModalButtonClick}
                 onConfirm={onConfirmModalButtonClick}
               />

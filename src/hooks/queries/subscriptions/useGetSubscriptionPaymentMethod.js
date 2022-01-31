@@ -8,7 +8,7 @@ export const useGetSubscriptionPaymentMethod = (props) => {
   const { data, isLoading, refetch, isFetching } = useQuery(
     ["subscriptionPaymentMethod", subscriptionId],
     () => SubscriptionsService.getSubscriptionPaymentMethod({ shopIdentifier, subscriptionId }),
-    { onSuccess, enabled: false }
+    { onSuccess }
   );
 
   return {

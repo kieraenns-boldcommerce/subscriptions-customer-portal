@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 
 export const useGetSubscriptions = (params) => {
   const { data, isLoading, refetch } = useQuery(
-    "subscriptions",
+    ["subscriptions", params],
     () => SubscriptionsService.getSubscriptions(params),
     { enabled: false }
   );

@@ -11,6 +11,8 @@ import { useReactivateSubscription } from "../hooks/queries/subscriptions/useRea
 import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
 import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/useChangeSubscriptionInterval";
 
+import { INITIAL_ADDRESS_STATE } from "../constants";
+
 
 const ChildType = PT.oneOfType([
   PT.bool,
@@ -99,36 +101,30 @@ const AppStateProvider = (props) => {
   const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
   const [activeAddressData, setActiveAddressData] = useState({});
   const [innerSubscriptions, setInnerSubscriptions] = useState([]);
+  const [subscriptionOptions, setSubscriptionOptions] = useState([]);
+  const [activeSubscriptionOption, setActiveSubscriptionOption] = useState([]);
   const [innerSubscriptionIntervals, setInnerSubscriptionIntervals] = useState([]);
+  const [messageData, setMessageData] = useState(null);
+  const [modalConfirmData, setModalConfirmData] = useState(null);
+  const [addressData, setAddressData] = useState(INITIAL_ADDRESS_STATE);
+  const [activeMenuValue, setActiveMenuValue] = useState(null);
 
 
   // * Handlers
   const onSuccessChangeAddress = (response) => {
     if (response) fetchSubscriptions();
   };
-  const onErrorChangeAddress = (error) => {
-    console.log(error);
-  };
 
   const onSuccessPauseSubscription = (response) => {
     if (response) fetchSubscriptions();
-  };
-  const onErrorPauseSubscription = (error) => {
-    console.log(error);
   };
 
   const onSuccessCancelSubscription = (response) => {
     if (response) fetchSubscriptions();
   };
-  const onErrorCancelSubscription = (error) => {
-    console.log(error);
-  };
 
   const onSuccessChangeSubscriptionInterval = (response) => {
     if (response) fetchSubscriptions();
-  };
-  const onErrorChangeSubscriptionInterval = (error) => {
-    console.log(error);
   };
 
 
@@ -156,40 +152,35 @@ const AppStateProvider = (props) => {
     changeAddress,
     isChangeAddressLoading
   } = useChangeAddress({
-    onSuccess: onSuccessChangeAddress,
-    onError: onErrorChangeAddress
+    onSuccess: onSuccessChangeAddress
   });
 
   const {
     pauseSubscription,
     isPauseSubscriptionLoading
   } = usePauseSubscription({
-    onSuccess: onSuccessPauseSubscription,
-    onError: onErrorPauseSubscription
+    onSuccess: onSuccessPauseSubscription
   });
 
   const {
     reactivateSubscription,
     isReactivateSubscriptionLoading
   } = useReactivateSubscription({
-    onSuccess: onSuccessPauseSubscription,
-    onError: onErrorPauseSubscription
+    onSuccess: onSuccessPauseSubscription
   });
 
   const {
     cancelSubscription,
     isCancelSubscriptionLoading
   } = useCancelSubscription({
-    onSuccess: onSuccessCancelSubscription,
-    onError: onErrorCancelSubscription
+    onSuccess: onSuccessCancelSubscription
   });
 
   const {
     changeSubscriptionInterval,
     isChangeSubscriptionIntervalLoading
   } = useChangeSubscriptionInterval({
-    onSuccess: onSuccessChangeSubscriptionInterval,
-    onError: onErrorChangeSubscriptionInterval
+    onSuccess: onSuccessChangeSubscriptionInterval
   });
 
 
@@ -253,7 +244,35 @@ const AppStateProvider = (props) => {
       };
     });
 
+
+    const subscriptionOptions = innerSubscriptions.map((subscription) => {
+      const { id, nextOrderDatetime, products } = subscription;
+
+      const nextOrder = new Date(nextOrderDatetime).toLocaleString(
+        "en-US",
+        {
+          month: "long",
+          year: "numeric",
+          day: "numeric"
+        });
+
+      const optionName = products.length > 1 ? `${products.length} Products` : products[0].product_name;
+
+      return {
+        name: `${optionName} Subscription - ${String(id)}`,
+        title: `${optionName} Subscription - #${String(id)}`,
+        value: String(id),
+        date: nextOrder
+      };
+    });
+
     setInnerSubscriptions(innerSubscriptions);
+    setSubscriptionOptions(subscriptionOptions);
+
+    if (!activeSubscriptionId) {
+      setActiveSubscriptionOption(subscriptionOptions[0]);
+      setActiveSubscriptionId(subscriptions.subscriptions[0].id);
+    }
   }, [subscriptions]);
 
 
@@ -277,6 +296,56 @@ const AppStateProvider = (props) => {
 
   const activeSubscription = innerSubscriptions.find((subscription) => subscription.id === activeSubscriptionId);
 
+  useEffect(() => {
+    if (!activeSubscription) return;
+
+    const { status } = activeSubscription;
+
+    const isSubscriptionPaused = status === "paused";
+    const isSubscriptionInactive = status === "inactive";
+    const subscriptionStatus = isSubscriptionPaused ? "paused" : "canceled";
+    
+    setMessageData({
+      text: `This subscription has been ${subscriptionStatus}.`,
+      buttonText: `${isSubscriptionPaused ? "Resume" : "Reactivate"} subscription`
+    });
+
+    const data = {
+      title: `Are you sure you want to ${subscriptionStatus} this subscription?`,
+      textButtonCancel: `No, don’t ${subscriptionStatus}`,
+      textButtonConfirm: `Yes, ${subscriptionStatus}`
+    };
+
+    if (isSubscriptionPaused) data.description = "This will pause all orders until the subscription is resumed.";
+    if (isSubscriptionInactive) data.description = "This will cancel your subscription and all unprocessed orders.";
+
+    setModalConfirmData(data);
+  }, [activeSubscriptionId]);
+
+  useEffect(() => {
+    if (!activeMenuValue) return;
+
+    const isSubscriptionPaused = activeMenuValue === "pause";
+    const isSubscriptionInactive = activeMenuValue === "inactive";
+    const subscriptionStatus = isSubscriptionPaused ? "paused" : "canceled";
+    
+    setMessageData({
+      text: `This subscription has been ${subscriptionStatus}.`,
+      buttonText: `${isSubscriptionPaused ? "Resume" : "Reactivate"} subscription`
+    });
+
+    const data = {
+      title: `Are you sure you want to ${subscriptionStatus} this subscription?`,
+      textButtonCancel: `No, don’t ${subscriptionStatus}`,
+      textButtonConfirm: `Yes, ${subscriptionStatus}`
+    };
+
+    if (isSubscriptionPaused) data.description = "This will pause all orders until the subscription is resumed.";
+    if (isSubscriptionInactive) data.description = "This will cancel your subscription and all unprocessed orders.";
+
+    setModalConfirmData(data);
+  }, [activeMenuValue]);
+
   const mainState = {
     state: {
       activeShop,
@@ -288,12 +357,18 @@ const AppStateProvider = (props) => {
       activeAddressData,
       isChangeAddressLoading,
       subscriptions: innerSubscriptions,
+      subscriptionOptions,
       isSubscriptionsLoading,
       subscriptionIntervals: innerSubscriptionIntervals,
       isPauseSubscriptionLoading,
       isReactivateSubscriptionLoading,
       isCancelSubscriptionLoading,
-      isChangeSubscriptionIntervalLoading
+      isChangeSubscriptionIntervalLoading,
+      messageData,
+      modalConfirmData,
+      addressData,
+      activeSubscriptionOption,
+      activeMenuValue
     },
     methods: {
       formatAddressData,
@@ -305,7 +380,10 @@ const AppStateProvider = (props) => {
       pauseSubscription,
       reactivateSubscription,
       cancelSubscription,
-      changeSubscriptionInterval
+      changeSubscriptionInterval,
+      setAddressData,
+      setActiveSubscriptionOption,
+      setActiveMenuValue
     }
   };
 

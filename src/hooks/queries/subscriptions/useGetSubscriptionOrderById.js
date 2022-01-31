@@ -8,7 +8,7 @@ export const useGetSubscriptionOrderById = (props) => {
   const { data, isLoading, refetch, isFetching } = useQuery(
     ["subscriptionOrder", orderId],
     () => SubscriptionsService.getSubscriptionOrderById({ subscriptionId, shopIdentifier, orderId }),
-    { onSuccess, enabled: false }
+    { onSuccess }
   );
 
   return {

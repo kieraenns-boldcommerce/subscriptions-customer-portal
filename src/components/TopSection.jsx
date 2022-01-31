@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import PT from "prop-types";
 import { SelectField } from "@boldcommerce/stacks-ui";
 import Menu from "./Menu";
@@ -76,12 +76,16 @@ const TopSection = (props) => {
 
   const { state, methods } = useContext(AppContext);
 
-  const { subscriptions, activeSubscriptionId, activeSubscription } = state;
-  const { setActiveSubscriptionId } = methods;
-
-  const [subscriptionOptions, setSubscriptionOptions] = useState([]);
-  const [activeSubscriptionOption, setActiveSubscriptionOption] = useState(null);
-  const [messageData, setMessageData] = useState();
+  const {
+    subscriptions,
+    subscriptionOptions,
+    messageData,
+    activeSubscriptionOption
+  } = state;
+  const {
+    setActiveSubscriptionId,
+    setActiveSubscriptionOption
+  } = methods;
 
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
@@ -100,47 +104,9 @@ const TopSection = (props) => {
   const onMenuItemClick = (item) => onMenuItemChange(item);
 
 
-  useEffect(() => {
-    if (!subscriptions.length) return;
-
-    const options = subscriptions.map((subscription) => {
-      const { id, nextOrderDatetime, products } = subscription;
-
-      const nextOrder = new Date(nextOrderDatetime).toLocaleString(
-        "en-US",
-        {
-          month: "long",
-          year: "numeric",
-          day: "numeric"
-        });
-
-      return {
-        name: `${products.length > 1 ? `${products.length} Products` : products[0].product_name} Subscription - ${String(id)}`,
-        title: `${products.length > 1 ? `${products.length} Products` : products[0].product_name} Subscription - #${String(id)}`,
-        value: String(id),
-        date: nextOrder
-      };
-    });
-
-    setSubscriptionOptions(options);
-    if (!activeSubscriptionOption) setActiveSubscriptionOption(options[0]);
-    if (!activeSubscriptionId) setActiveSubscriptionId(subscriptions[0].id);
-  }, [subscriptions]);
-
-  useEffect(() => {
-    if (!activeSubscription) return;
-
-    const { status } = activeSubscription;
-    
-    setMessageData({
-      text: `This subscription has been ${status === "paused" ? "paused" : "canceled"}.`,
-      buttonText: `${status === "paused" ? "Resume" : "Reactivate"} subscription`
-    });
-  }, [activeSubscription]);
-
   const MENU_ITEMS = [
     { name: `${showMessage ? "Resume" : "Pause"} subscription`, value: showMessage ? "resume" : "pause" },
-    { type: "alert", name: "Cancel subscription", value: "cancel" }
+    { type: "alert", name: "Cancel subscription", value: "inactive" }
   ];
 
 
@@ -169,8 +135,8 @@ const TopSection = (props) => {
           <StyledSubscriptionInfoBottom>
             <StyledSubscriptionMessage>
               <Message
-                text={messageData?.text}
-                buttonText={messageData?.buttonText}
+                text={messageData.text}
+                buttonText={messageData.buttonText}
                 onButtonClick={onMessageButtonClick}
               />
             </StyledSubscriptionMessage>

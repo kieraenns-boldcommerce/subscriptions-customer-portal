@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 
 
 export const useGetSubscriptionOrders = (params) => {
-  const { data, isLoading, refetch } = useQuery("subscriptionOrders", () => SubscriptionsService.getSubscriptionOrders(params));
+  const { data, isLoading, refetch } = useQuery(["subscriptionOrders", params], () => SubscriptionsService.getSubscriptionOrders(params));
 
   return {
     subscriptionOrders: data,
