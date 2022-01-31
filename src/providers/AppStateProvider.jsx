@@ -325,13 +325,14 @@ const AppStateProvider = (props) => {
   useEffect(() => {
     if (!activeMenuValue) return;
 
-    const isSubscriptionPaused = activeMenuValue === "pause";
+    const isSubscriptionPause = activeMenuValue === "pause";
     const isSubscriptionInactive = activeMenuValue === "inactive";
-    const subscriptionStatus = isSubscriptionPaused ? "paused" : "canceled";
+    const isSubscriptionResume = activeMenuValue === "resume";
+    const subscriptionStatus = isSubscriptionPause ? "pause" : isSubscriptionResume ? "resume" : "cancel";
     
     setMessageData({
       text: `This subscription has been ${subscriptionStatus}.`,
-      buttonText: `${isSubscriptionPaused ? "Resume" : "Reactivate"} subscription`
+      buttonText: `${isSubscriptionPause ? "Resume" : "Reactivate"} subscription`
     });
 
     const data = {
@@ -340,7 +341,7 @@ const AppStateProvider = (props) => {
       textButtonConfirm: `Yes, ${subscriptionStatus}`
     };
 
-    if (isSubscriptionPaused) data.description = "This will pause all orders until the subscription is resumed.";
+    if (isSubscriptionPause) data.description = "This will pause all orders until the subscription is resumed.";
     if (isSubscriptionInactive) data.description = "This will cancel your subscription and all unprocessed orders.";
 
     setModalConfirmData(data);

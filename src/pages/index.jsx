@@ -103,6 +103,7 @@ const IndexPage = () => {
   const onConfirmModalButtonClick = () => {
     setShowModal(false);
     setShowAnyForm(false);
+    setActiveMenuValue(null);
 
     if (activeMenuValue === "resume") {
       reactivateSubscription({
