@@ -328,17 +328,18 @@ const AppStateProvider = (props) => {
     const isSubscriptionPause = activeMenuValue === "pause";
     const isSubscriptionInactive = activeMenuValue === "inactive";
     const isSubscriptionResume = activeMenuValue === "resume";
-    const subscriptionStatus = isSubscriptionPause ? "pause" : isSubscriptionResume ? "resume" : "cancel";
+    const messageSubscriptionStatus = isSubscriptionPause ? "paused" : "canceled";
+    const modalSubscriptionStatus = isSubscriptionPause ? "pause" : isSubscriptionResume ? "resume" : "cancel";
     
     setMessageData({
-      text: `This subscription has been ${subscriptionStatus}.`,
+      text: `This subscription has been ${messageSubscriptionStatus}.`,
       buttonText: `${isSubscriptionPause ? "Resume" : "Reactivate"} subscription`
     });
 
     const data = {
-      title: `Are you sure you want to ${subscriptionStatus} this subscription?`,
-      textButtonCancel: `No, don’t ${subscriptionStatus}`,
-      textButtonConfirm: `Yes, ${subscriptionStatus}`
+      title: `Are you sure you want to ${modalSubscriptionStatus} this subscription?`,
+      textButtonCancel: `No, don’t ${modalSubscriptionStatus}`,
+      textButtonConfirm: `Yes, ${modalSubscriptionStatus}`
     };
 
     if (isSubscriptionPause) data.description = "This will pause all orders until the subscription is resumed.";

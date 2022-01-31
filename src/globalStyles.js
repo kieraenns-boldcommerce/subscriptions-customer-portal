@@ -74,6 +74,10 @@ export const Resets = createGlobalStyle`
     color: inherit;
   }
 
+  .button-ModalConfirm {
+    text-transform: none;
+  }
+
   @media (min-width: 375px) {
     .button-ModalConfirm {
       width: max-content;
