@@ -10,6 +10,8 @@ import { useReactivateSubscription } from "../hooks/queries/subscriptions/useRea
 import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
 import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/useChangeSubscriptionInterval";
 import { useGetSubscriptionPaymentMethod } from "../hooks/queries/subscriptions/useGetSubscriptionPaymentMethod";
+import { toast } from "react-toastify";
+import Message from "../components/Message";
 
 
 const ChildType = PT.oneOfType([
@@ -27,14 +29,27 @@ const AppStateProviderPropTypes = {
 const AppStateProvider = (props) => {
   const { children } = props;
 
-  // * State
+  // * States
   const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
 
   // * Handlers
-  const onSuccessChangeAddress = (response) => response && fetchSubscriptions();
-  const onSuccessPauseSubscription = (response) => response && fetchSubscriptions();
-  const onSuccessCancelSubscription = (response) => response && fetchSubscriptions();
-  const onSuccessChangeSubscriptionInterval = (response) => response && fetchSubscriptions();
+  const onSuccessPauseSubscription = () => fetchSubscriptions();
+  const onSuccessCancelSubscription = () => fetchSubscriptions();
+  const onSuccessChangeAddress = () => {
+    fetchSubscriptions();
+    toast(<Message text="Address changed successfully" type="success" />);
+  };
+  const onErrorChangeAddress = (error) => {
+    toast(<Message text={error?.message} type="alert" />);
+  };
+  const onSuccessReactivateSubscription = () => {
+    fetchSubscriptions();
+    toast(<Message text="Subscription reactivated successfully" type="success" />);
+  };
+  const onSuccessChangeSubscriptionInterval = () => {
+    fetchSubscriptions();
+    toast(<Message text="Frequency changed successfully" type="success" />);
+  };
 
   // * Hooks
   const { shop, isShopInfoLoading } = useGetShopInfo();
@@ -69,7 +84,8 @@ const AppStateProvider = (props) => {
     changeAddress,
     isChangeAddressLoading
   } = useChangeAddress({
-    onSuccess: onSuccessChangeAddress
+    onSuccess: onSuccessChangeAddress,
+    onError: onErrorChangeAddress
   });
 
   const {
@@ -83,7 +99,7 @@ const AppStateProvider = (props) => {
     reactivateSubscription,
     isReactivateSubscriptionLoading
   } = useReactivateSubscription({
-    onSuccess: onSuccessPauseSubscription
+    onSuccess: onSuccessReactivateSubscription
   });
 
   const {

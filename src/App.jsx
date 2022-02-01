@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Resets, Vars, Fonts } from "./globalStyles";
+import "react-toastify/dist/ReactToastify.min.css";
 import IndexPage from "./pages/index";
 import AppStateProvider from "./providers/AppStateProvider";
-
 
 
 const queryClient = new QueryClient({

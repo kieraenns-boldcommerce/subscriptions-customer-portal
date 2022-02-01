@@ -30,9 +30,12 @@ const StyledForm = styled.div`
   }
 
   @media (min-width: 768px) {
-    row-gap: 20px;
+    row-gap: 10px;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 50% max-content;
   }
 `;
 
@@ -53,7 +56,11 @@ const StyledButtons = styled.div`
   column-gap: 10px;
 
   @media (min-width: 768px) {
-    grid-template-columns: 1fr max-content;
+    grid-template-columns: max-content max-content;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
   }
 `;
 

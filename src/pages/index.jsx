@@ -10,6 +10,7 @@ import FrequencyAndPayment from "../components/FrequencyAndPayment";
 import TopSection from "../components/TopSection";
 import Section from "../components/Section";
 import ModalConfirm from "../components/ModalConfirm";
+import Notification from "../components/Notification";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
 
@@ -245,6 +246,8 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Container>
+
+        <Notification />
 
         {isAppLoading ? (
           <StyledFullPageSpinner>
