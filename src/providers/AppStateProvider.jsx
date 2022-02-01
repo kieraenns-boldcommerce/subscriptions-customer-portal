@@ -33,6 +33,8 @@ const AppStateProvider = (props) => {
   const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
 
   // * Handlers
+  const onSuccessPauseSubscription = () => fetchSubscriptions();
+  const onSuccessCancelSubscription = () => fetchSubscriptions();
   const onSuccessChangeAddress = () => {
     fetchSubscriptions();
     toast(<Message text="Address changed successfully" type="success" />);
@@ -40,17 +42,9 @@ const AppStateProvider = (props) => {
   const onErrorChangeAddress = (error) => {
     toast(<Message text={error?.message} type="alert" />);
   };
-  const onSuccessPauseSubscription = () => {
-    fetchSubscriptions();
-    toast(<Message text="Subscription paused successfully" type="success" />);
-  };
   const onSuccessReactivateSubscription = () => {
     fetchSubscriptions();
     toast(<Message text="Subscription reactivated successfully" type="success" />);
-  };
-  const onSuccessCancelSubscription = () => {
-    fetchSubscriptions();
-    toast(<Message text="Subscription closed successfully" type="success" />);
   };
   const onSuccessChangeSubscriptionInterval = () => {
     fetchSubscriptions();
