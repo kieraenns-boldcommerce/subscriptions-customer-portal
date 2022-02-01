@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import PT from "prop-types";
+import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import TitleWithEditButton from "./TitleWithEditButton";
 import visaIcon from "../assets/icons/cards/visa.svg";
 import mastercardIcon from "../assets/icons/cards/mastercard.svg";
@@ -36,29 +37,23 @@ const StyledPaymentCardIcon = styled.img`
   height: 26px;
 `;
 
+const StyledSpinner = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const PaymentMethod = (props) => {
   const { editMode, onEdit } = props;
 
   const { state } = useContext(AppContext);
-  const { subscriptionPaymentMethod } = state;
+  const { subscriptionPaymentMethod, isSubscriptionPaymentMethodLoading } = state;
 
   const onOpenForm = () => onEdit && onEdit();
-
-  if (!subscriptionPaymentMethod) return null;
-
-  const {
-    cardType,
-    expiration,
-    lastFourNumbers,
-    paymentSystem
-  } = subscriptionPaymentMethod;
-
-  const { date } = expiration;
 
   let cardIcon;
   let innerCardType;
 
-  switch (paymentSystem) {
+  switch (subscriptionPaymentMethod?.paymentSystem) {
   case "mastercard":
     cardIcon = mastercardIcon;
     break;
@@ -67,7 +62,7 @@ const PaymentMethod = (props) => {
     break;
   }
 
-  switch (cardType) {
+  switch (subscriptionPaymentMethod?.cardType) {
   case "credit_card":
     innerCardType = "Credit card";
     break;
@@ -84,11 +79,18 @@ const PaymentMethod = (props) => {
         />
       </StyledTitle>
 
-      <StyledPaymentContent>
-        { innerCardType } - 
-        <StyledPaymentCardIcon src={cardIcon} />
-        ending in { lastFourNumbers } - Expires { date }
-      </StyledPaymentContent>
+      {isSubscriptionPaymentMethodLoading ? (
+        <StyledSpinner>
+          <LoadingSpinner />
+        </StyledSpinner>
+      ) : (
+        <StyledPaymentContent>
+          { innerCardType } - 
+          <StyledPaymentCardIcon src={cardIcon} />
+        ending in { subscriptionPaymentMethod?.lastFourNumbers } - Expires { subscriptionPaymentMethod?.expiration.date }
+        </StyledPaymentContent>
+      )}
+
     </div>
   );
 };

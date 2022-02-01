@@ -137,7 +137,6 @@ const AppStateProvider = (props) => {
   const isAppLoading = 
     isShopInfoLoading ||
     isSubscriptionsLoading ||
-    isSubscriptionPaymentMethodLoading ||
     isPauseSubscriptionLoading ||
     isReactivateSubscriptionLoading ||
     isCancelSubscriptionLoading;
@@ -155,7 +154,8 @@ const AppStateProvider = (props) => {
       subscriptionPaymentMethod,
       isAppLoading,
       isChangeAddressLoading,
-      isChangeSubscriptionIntervalLoading
+      isChangeSubscriptionIntervalLoading,
+      isSubscriptionPaymentMethodLoading
     },
     methods: {
       setActiveSubscriptionId,
