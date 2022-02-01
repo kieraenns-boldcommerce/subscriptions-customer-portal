@@ -1,12 +1,21 @@
-import { useEffect, useState, useContext } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
 import TitleWithEditButton from "./TitleWithEditButton";
-import AppContext from "../contexts/AppContext";
-import { INITIAL_ADDRESS_STATE } from "../constants";
 
 const AddressPropTypes = {
   type: PT.oneOf(["shipping", "billing"]).isRequired,
+  data: PT.shape({
+    city: PT.string.isRequired,
+    company: PT.string,
+    country: PT.string.isRequired,
+    firstName: PT.string.isRequired,
+    lastName: PT.string.isRequired,
+    phone: PT.string,
+    province: PT.string.isRequired,
+    addressLineFirst: PT.string.isRequired,
+    addressLineSecond: PT.string,
+    zip: PT.string.isRequired
+  }),
   showEditButton: PT.bool,
   altTextEditButton: PT.string,
   onEdit: PT.func
@@ -39,6 +48,7 @@ const StyledFullName = styled.div`
 const Address = (props) => {
   const {
     type,
+    data,
     showEditButton,
     altTextEditButton,
     onEdit
@@ -46,40 +56,20 @@ const Address = (props) => {
 
   const title = type === "shipping" ? "Shipping address" : "Billing address";
 
-  const { state, methods } = useContext(AppContext);
-  const { activeSubscription } = state;
-  const { setActiveAddressData } = methods;
-
-  const [innerAddressData, setInnerAddressData] = useState(INITIAL_ADDRESS_STATE);
-
-  const onEditAddressFormButtonClick = () => {
-    setActiveAddressData({ ...innerAddressData, type });
-    onEdit();
-  };
-
-  useEffect(() => {
-    if (!activeSubscription) return;
-
-    const { billingAddress, shippingAddress } = activeSubscription;
-
-    type === "shipping" ? setInnerAddressData(shippingAddress) : setInnerAddressData(billingAddress);
-  }, [activeSubscription]);
-
-
-  if (!innerAddressData) return null;
+  if (!data) return null;
 
   const {
     city,
-    companyName,
+    company,
     country,
     firstName,
     lastName,
-    phoneNumber,
-    stateOrProvince,
+    phone,
+    province,
     addressLineFirst,
     addressLineSecond,
-    zipOrPostalCode
-  } = innerAddressData;
+    zip
+  } = data;
 
   return (
     <StyledAddress>
@@ -89,7 +79,7 @@ const Address = (props) => {
           title={title}
           showEditButton={showEditButton}
           altTextButton={altTextEditButton}
-          onEdit={onEditAddressFormButtonClick}
+          onEdit={onEdit}
         />
       </StyledTitle>
 
@@ -99,10 +89,10 @@ const Address = (props) => {
 
       { addressLineFirst }<br />
       { addressLineSecond && <>{ addressLineSecond }<br /></> }
-      { city }, { stateOrProvince }, { zipOrPostalCode }<br />
+      { city }, { province }, { zip }<br />
       { country }<br />
-      { companyName && <>Company: { companyName }<br /></> }
-      { phoneNumber && <>Phone: { phoneNumber }</>}
+      { company && <>Company: { company }<br /></> }
+      { phone && <>Phone: { phone }</>}
 
     </StyledAddress>
   );

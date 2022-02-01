@@ -1,214 +1,71 @@
-import PT from "prop-types";
 import { ServiceBase } from "../core";
+import { renameKeys } from "../../helpers/utils";
 
 
-export const CreateSubscriptionDataPropTypes = {
-  customer: PT.shape({
-    firstName: PT.string.isRequired,
-    lastName: PT.string.isRequired,
-    email: PT.string.isRequired,
-    phone: PT.string,
-    notes: PT.string
-  }),
-  subscription: PT.shape({
-    idempotencyKey: PT.string.isRequired,
-    nextOrderDatetime: PT.string.isRequired,
-    lastOrderDatetime: PT.string,
-    subscriptionStatus: PT.oneOf(["active", "inactive", "paused"]),
-    orderRrule: PT.string.isRequired,
-    baseCurrency: PT.string.isRequired,
-    chargedCurrency: PT.string.isRequired,
-    baseToChargedExchangeRate: PT.number,
-    lineItems: PT.arrayOf(PT.shape({
-      platform_product_id: PT.string.isRequired,
-      platform_variant_id: PT.string.isRequired,
-      quantity: PT.number.isRequired,
-      price: PT.number.isRequired,
-      subscription_group_id: PT.number.isRequired
-    })),
-    billingAddress: PT.shape({
-      firstName: PT.string.isRequired,
-      lastName: PT.string.isRequired,
-      company: PT.string,
-      phone: PT.string,
-      street1: PT.string.isRequired,
-      street2: PT.string.isRequired,
-      city: PT.string.isRequired,
-      province: PT.string,
-      provinceCode: PT.string,
-      country: PT.string.isRequired,
-      countryCode: PT.string.isRequired,
-      zip: PT.string
-    }),
-    shippingAddress: PT.shape({
-      firstName: PT.string.isRequired,
-      lastName: PT.string.isRequired,
-      company: PT.string,
-      phone: PT.string,
-      street1: PT.string.isRequired,
-      street2: PT.string.isRequired,
-      city: PT.string.isRequired,
-      province: PT.string,
-      provinceCode: PT.string,
-      country: PT.string.isRequired,
-      countryCode: PT.string.isRequired,
-      zip: PT.string
-    }),
-    externalId: PT.string,
-    note: PT.string,
-    paymentDetails: PT.shape({
-      gatewayName: PT.string,
-      gatewayCustomerId: PT.string,
-      gatewayPaymentId: PT.string
-    })
-  })
+const adaptAddressDataFromServer = (address) => renameKeys(
+  address,
+  [
+    "customer_id",
+    "first_name",
+    "last_name",
+    "street1",
+    "street2"
+  ],
+  [
+    "customerId",
+    "firstName",
+    "lastName",
+    "addressLineFirst",
+    "addressLineSecond"
+  ]
+);
+
+const adaptAddressDataToServer = (address) => renameKeys(
+  address,
+  [
+    "customerId",
+    "firstName",
+    "lastName",
+    "addressLineFirst",
+    "addressLineSecond"
+  ],
+  [
+    "customer_id",
+    "first_name",
+    "last_name",
+    "street1",
+    "street2"
+  ]
+);
+
+const adaptIntervalFromServer = (interval) => {
+  const { interval_name, id } = interval;
+
+  return {
+    id,
+    name: interval_name,
+    value: String(id)
+  };
 };
 
-export const ChangeSubscriptionDataPropTypes = {
-  subscription: PT.shape({
-    id: PT.number.isRequired,
-    externalId: PT.string.isRequired,
-    shopId: PT.number.isRequired,
-    nextOrderDatetime: PT.string.isRequired,
-    nextPaymentDatetime: PT.string.isRequired,
-    nextProcessingDatetime: PT.string.isRequired,
-    subscriptionStatus: PT.oneOf(["active", "inactive", "paused", "scheduled", "processing", "app_uninstalled"]),
-    statusChangedAt: PT.string.isRequired,
-    paymentMethodToken: PT.string.isRequired,
-    paymentGatewayPublicId: PT.string.isRequired,
-    paymentRrule: PT.string.isRequired,
-    paymentRruleText: PT.string.isRequired,
-    orderRrule: PT.string.isRequired,
-    orderRruleText: PT.string.isRequired,
-    lastPaymentDatetime: PT.string.isRequired,
-    lastOrderDatetime: PT.string.isRequired,
-    lastProcessedDatetime: PT.string.isRequired,
-    currentRetries: PT.number.isRequired,
-    chargedCurrency: PT.string.isRequired,
-    baseToChargedExchangeRate: PT.number.isRequired,
-    baseCurrency: PT.string.isRequired,
+const adaptProductsFromServer = (product) => {
+  const {
+    id,
+    image,
+    price,
+    product_name,
+    variant_name,
+    quantity
+  } = product;
 
-
-    lineItems: PT.arrayOf(PT.shape({
-      id: PT.number.isRequired,
-      subscriptionId: PT.number.isRequired,
-      platformId: PT.string.isRequired,
-      platformProductId: PT.string.isRequired,
-      platformVariantId: PT.string.isRequired,
-      subscriptionGroupId: PT.number.isRequired,
-      subscriptionGroupBillingRulesId: PT.number.isRequired,
-      title: PT.string.isRequired,
-      productName: PT.string.isRequired,
-      variantName: PT.string.isRequired,
-      sku: PT.string.isRequired,
-      url: PT.string.isRequired,
-      image: PT.string.isRequired,
-      quantity: PT.number.isRequired,
-      price: PT.number.isRequired,
-      priceCharged: PT.number.isRequired,
-      discountedPrice: PT.number.isRequired,
-      discountedPriceCharged: PT.number.isRequired,
-      fullPrice: PT.number.isRequired,
-      fullPriceCharged: PT.number,
-      requiresShipping: PT.bool.isRequired,
-      grams: PT.number.isRequired,
-      weight: PT.number.isRequired,
-      weightUnit: PT.number.isRequired,
-      taxable: PT.bool.isRequired,
-      discounts: PT.any.isRequired,
-      prepaidMetadata: PT.any.isRequired,
-      lineItemAttributes: PT.any.isRequired,
-      createdAt: PT.symbol.isRequired,
-      updatedAt: PT.string.isRequired
-    })),
-    billingAddress: PT.shape({
-      firstName: PT.string.isRequired,
-      lastName: PT.string.isRequired,
-      company: PT.string,
-      phone: PT.string,
-      street1: PT.string.isRequired,
-      street2: PT.string.isRequired,
-      city: PT.string.isRequired,
-      province: PT.string,
-      provinceCode: PT.string,
-      country: PT.string.isRequired,
-      countryCode: PT.string.isRequired,
-      zip: PT.string
-    }),
-    shippingAddress: PT.shape({
-      firstName: PT.string.isRequired,
-      lastName: PT.string.isRequired,
-      company: PT.string,
-      phone: PT.string,
-      street1: PT.string.isRequired,
-      street2: PT.string.isRequired,
-      city: PT.string.isRequired,
-      province: PT.string,
-      provinceCode: PT.string,
-      country: PT.string.isRequired,
-      countryCode: PT.string.isRequired,
-      zip: PT.string
-    }),
-    note: PT.string,
-    paymentDetails: PT.shape({
-      gatewayName: PT.string,
-      gatewayCustomerId: PT.string,
-      gatewayPaymentId: PT.string
-    })
-  })
-};
-
-///////////
-
-
-export const getSubscriptionsForAnyPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  subscriptionId: PT.number.isRequired
-};
-
-export const getSubscriptionsPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  subscriptionStatus: PT.arrayOf(PT.oneOf(["active", "inactive", "processing", "scheduled", "paused"])),
-  boldPlatformCustomerId: PT.arrayOf(PT.number),
-  expand: PT.arrayOf(PT.string),
-  limit: PT.number,
-  sinceId: PT.number,
-  filter: PT.string
-};
-
-export const getSubscriptionByIdPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  id: PT.number.isRequired
-};
-
-export const createSubscriptionPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  data: PT.shape(CreateSubscriptionDataPropTypes)
-};
-
-export const changeSubscriptionPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  id: PT.string.isRequired,
-  data: PT.shape(ChangeSubscriptionDataPropTypes)
-};
-
-export const changeSubscriptionIntervalPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  subscriptionIntervalId: PT.number.isRequired,
-  subscriptionId: PT.number.isRequired
-};
-
-export const getSubscriptionOrdersPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  subscriptionId: PT.number.isRequired,
-  page: PT.number.isRequired,
-  limit: PT.number.isRequired
-};
-
-export const getSubscriptionOrderByIdPropTypes = {
-  shopIdentifier: PT.string.isRequired,
-  subscriptionId: PT.number.isRequired,
-  orderId: PT.number.isRequired
+  return {
+    id,
+    image,
+    name: product_name,
+    variant: variant_name,
+    price,
+    quantity
+  };
 };
 
 
@@ -242,7 +99,52 @@ class SubscriptionsService {
 
     const response = await ServiceBase.callApi(data);
 
-    return response;
+    const innerSubscriptions = response.subscriptions.map((subscription) => {
+      const {
+        id,
+        base_currency: baseCurrency,
+        billing_address,
+        billing_address_id: billingAddressId,
+        charged_currency: currency,
+        line_items: products,
+        next_order_datetime: nextOrderDatetime,
+        next_payment_datetime: nextPaymentDatetime,
+        order_rrule_text: frequency,
+        payment_rrule_text: paymentText,
+        shipping_address,
+        shipping_address_id: shippingAddressId,
+        shipping_lines: shippingLines,
+        shop_id: shopId,
+        subscription_status: status
+      } = subscription;
+
+      const billingAddress = adaptAddressDataFromServer(billing_address);
+      const shippingAddress = adaptAddressDataFromServer(shipping_address);
+      const innerProducts = products.map(adaptProductsFromServer);
+
+      return {
+        id,
+        baseCurrency,
+        billingAddress,
+        billingAddressId,
+        currency,
+        products: innerProducts,
+        nextOrderDatetime,
+        nextPaymentDatetime,
+        frequency,
+        paymentText,
+        shippingAddress,
+        shippingAddressId,
+        shippingLines,
+        shopId,
+        status
+      };
+    });
+
+    return {
+      ...response,
+      subscriptions: innerSubscriptions
+    };
   }
 
   static async getSubscriptionById(params) {
@@ -273,7 +175,15 @@ class SubscriptionsService {
     const method = "PUT";
     const url = `/subscriptions/v1/shops/${shopIdentifier}/customers/${customerId}/addresses/${addressId}`;
 
-    const response = await ServiceBase.callApi({ data, method, url });
+    const response = await ServiceBase.callApi({
+      data: {
+        customer_address: {
+          ...adaptAddressDataToServer(data)
+        }
+      },
+      method,
+      url
+    });
 
     return response;
   }
@@ -286,7 +196,9 @@ class SubscriptionsService {
 
     const response = await ServiceBase.callApi({ method, url });
 
-    return response;
+    const result = response?.intervals.map(adaptIntervalFromServer);
+  
+    return result;
   }
 
   static async changeSubscriptionInterval(params) {

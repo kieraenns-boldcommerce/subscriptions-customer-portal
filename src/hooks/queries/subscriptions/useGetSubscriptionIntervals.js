@@ -6,9 +6,9 @@ export const useGetSubscriptionIntervals = (props) => {
   const { shopIdentifier, subscriptionId, onSuccess } = props;
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ["subscriptionIntervals", subscriptionId],
+    ["subscriptionIntervals", shopIdentifier, subscriptionId],
     () => SubscriptionsService.getSubscriptionIntervals({ shopIdentifier, subscriptionId }),
-    { onSuccess, enabled: false }
+    { onSuccess, enabled: Boolean(shopIdentifier && subscriptionId) }
   );
 
   return {

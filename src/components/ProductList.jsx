@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import Section from "./Section";
 import ProductCard from "./ProductCard";
@@ -46,45 +46,12 @@ const StyledProduct = styled.div`
 
 const ProductList = () => {
   const { state } = useContext(AppContext);
-  const { activeSubscription } = state;
-
-  const [innerProducts, setInnerProducts] = useState([]);
-
-  useEffect(() => {
-    if (!activeSubscription) return;
-
-    const { products } = activeSubscription;
-
-    if (!products) return;
-
-    const innerProducts = products.map((product) => {
-      const {
-        id,
-        image,
-        price,
-        product_name,
-        variant_name,
-        quantity
-      } = product;
-
-      return {
-        id,
-        image,
-        name: product_name,
-        variant: variant_name,
-        price,
-        quantity
-      };
-    });
-
-    setInnerProducts(innerProducts);
-  }, [activeSubscription]);
-  
+  const { activeSubscription } = state;  
 
   return (
     <Section title="Products in my subscription">
       <StyledProductList>
-        {innerProducts.map((product) => {
+        {activeSubscription?.products.map((product) => {
           const { id, image, name, variant, price, quantity } = product;
 
           return (

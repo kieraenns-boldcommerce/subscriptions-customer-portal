@@ -4,12 +4,12 @@ import { useQuery } from "react-query";
 
 export const useGetShopInfo = () => {
   const { data, isLoading, refetch } = useQuery(
-    ["shopInfo"],
+    ["shop"],
     () => ShopsService.getShopInfo()
   );
 
   return {
-    shopInfo: data,
+    shop: data,
     isShopInfoLoading: isLoading,
     fetchShopInfo: refetch
   };

@@ -36,7 +36,6 @@ const PaymentMethod = (props) => {
   const { editMode, onEdit } = props;
 
   const onOpenForm = () => onEdit && onEdit();
-  
 
   return (
     <div>

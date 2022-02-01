@@ -19,7 +19,13 @@ class ShopsService {
 
     const response = await ServiceBase.callApi({ method, url });
 
-    return response;
+    const result = {
+      ...response,
+      shopIdentifier: response.shop_identifier
+    };
+    delete result.shop_identifier;
+
+    return result;
   }
 }
 

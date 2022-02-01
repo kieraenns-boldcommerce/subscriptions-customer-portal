@@ -7,7 +7,6 @@ import AppContext from "../contexts/AppContext";
 
 
 export const OrderFrequencyPropTypes = {
-  onChange: PT.func,
   onEdit: PT.func,
   editMode: PT.bool
 };
@@ -28,7 +27,12 @@ const StyledForm = styled.div`
 
   @media (min-width: 576px) {
     column-gap: 20px;
-    grid-template-columns: 2fr 1fr;
+  }
+
+  @media (min-width: 768px) {
+    row-gap: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
   }
 `;
 
@@ -38,15 +42,31 @@ const StyledDescription = styled.div`
   line-height: 24px;
 `;
 
+const StyledSpinner = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const StyledButtons = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr max-content;
+  }
+`;
+
 const OrderFrequency = (props) => {
-  const { editMode, onChange, onEdit } = props;
+  const { editMode, onEdit } = props;
 
   const { state, methods } = useContext(AppContext);
   const {
+    shopId,
     subscriptionIntervals,
-    isSubscriptionIntervalsLoading,
     activeSubscription,
-    activeShopId
+    activeSubscriptionId,
+    isChangeSubscriptionIntervalLoading
   } = state;
   const {
     fetchSubscriptionIntervals,
@@ -54,61 +74,41 @@ const OrderFrequency = (props) => {
   } = methods;
 
   const [showForm, setShowForm] = useState(false);
-  const [intervalOptions, setIntervalOptions] = useState([]);
-  const [activeIntervalOption, setActiveIntervalOption] = useState();
-  const [activeOrder, setActiveOrder] = useState();
-
-  useEffect(() => {
-    if (!subscriptionIntervals) return;
-
-    const matchOption = subscriptionIntervals.find((option) => option.name === activeOrder);
-    setActiveIntervalOption(matchOption);
-  }, [activeOrder]);
-
-  useEffect(() => {
-    if (!activeSubscription) return;
-
-    setActiveOrder(activeSubscription.orderText);
-  }, [activeSubscription]);
-  
-
-  useEffect(() => {
-    if (!subscriptionIntervals) return;
-
-    const innerIntervalOptions = subscriptionIntervals.map((interval) => {
-      const { name } = interval;
-
-      return {
-        name,
-        value: name
-      };
-    });
-
-    setActiveIntervalOption(subscriptionIntervals[0]);
-    setIntervalOptions(innerIntervalOptions);
-  }, [subscriptionIntervals]);
-  
+  const [activeInterval, setActiveInterval] = useState();
 
   const onSaveButtonClick = () => {
-    onChange && onChange(activeIntervalOption);
-
     changeSubscriptionInterval({
-      shopIdentifier: activeShopId,
-      subscriptionIntervalId: activeIntervalOption.id,
-      subscriptionId: activeSubscription.id
+      shopIdentifier: shopId,
+      subscriptionIntervalId: activeInterval?.id,
+      subscriptionId: activeSubscriptionId
     });
 
     setShowForm(false);
+    onEdit && onEdit();
   };
 
-  const onChangeOption = (event) => setActiveOrder(event.target.value);
+  const onCancelButtonClick = () => {
+    setShowForm(false);
+    onEdit && onEdit();
+  };
+
+  const onChangeOption = (event) => {
+    const matchOption = subscriptionIntervals?.find((option) => option.value === event.target.value);
+
+    setActiveInterval(matchOption);
+  };
 
   const onOpenForm = () => {
     setShowForm(true);
     onEdit && onEdit();
     fetchSubscriptionIntervals();
   };
-  
+
+  useEffect(() => {
+    const matchOption = subscriptionIntervals?.find((option) => option.name === activeSubscription?.frequency);
+
+    setActiveInterval(matchOption);
+  }, [activeSubscriptionId]);
 
   return (
     <div>
@@ -121,26 +121,39 @@ const OrderFrequency = (props) => {
         />
       </StyledTitle>
 
-      {showForm && isSubscriptionIntervalsLoading ? (
-        <LoadingSpinner />
-      ) : showForm && !isSubscriptionIntervalsLoading ? (
+      {showForm ? (
         <StyledForm>
           <SelectField
-            value={activeOrder}
-            options={intervalOptions}
+            value={activeInterval?.value}
+            options={subscriptionIntervals}
             onChange={onChangeOption}
           />
-          <Button 
-            className="button"
-            primary 
-            onClick={onSaveButtonClick}
-          >
-            Save
-          </Button>
+          <StyledButtons>
+            <Button 
+              className="button"
+              primary 
+              onClick={onSaveButtonClick}
+            >
+              Save
+            </Button>
+            <Button 
+              className="button" 
+              onClick={onCancelButtonClick}
+            >
+              Cancel
+            </Button>
+          </StyledButtons>
         </StyledForm>
       ) : (
         <StyledDescription>
-          { activeOrder }
+          {isChangeSubscriptionIntervalLoading ? (
+            <StyledSpinner>
+              <LoadingSpinner />
+            </StyledSpinner>
+          ) : (
+            activeSubscription?.frequency
+          )}
+          
         </StyledDescription>
       )}
     </div>

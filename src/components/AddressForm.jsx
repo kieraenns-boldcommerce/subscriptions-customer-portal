@@ -9,6 +9,21 @@ import AppContext from "../contexts/AppContext";
 import { STATE_OPTIONS, CITY_OPTIONS, COUNTRY_OPTIONS } from "../constants";
 
 const AddressFormPropTypes = {
+  type: PT.oneOf(["shipping", "billing"]).isRequired,
+  data: PT.shape({
+    id: PT.number.isRequired,
+    customerId: PT.number.isRequired,
+    city: PT.string.isRequired,
+    company: PT.string.isRequired,
+    country: PT.string.isRequired,
+    firstName: PT.string.isRequired,
+    lastName: PT.string.isRequired,
+    phone: PT.string.isRequired,
+    province: PT.string.isRequired,
+    addressLineFirst: PT.string.isRequired,
+    addressLineSecond: PT.string.isRequired,
+    zip: PT.string.isRequired
+  }).isRequired,
   onConfirm: PT.func,
   onCancel: PT.func
 };
@@ -34,35 +49,27 @@ const StyledAddressFormSecondRow = styled.div`
 `;
 
 const AddressForm = (props) => {
-  const { onConfirm, onCancel } = props;
+  const { type, data, onConfirm, onCancel } = props;
 
   const { state, methods } = useContext(AppContext);
-  const {
-    activeAddressData,
-    activeShopId
-  } = state;
-  const {
-    setActiveAddressData,
-    formatAddressDataForServer,
-    changeAddress
-  } = methods;
+  const { shopId } = state;
+  const { changeAddress } = methods;
 
-  const [addressDataForm, setAddressDataForm] = useState(activeAddressData);
+  const [addressDataForm, setAddressDataForm] = useState(data);
 
   const {
-    type,
     id,
     customerId,
     city,
-    companyName,
+    company,
     country,
     firstName,
     lastName,
-    phoneNumber,
-    stateOrProvince,
+    phone,
+    province,
     addressLineFirst,
     addressLineSecond,
-    zipOrPostalCode
+    zip
   } = addressDataForm;
 
   const title = type === "shipping"
@@ -70,21 +77,20 @@ const AddressForm = (props) => {
     : "Editing billing address";
 
   const onConfirmAddressButtonClick = () => {
-    setActiveAddressData(addressDataForm);
-
     changeAddress({
-      shopIdentifier: activeShopId,
+      shopIdentifier: shopId,
       customerId,
       addressId: id,
-      data: {
-        customer_address: {
-          ...formatAddressDataForServer(addressDataForm)
-        }
-      }
+      data: addressDataForm
     });
 
     onConfirm && onConfirm();
   };
+
+  const onFormFieldChange = (event, key) => setAddressDataForm((prev) => ({
+    ...prev,
+    [key]: event.target.value
+  }));
 
   return (
     <Section title={title}>
@@ -95,34 +101,22 @@ const AddressForm = (props) => {
             <InputField
               value={firstName}
               label="First name"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                firstName: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "firstName")}
             />
             <InputField
               value={lastName}
               label="Last name"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                lastName: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "lastName")}
             />
             <InputField
               value={addressLineFirst}
               label="Address line 1"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                addressLineFirst: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "addressLineFirst")}
             />
             <InputField
               value={addressLineSecond}
               label="Address line 2"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                addressLineSecond: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "addressLineSecond")}
             />
           </FieldsLayout>
 
@@ -132,58 +126,38 @@ const AddressForm = (props) => {
                 options={CITY_OPTIONS}
                 value={city}
                 label="City"
-                onChange={(event) => {
-                  setAddressDataForm((prev) => ({
-                    ...prev,
-                    city: event.target.value
-                  }));
-                }}
+                onChange={(event) => onFormFieldChange(event, "city")}
               />
               <SelectField
                 options={STATE_OPTIONS}
-                value={stateOrProvince}
+                value={province}
                 label="State/Province"
-                onChange={(event) => setAddressDataForm((prev) => ({
-                  ...prev,
-                  stateOrProvince: event.target.value
-                }))}
+                onChange={(event) => onFormFieldChange(event, "province")}
               />
               <SelectField
                 options={COUNTRY_OPTIONS}
                 value={country}
                 label="Country"
-                onChange={(event) => setAddressDataForm((prev) => ({
-                  ...prev,
-                  country: event.target.value
-                }))}
+                onChange={(event) => onFormFieldChange(event, "country")}
               />
             </FieldsLayout>
           </StyledAddressFormSecondRow>
 
           <FieldsLayout>
             <InputField
-              value={zipOrPostalCode}
+              value={zip}
               label="Zip/Postal code"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                zipOrPostalCode: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "zip")}
             />
             <InputField
-              value={phoneNumber}
+              value={phone}
               label="Phone number"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                phoneNumber: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "phone")}
             />
             <InputField
-              value={companyName}
+              value={company}
               label="Company name (optional)"
-              onInput={(event) => setAddressDataForm((prev) => ({
-                ...prev,
-                companyName: event.target.value
-              }))}
+              onInput={(event) => onFormFieldChange(event, "company")}
             />
           </FieldsLayout>
 

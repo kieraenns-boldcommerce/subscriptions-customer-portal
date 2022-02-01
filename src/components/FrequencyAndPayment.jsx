@@ -31,12 +31,9 @@ const FrequencyAndPayment = (props) => {
     onEditPayment
   } = props;
 
-  const onFrequencyChangeButtonClick = (option) => onEditFrequency && onEditFrequency(option);
-
   return (
     <StyledFrequencyAndPayment>
       <OrderFrequency
-        onChange={onFrequencyChangeButtonClick}
         onEdit={onEditFrequency}
         editMode={editModeFrequency}
       />

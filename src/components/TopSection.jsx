@@ -77,26 +77,27 @@ const TopSection = (props) => {
   const { state, methods } = useContext(AppContext);
 
   const {
+    activeSubscription,
+    activeSubscriptionOption,
     subscriptions,
     subscriptionOptions,
-    messageData,
-    activeSubscriptionOption
+    messageProps
   } = state;
   const {
-    setActiveSubscriptionId,
-    setActiveSubscriptionOption
+    setActiveSubscriptionId
   } = methods;
+
+  const showMenu = activeSubscription?.status !== "inactive";
 
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
   const onOptionChange = (event) => {
     const { target } = event;
 
-    const matchOption = subscriptionOptions && subscriptionOptions.find((option) => option.value === target.value);
-    const matchSubscription = subscriptions && subscriptions.find((subscription) => String(subscription.id) === target.value);
+    const matchOption = subscriptionOptions?.find((option) => option.value === target.value);
+    const matchSubscription = subscriptions?.find((subscription) => String(subscription.id) === target.value);
 
-    setActiveSubscriptionOption(matchOption);
-    setActiveSubscriptionId(matchSubscription.id);
+    setActiveSubscriptionId(matchSubscription?.id);
 
     onSubscriptionChange && onSubscriptionChange(matchOption);
   };
@@ -128,15 +129,16 @@ const TopSection = (props) => {
             { activeSubscriptionOption?.title }
           </StyledSubscriptionName>
 
-          <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
+          {showMenu && (
+            <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
+          )}
         </StyledSubscriptionInfoTop>
 
         {showMessage ? (
           <StyledSubscriptionInfoBottom>
             <StyledSubscriptionMessage>
               <Message
-                text={messageData.text}
-                buttonText={messageData.buttonText}
+                {...messageProps}
                 onButtonClick={onMessageButtonClick}
               />
             </StyledSubscriptionMessage>

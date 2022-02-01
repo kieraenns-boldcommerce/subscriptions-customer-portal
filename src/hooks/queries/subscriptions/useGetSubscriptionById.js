@@ -6,7 +6,7 @@ export const useGetSubscriptionById = (props) => {
   const { id, shopIdentifier, onSuccess } = props;
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ["subscription", id],
+    ["subscription", id, shopIdentifier],
     () => SubscriptionsService.getSubscriptionById({ id, shopIdentifier }),
     { onSuccess }
   );

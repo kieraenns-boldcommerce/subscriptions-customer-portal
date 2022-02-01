@@ -3,14 +3,16 @@ import { useQuery } from "react-query";
 
 
 export const useGetSubscriptions = (params) => {
+  const { shopIdentifier } = params;
+
   const { data, isLoading, refetch } = useQuery(
     ["subscriptions", params],
     () => SubscriptionsService.getSubscriptions(params),
-    { enabled: false }
+    { enabled: Boolean(shopIdentifier) }
   );
 
   return {
-    subscriptions: data,
+    subscriptionsData: data,
     isSubscriptionsLoading: isLoading,
     fetchSubscriptions: refetch
   };

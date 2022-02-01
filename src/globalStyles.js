@@ -14,6 +14,8 @@ export const Resets = createGlobalStyle`
   .stx-field--with-select .stx-select,
   .stx-field--with-input .stx-input {
     margin: 0;
+
+    text-transform: none;
   }
 
   .stx-select__icon {
@@ -32,7 +34,6 @@ export const Resets = createGlobalStyle`
   .confirm-button-Message {
     padding: 8px 30px;
 
-    text-transform: none;
     font-size: 14px;
     line-height: 20px;
   }
@@ -72,10 +73,6 @@ export const Resets = createGlobalStyle`
     line-height: inherit;
     text-align: left;
     color: inherit;
-  }
-
-  .button-ModalConfirm {
-    text-transform: none;
   }
 
   @media (min-width: 375px) {
