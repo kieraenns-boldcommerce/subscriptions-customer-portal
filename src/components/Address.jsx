@@ -4,16 +4,18 @@ import TitleWithEditButton from "./TitleWithEditButton";
 
 const AddressPropTypes = {
   type: PT.oneOf(["shipping", "billing"]).isRequired,
-  firstName: PT.string.isRequired,
-  lastName: PT.string.isRequired,
-  addressLineFirst: PT.string.isRequired,
-  addressLineSecond: PT.string,
-  city: PT.string.isRequired,
-  stateOrProvince: PT.string.isRequired,
-  zipOrPostalCode: PT.string.isRequired,
-  country: PT.string.isRequired,
-  phoneNumber: PT.string.isRequired,
-  companyName: PT.string,
+  data: PT.shape({
+    city: PT.string.isRequired,
+    company: PT.string,
+    country: PT.string.isRequired,
+    firstName: PT.string.isRequired,
+    lastName: PT.string.isRequired,
+    phone: PT.string,
+    province: PT.string.isRequired,
+    addressLineFirst: PT.string.isRequired,
+    addressLineSecond: PT.string,
+    zip: PT.string.isRequired
+  }),
   showEditButton: PT.bool,
   altTextEditButton: PT.string,
   onEdit: PT.func
@@ -22,6 +24,7 @@ const AddressPropTypes = {
 const AddressDefaultProps = {
   showEditButton: false
 };
+
 
 const StyledAddress = styled.div`
   font-size: 13px;
@@ -45,22 +48,28 @@ const StyledFullName = styled.div`
 const Address = (props) => {
   const {
     type,
-    firstName,
-    lastName,
-    addressLineFirst,
-    addressLineSecond,
-    city,
-    stateOrProvince,
-    zipOrPostalCode,
-    country,
-    phoneNumber,
-    companyName,
+    data,
     showEditButton,
     altTextEditButton,
     onEdit
   } = props;
 
   const title = type === "shipping" ? "Shipping address" : "Billing address";
+
+  if (!data) return null;
+
+  const {
+    city,
+    company,
+    country,
+    firstName,
+    lastName,
+    phone,
+    province,
+    addressLineFirst,
+    addressLineSecond,
+    zip
+  } = data;
 
   return (
     <StyledAddress>
@@ -80,10 +89,10 @@ const Address = (props) => {
 
       { addressLineFirst }<br />
       { addressLineSecond && <>{ addressLineSecond }<br /></> }
-      { city }, { stateOrProvince }, { zipOrPostalCode }<br />
+      { city }, { province }, { zip }<br />
       { country }<br />
-      { companyName && <>Company: { companyName }<br /></> }
-      Phone: { phoneNumber }
+      { company && <>Company: { company }<br /></> }
+      { phone && <>Phone: { phone }</>}
 
     </StyledAddress>
   );

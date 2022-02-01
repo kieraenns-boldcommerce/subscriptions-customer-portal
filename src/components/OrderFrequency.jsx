@@ -1,17 +1,12 @@
 import PT from "prop-types";
-import { Button, SelectField } from "@boldcommerce/stacks-ui";
+import { Button, SelectField, LoadingSpinner } from "@boldcommerce/stacks-ui";
 import TitleWithEditButton from "./TitleWithEditButton";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import AppContext from "../contexts/AppContext";
 
-export const OptionPropTypes = {
-  name: PT.string.isRequired,
-  value: PT.string.isRequired
-};
 
 export const OrderFrequencyPropTypes = {
-  options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
-  onChange: PT.func,
   onEdit: PT.func,
   editMode: PT.bool
 };
@@ -32,7 +27,12 @@ const StyledForm = styled.div`
 
   @media (min-width: 576px) {
     column-gap: 20px;
-    grid-template-columns: 2fr 1fr;
+  }
+
+  @media (min-width: 768px) {
+    row-gap: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
   }
 `;
 
@@ -42,30 +42,73 @@ const StyledDescription = styled.div`
   line-height: 24px;
 `;
 
+const StyledSpinner = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const StyledButtons = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr max-content;
+  }
+`;
+
 const OrderFrequency = (props) => {
-  const { options, editMode, onChange, onEdit } = props;
+  const { editMode, onEdit } = props;
+
+  const { state, methods } = useContext(AppContext);
+  const {
+    shopId,
+    subscriptionIntervals,
+    activeSubscription,
+    activeSubscriptionId,
+    isChangeSubscriptionIntervalLoading
+  } = state;
+  const {
+    fetchSubscriptionIntervals,
+    changeSubscriptionInterval
+  } = methods;
 
   const [showForm, setShowForm] = useState(false);
-  const [activeOption, setActiveOption] = useState(options[0]);
-  const [activeOptionValue, setActiveOptionValue] = useState(options[0].value);
-
-  useEffect(() => {
-    const matchOption = options.find((option) => option.value === activeOptionValue);
-    setActiveOption(matchOption);
-  }, [activeOptionValue]);
+  const [activeInterval, setActiveInterval] = useState();
 
   const onSaveButtonClick = () => {
-    onChange && onChange(activeOption);
+    changeSubscriptionInterval({
+      shopIdentifier: shopId,
+      subscriptionIntervalId: activeInterval?.id,
+      subscriptionId: activeSubscriptionId
+    });
+
     setShowForm(false);
+    onEdit && onEdit();
   };
 
-  const onChangeOption = (event) => setActiveOptionValue(event.target.value);
+  const onCancelButtonClick = () => {
+    setShowForm(false);
+    onEdit && onEdit();
+  };
+
+  const onChangeOption = (event) => {
+    const matchOption = subscriptionIntervals?.find((option) => option.value === event.target.value);
+
+    setActiveInterval(matchOption);
+  };
 
   const onOpenForm = () => {
     setShowForm(true);
     onEdit && onEdit();
+    fetchSubscriptionIntervals();
   };
-  
+
+  useEffect(() => {
+    const matchOption = subscriptionIntervals?.find((option) => option.name === activeSubscription?.frequency);
+
+    setActiveInterval(matchOption);
+  }, [activeSubscriptionId]);
 
   return (
     <div>
@@ -81,21 +124,36 @@ const OrderFrequency = (props) => {
       {showForm ? (
         <StyledForm>
           <SelectField
-            value={activeOptionValue}
-            options={options}
+            value={activeInterval?.value}
+            options={subscriptionIntervals}
             onChange={onChangeOption}
           />
-          <Button 
-            className="button"
-            primary 
-            onClick={onSaveButtonClick}
-          >
-            Save
-          </Button>
+          <StyledButtons>
+            <Button 
+              className="button"
+              primary 
+              onClick={onSaveButtonClick}
+            >
+              Save
+            </Button>
+            <Button 
+              className="button" 
+              onClick={onCancelButtonClick}
+            >
+              Cancel
+            </Button>
+          </StyledButtons>
         </StyledForm>
       ) : (
         <StyledDescription>
-          { activeOption.name }
+          {isChangeSubscriptionIntervalLoading ? (
+            <StyledSpinner>
+              <LoadingSpinner />
+            </StyledSpinner>
+          ) : (
+            activeSubscription?.frequency
+          )}
+          
         </StyledDescription>
       )}
     </div>

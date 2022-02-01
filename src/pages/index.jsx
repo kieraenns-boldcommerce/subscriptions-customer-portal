@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
 import Tabs from "../components/Tabs";
@@ -10,49 +11,8 @@ import TopSection from "../components/TopSection";
 import Section from "../components/Section";
 import ModalConfirm from "../components/ModalConfirm";
 import styled from "styled-components";
+import AppContext from "../contexts/AppContext";
 
-
-const OPTIONS_ORDER_FREQUENCE = [
-  { name: "Every 1 week", value: "every-one-week" },
-  { name: "Every 2 weeks", value: "every-two-weeks" },
-  { name: "Every month", value: "every-month" }
-];
-
-const OPTIONS_SUBSCRIPTIONS = [
-  { name: "<product name>", value: "1035489" },
-  { name: "<product name2>", value: "2145590" }
-];
-
-const products = [
-  {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-    name: "Product Name",
-    variant: "Variant Name",
-    price: 2499,
-    quantity: 1
-  },
-  {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-    name: "Product Name",
-    variant: "Variant Name",
-    price: 2499,
-    quantity: 1
-  },
-  {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-    name: "Product Name",
-    variant: "Variant Name",
-    price: 2499,
-    quantity: 1
-  },
-  {
-    image: "https://s3-alpha-sig.figma.com/img/330a/3642/0669d5cc9ce3cade3874f65dfa4eaaab?Expires=1643587200&Signature=g~KjnfR8XdruHS-ngNiZtLfYdulJ837pX6nz2K-LpgduT8lvbnUYBEK~f8Kphewyt9lkWD1N~iRXdhRDRXjPFmt9FBQpHMaIooG529yTsZosSu8sALRFHKO8U06Eq1n~jlHLEgoJuetgkWzP69C0y7dt1SfTM13UU9z67pAN0idpTszu2H0zEs3nu71dL0rCXVjRnIEjijCkg0w3nrqwqtctMsZhVeKptQLKzEWUgMmQEnLUFnHonOJVQiL58P~-qzxD4XCezxeg5j0ibuv~uY3~F2-lUV2EpfSGXhoNhTopv9DTw7V48eb1NG-VXE8n9dTsULizjWO6uaIYG6hk8Q__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-    name: "Product Name",
-    variant: "Variant Name",
-    price: 2499,
-    quantity: 1
-  }
-];
 
 const StyledTitle = styled.h1`
   margin-bottom: 38px;
@@ -87,35 +47,104 @@ const StyledTopSectionContainer = styled.div`
   margin-bottom: 30px;
 `;
 
+const StyledFullPageSpinner = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  .stx-loading-spinner {
+    width: 50px;
+    height: 50px;
+  }
+`;
+
+const StyledSpinner = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background-color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 
 const IndexPage = () => {
-  const [activeMenuItem, setActiveMenuItem] = useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [activeFrequency, setActiveFrequency] = useState(null);
+  // * States
+  const [activeMenuValue, setActiveMenuValue] = useState(null);
   const [showBillingAddress, setShowBillingAddress] = useState(false);
   const [showShippingAddress, setShowShippingAddress] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
   const [showOrderFrequency, setShowOrderFrequency] = useState(false);
   const [showSubscriptionMessage, setShowSubscriptionMessage] = useState(false);
   const [showAnyForm, setShowAnyForm] = useState(false);
-
-  const [modalConfirmData, setModalConfirmData] = useState({});
-  const { title, description, textButtonCancel, textButtonConfirm } = modalConfirmData;
+  const [showModal, setShowModal] = useState(false);
 
   const formContainerRef = useRef(null);
 
-  const showModal = Boolean(activeMenuItem);
+  const { state, methods } = useContext(AppContext);
+  const {
+    shopId,
+    activeSubscription,
+    activeSubscriptionId,
+    isAppLoading,
+    isChangeAddressLoading,
+    isChangeSubscriptionIntervalLoading
+  } = state;
+  const {
+    pauseSubscription,
+    reactivateSubscription,
+    cancelSubscription
+  } = methods;
 
-  const onMenuItemChange = (item) => setActiveMenuItem(item);
 
-  const onCloseFormButtonClick = () => setShowAnyForm(false);
+  // * Handlers
+  const onMenuItemChange = (item) => {
+    setActiveMenuValue(item.value);
+    setShowModal(true);
+  };
 
-  const onCancelModalButtonClick = () => setActiveMenuItem(null);
+  const onCancelFormButtonClick = () => setShowAnyForm(false);
+  const onConfirmFormButtonClick = () => setShowAnyForm(false);
 
+  const onCancelModalButtonClick = () => setShowModal(false);
   const onConfirmModalButtonClick = () => {
-    setActiveMenuItem(null);
-    setShowSubscriptionMessage(true);
+    setShowModal(false);
     setShowAnyForm(false);
+    setActiveMenuValue(null);
+
+    if (activeMenuValue === "resume") {
+      reactivateSubscription({
+        shopIdentifier: shopId,
+        subscriptionId: activeSubscriptionId
+      });
+
+      setShowSubscriptionMessage(false);
+      return;
+    }
+
+    if (activeMenuValue === "inactive") {
+      cancelSubscription({
+        shopIdentifier: shopId,
+        subscriptionId: activeSubscriptionId
+      });
+
+      setShowSubscriptionMessage(true);
+      return;
+    }
+
+    pauseSubscription({
+      shopIdentifier: shopId,
+      subscriptionId: activeSubscriptionId
+    });
+
+    setShowSubscriptionMessage(true);
   };
 
   const onEditShippingAddress = () => {
@@ -142,8 +171,7 @@ const IndexPage = () => {
     setShowOrderFrequency(false);
   };
 
-  const onEditOrderFrequency = (option) => {
-    setActiveFrequency(option);
+  const onEditOrderFrequency = () => {
     setShowOrderFrequency((v) => !v);
     setShowAnyForm(false);
   };
@@ -156,20 +184,24 @@ const IndexPage = () => {
     setShowShippingAddress(false);
   };
 
-  useEffect(() => {
-    if (!activeMenuItem) return;
-
-    const { value } = activeMenuItem;
-    
-    setModalConfirmData({
-      title: `Are you sure you want to ${value} this subscription?`,
-      description: value === "pause" ? 
-        "This will pause all orders until the subscription is resumed." : 
-        "This will cancel your subscription and all unprocessed orders.",
-      textButtonCancel: `No, don’t ${value}`,
-      textButtonConfirm: `Yes, ${value}`
+  const onMessageButtonClick = () => {
+    reactivateSubscription({
+      shopIdentifier: shopId,
+      subscriptionId: activeSubscriptionId
     });
-  }, [activeMenuItem]);
+
+    setShowSubscriptionMessage(false);
+  };
+
+  useEffect(() => {
+    if (!activeSubscriptionId) return;
+
+    const isInactiveSubscription = activeSubscription.status === "inactive" || activeSubscription.status === "paused";
+
+    setShowSubscriptionMessage(isInactiveSubscription);
+    setShowAnyForm(false);
+    setShowOrderFrequency(false);
+  }, [activeSubscriptionId]);
 
 
   const tabs = [
@@ -177,15 +209,7 @@ const IndexPage = () => {
       content: (
         <Address
           type="shipping"
-          firstName="Jodeci"
-          lastName="Correa"
-          addressLineFirst="27 Main Street"
-          city="Winnipeg"
-          stateOrProvince="Manitoba"
-          zipOrPostalCode="R3W 4S5"
-          country="Canada"
-          phoneNumber="204-123-1234"
-          companyName="Queens Gambit"
+          data={activeSubscription?.shippingAddress}
           showEditButton={!showShippingAddress && !showSubscriptionMessage}
           altTextEditButton="Edit shipping address"
           onEdit={onEditShippingAddress}
@@ -197,15 +221,7 @@ const IndexPage = () => {
       content: (
         <Address
           type="billing"
-          firstName="Jodeci"
-          lastName="Correa"
-          addressLineFirst="27 Main Street"
-          city="Winnipeg"
-          stateOrProvince="Manitoba"
-          zipOrPostalCode="R3W 4S5"
-          country="Canada"
-          phoneNumber="204-123-1234"
-          companyName="Queens Gambit"
+          data={activeSubscription?.billingAddress}
           showEditButton={!showBillingAddress && !showSubscriptionMessage}
           altTextEditButton="Edit billing address"
           onEdit={onEditBillingAddress}
@@ -216,8 +232,7 @@ const IndexPage = () => {
     { 
       content: (
         <FrequencyAndPayment 
-          options={OPTIONS_ORDER_FREQUENCE}
-          editModeFrequency={!showOrderFrequency && !showSubscriptionMessage}
+          editModeFrequency={!showOrderFrequency && !showSubscriptionMessage && !isChangeSubscriptionIntervalLoading}
           editModePayment={!showPaymentMethod && !showSubscriptionMessage}
           onEditFrequency={onEditOrderFrequency}
           onEditPayment={onEditPaymentMethod}
@@ -231,51 +246,97 @@ const IndexPage = () => {
     <DefaultLayout>
       <Container>
 
-        <StyledTitle>My Subscriptions</StyledTitle>
+        {isAppLoading ? (
+          <StyledFullPageSpinner>
+            <LoadingSpinner />
+          </StyledFullPageSpinner>
+        ) : (
+          <>
+            <StyledTitle>My Subscriptions</StyledTitle>
+      
+            <StyledTopSectionContainer>
+              <TopSection
+                label="Subscriptions"
+                onMenuItemChange={onMenuItemChange}
+                showMessage={showSubscriptionMessage}
+                onMessageButtonClick={onMessageButtonClick}
+              />
+            </StyledTopSectionContainer>
 
-        <StyledTopSectionContainer>
-          <TopSection
-            options={OPTIONS_SUBSCRIPTIONS}
-            label="Subscriptions"
-            date="December 25, 2020"
-            onMenuItemChange={onMenuItemChange}
-            showMessage={showSubscriptionMessage}
-            onMessageButtonClick={() => setShowSubscriptionMessage(false)}
-          />
-        </StyledTopSectionContainer>
+            <Section>
+              <Tabs tabs={tabs} />
 
-        <Section>
-          <Tabs tabs={tabs} />
-        </Section>
-        <StyledFormContainer showForm={showAnyForm} ref={formContainerRef} onTransitionEnd={onFormCollapse}>
-          {showBillingAddress && (
-            <AddressForm
-              type="billing"
-              onCancel={onCloseFormButtonClick}
-            />
-          )}
-          {showShippingAddress && (
-            <AddressForm
-              type="shipping"
-              onCancel={onCloseFormButtonClick}
-            />
-          )}
-          {showPaymentMethod && (
-            <StyledPaymentContent />
-          )}
-        </StyledFormContainer>
+              {isChangeAddressLoading && (
+                <StyledSpinner>
+                  <LoadingSpinner />
+                </StyledSpinner>
+              )}
+            </Section>
 
-        <ProductList products={products} />
+            <StyledFormContainer
+              showForm={showAnyForm}
+              ref={formContainerRef}
+              onTransitionEnd={onFormCollapse}
+            >
+              {showBillingAddress && (
+                <AddressForm
+                  type="billing"
+                  data={activeSubscription?.billingAddress}
+                  onConfirm={onConfirmFormButtonClick}
+                  onCancel={onCancelFormButtonClick}
+                />
+              )}
+              {showShippingAddress && (
+                <AddressForm
+                  type="shipping"
+                  data={activeSubscription?.shippingAddress}
+                  onConfirm={onConfirmFormButtonClick}
+                  onCancel={onCancelFormButtonClick}
+                />
+              )}
+              {showPaymentMethod && (
+                <StyledPaymentContent />
+              )}
+            </StyledFormContainer>
+      
+            <ProductList />
 
-        <ModalConfirm
-          isVisible={showModal}
-          title={title}
-          description={description}
-          textButtonCancel={textButtonCancel}
-          textButtonConfirm={textButtonConfirm}
-          onCancel={onCancelModalButtonClick}
-          onConfirm={onConfirmModalButtonClick}
-        />
+            {activeMenuValue === "pause" && (
+              <ModalConfirm
+                isVisible={showModal}
+                title="Are you sure you want to pause this subscription?"
+                description="This will pause all orders until the subscription is resumed."
+                textButtonCancel="No, don’t pause"
+                textButtonConfirm="Yes, pause"
+                onCancel={onCancelModalButtonClick}
+                onConfirm={onConfirmModalButtonClick}
+              />
+            )}
+
+            {activeMenuValue === "inactive" && (
+              <ModalConfirm
+                isVisible={showModal}
+                title="Are you sure you want to cancel this subscription?"
+                description="This will cancel your subscription and all unprocessed orders."
+                textButtonCancel="No, don’t cancel"
+                textButtonConfirm="Yes, cancel"
+                onCancel={onCancelModalButtonClick}
+                onConfirm={onConfirmModalButtonClick}
+              />
+            )}
+
+            {activeMenuValue === "resume" && (
+              <ModalConfirm
+                isVisible={showModal}
+                title="Are you sure you want to resume this subscription?"
+                textButtonCancel="No, don’t resume"
+                textButtonConfirm="Yes, resume"
+                onCancel={onCancelModalButtonClick}
+                onConfirm={onConfirmModalButtonClick}
+              />
+            )}
+          </>
+        )}
 
       </Container>
     </DefaultLayout>

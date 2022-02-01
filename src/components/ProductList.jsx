@@ -1,11 +1,9 @@
-import PT from "prop-types";
+import { useContext } from "react";
 import styled from "styled-components";
 import Section from "./Section";
-import ProductCard, { ProductCardPropTypes } from "./ProductCard";
+import ProductCard from "./ProductCard";
+import AppContext from "../contexts/AppContext";
 
-const ProductListPropTypes = {
-  products: PT.arrayOf(PT.shape(ProductCardPropTypes)).isRequired
-};
 
 const StyledProductList = styled.div`
   display: grid;
@@ -46,17 +44,18 @@ const StyledProduct = styled.div`
   }
 `;
 
-const ProductList = (props) => {
-  const { products } = props;
+const ProductList = () => {
+  const { state } = useContext(AppContext);
+  const { activeSubscription } = state;  
 
   return (
     <Section title="Products in my subscription">
       <StyledProductList>
-        {products.map((product, index) => {
-          const { image, name, variant, price, quantity } = product;
+        {activeSubscription?.products.map((product) => {
+          const { id, image, name, variant, price, quantity } = product;
 
           return (
-            <StyledProduct key={index}>
+            <StyledProduct key={id}>
               <ProductCard
                 image={image}
                 name={name}
@@ -71,7 +70,5 @@ const ProductList = (props) => {
     </Section>
   );
 };
-
-ProductList.propTypes = ProductListPropTypes;
 
 export default ProductList;

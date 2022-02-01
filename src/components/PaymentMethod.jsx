@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import PT from "prop-types";
+import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import TitleWithEditButton from "./TitleWithEditButton";
-import cardLogo from "../assets/images/visa.png";
+import visaIcon from "../assets/icons/cards/visa.svg";
+import mastercardIcon from "../assets/icons/cards/mastercard.svg";
 import styled from "styled-components";
+import AppContext from "../contexts/AppContext";
 
 
 export const PaymentMethodPropTypes = {
@@ -28,15 +32,41 @@ const StyledPaymentContent = styled.div`
   line-height: 20px;
 `;
 
-const StyledPaymentImage = styled.img`
-  max-width: 100%;
+const StyledPaymentCardIcon = styled.img`
+  width: 44px;
+  height: 26px;
+`;
+
+const StyledSpinner = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const PaymentMethod = (props) => {
   const { editMode, onEdit } = props;
 
+  const { state } = useContext(AppContext);
+  const { subscriptionPaymentMethod, isSubscriptionPaymentMethodLoading } = state;
+
   const onOpenForm = () => onEdit && onEdit();
-  
+
+  let cardIcon;
+  let innerCardType;
+
+  switch (subscriptionPaymentMethod?.paymentSystem) {
+  case "mastercard":
+    cardIcon = mastercardIcon;
+    break;
+  case "visa":
+    cardIcon = visaIcon;
+    break;
+  }
+
+  switch (subscriptionPaymentMethod?.cardType) {
+  case "credit_card":
+    innerCardType = "Credit card";
+    break;
+  }
 
   return (
     <div>
@@ -49,11 +79,18 @@ const PaymentMethod = (props) => {
         />
       </StyledTitle>
 
-      <StyledPaymentContent>
-        Credit card - 
-        <StyledPaymentImage src={cardLogo} />
-        ending in 9111 - Expires 11/22
-      </StyledPaymentContent>
+      {isSubscriptionPaymentMethodLoading ? (
+        <StyledSpinner>
+          <LoadingSpinner />
+        </StyledSpinner>
+      ) : (
+        <StyledPaymentContent>
+          { innerCardType } - 
+          <StyledPaymentCardIcon src={cardIcon} />
+        ending in { subscriptionPaymentMethod?.lastFourNumbers } - Expires { subscriptionPaymentMethod?.expiration.date }
+        </StyledPaymentContent>
+      )}
+
     </div>
   );
 };

@@ -1,20 +1,14 @@
-import { useState, useEffect } from "react";
+import { useContext } from "react";
 import PT from "prop-types";
 import { SelectField } from "@boldcommerce/stacks-ui";
 import Menu from "./Menu";
 import Message from "./Message";
 import styled from "styled-components";
+import AppContext from "../contexts/AppContext";
 
-
-const OptionPropTypes = {
-  name: PT.string.isRequired,
-  value: PT.string.isRequired
-};
 
 const TopSectionPropTypes = {
-  options: PT.arrayOf(PT.shape(OptionPropTypes)).isRequired,
   label: PT.string.isRequired,
-  date: PT.string.isRequired,
   showMessage: PT.bool,
   onMessageButtonClick: PT.func,
   onSubscriptionChange: PT.func,
@@ -24,12 +18,6 @@ const TopSectionPropTypes = {
 const TopSectionDefaultProps = {
   showMessage: false
 };
-
-
-const MENU_ITEMS = [
-  { name: "Pause subscription", value: "pause" },
-  { type: "alert", name: "Cancel subscription", value: "cancel" }
-];
 
 
 const StyledTopSection = styled.div`
@@ -78,72 +66,86 @@ const StyledSubscriptionMessage = styled.div`
 `;
 
 const TopSection = (props) => {
-  const { options, label, date, showMessage, onMessageButtonClick, onSubscriptionChange, onMenuItemChange } = props;
+  const {
+    label,
+    showMessage,
+    onMessageButtonClick,
+    onSubscriptionChange,
+    onMenuItemChange
+  } = props;
 
-  const [activeMenuItem, setActiveMenuItem] = useState(options[0]);
-  const [activeOption, setActiveOption] = useState(options[0]);
-  const [messageData, setMessageData] = useState({});
-  const { text, buttonText } = messageData;
+  const { state, methods } = useContext(AppContext);
+
+  const {
+    activeSubscription,
+    activeSubscriptionOption,
+    subscriptions,
+    subscriptionOptions,
+    messageProps
+  } = state;
+  const {
+    setActiveSubscriptionId
+  } = methods;
+
+  const showMenu = activeSubscription?.status !== "inactive";
+
+  const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
   const onOptionChange = (event) => {
     const { target } = event;
 
-    const matchOption = options.find((option) => option.value === target.value);
+    const matchOption = subscriptionOptions?.find((option) => option.value === target.value);
+    const matchSubscription = subscriptions?.find((subscription) => String(subscription.id) === target.value);
 
-    setActiveOption(matchOption);
+    setActiveSubscriptionId(matchSubscription?.id);
+
     onSubscriptionChange && onSubscriptionChange(matchOption);
   };
 
-  const onMenuItemClick = (item) => {
-    onMenuItemChange(item);
-    setActiveMenuItem(item);
-  };
+  const onMenuItemClick = (item) => onMenuItemChange(item);
 
 
-  useEffect(() => {
-    if (!activeMenuItem) return;
-
-    const { value } = activeMenuItem;
-    
-    setMessageData({
-      text: `This subscription has been ${value === "pause" ? "paused" : "canceled"}.`,
-      buttonText: `${value === "pause" ? "Resume" : "Reactivate"} subscription`
-    });
-  }, [activeMenuItem]);
+  const MENU_ITEMS = [
+    { name: `${showMessage ? "Resume" : "Pause"} subscription`, value: showMessage ? "resume" : "pause" },
+    { type: "alert", name: "Cancel subscription", value: "inactive" }
+  ];
 
 
   return (
     <StyledTopSection>
-      <SelectField
-        className="subscription-select-TopSection"
-        options={options}
-        value={activeOption.value}
-        label={label}
-        onChange={onOptionChange}
-      />
+      {showSubscriptionsSelect && (
+        <SelectField
+          className="subscription-select-TopSection"
+          options={subscriptionOptions}
+          value={activeSubscriptionOption?.value}
+          label={label}
+          onChange={onOptionChange}
+        />
+      )}
 
       <StyledSubscriptionInfo>
         <StyledSubscriptionInfoTop>
           <StyledSubscriptionName>
-            { activeOption.name } Subscription — #{ activeOption.value }
+            { activeSubscriptionOption?.title }
           </StyledSubscriptionName>
 
-          <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
+          {showMenu && (
+            <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
+          )}
         </StyledSubscriptionInfoTop>
 
         {showMessage ? (
           <StyledSubscriptionInfoBottom>
             <StyledSubscriptionMessage>
               <Message
-                text={text}
-                buttonText={buttonText}
+                {...messageProps}
                 onButtonClick={onMessageButtonClick}
               />
             </StyledSubscriptionMessage>
           </StyledSubscriptionInfoBottom>
         ) : (
           <StyledSubscriptionInfoBottom>
-            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate> { date }
+            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate> { activeSubscriptionOption?.date }
           </StyledSubscriptionInfoBottom>
         )}
       </StyledSubscriptionInfo>

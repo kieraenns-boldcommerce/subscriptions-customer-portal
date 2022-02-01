@@ -15,6 +15,8 @@ const SectionPropTypes = {
 };
 
 const StyledSection = styled.div`
+  position: relative;
+
   border-top: 1px solid rgba(0, 0, 0, 0.3);
   padding-top: 24px;
 
