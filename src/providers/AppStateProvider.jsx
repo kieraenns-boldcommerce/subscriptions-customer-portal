@@ -10,6 +10,8 @@ import { useReactivateSubscription } from "../hooks/queries/subscriptions/useRea
 import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
 import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/useChangeSubscriptionInterval";
 import { useGetSubscriptionPaymentMethod } from "../hooks/queries/subscriptions/useGetSubscriptionPaymentMethod";
+import { toast } from "react-toastify";
+import Message from "../components/Message";
 
 
 const ChildType = PT.oneOfType([
@@ -29,55 +31,30 @@ const AppStateProvider = (props) => {
 
   // * States
   const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
-  const [toastValue, setToastValue] = useState(null);
 
   // * Handlers
   const onSuccessChangeAddress = () => {
     fetchSubscriptions();
-    setToastValue({
-      isShow: true,
-      text: "Address changed successfully",
-      type: "success"
-    });
+    toast(<Message text="Address changed successfully" type="success" />);
   };
   const onErrorChangeAddress = (error) => {
-    setToastValue({
-      isShow: true,
-      text: error?.message,
-      type: "alert"
-    });
+    toast(<Message text={error?.message} type="alert" />);
   };
   const onSuccessPauseSubscription = () => {
     fetchSubscriptions();
-    setToastValue({
-      isShow: true,
-      text: "Subscription paused successfully",
-      type: "success"
-    });
+    toast(<Message text="Subscription paused successfully" type="success" />);
   };
   const onSuccessReactivateSubscription = () => {
     fetchSubscriptions();
-    setToastValue({
-      isShow: true,
-      text: "Subscription reactivate successfully",
-      type: "success"
-    });
+    toast(<Message text="Subscription reactivated successfully" type="success" />);
   };
   const onSuccessCancelSubscription = () => {
     fetchSubscriptions();
-    setToastValue({
-      isShow: true,
-      text: "Subscription closed successfully",
-      type: "success"
-    });
+    toast(<Message text="Subscription closed successfully" type="success" />);
   };
   const onSuccessChangeSubscriptionInterval = () => {
     fetchSubscriptions();
-    setToastValue({
-      isShow: true,
-      text: "Frequency changed successfully",
-      type: "success"
-    });
+    toast(<Message text="Frequency changed successfully" type="success" />);
   };
 
   // * Hooks
@@ -197,7 +174,6 @@ const AppStateProvider = (props) => {
       subscriptionIntervals,
       messageProps,
       subscriptionPaymentMethod,
-      toastValue,
       isAppLoading,
       isChangeAddressLoading,
       isChangeSubscriptionIntervalLoading,

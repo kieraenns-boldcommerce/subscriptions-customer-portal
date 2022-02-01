@@ -106,7 +106,7 @@ class SubscriptionsService {
     const { shopIdentifier } = params;
 
     const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions`;
+    const url = `/subscriptions/v1/shops/${shopIdentifier}/customers/${157112978}/subscriptions`;
 
     const data = {
       method,

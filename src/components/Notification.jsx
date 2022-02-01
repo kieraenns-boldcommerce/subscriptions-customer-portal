@@ -1,11 +1,7 @@
-import { useContext, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
-import AppContext from "../contexts/AppContext";
-import Message from "./Message";
 
-
-const NotificationContainer = styled(ToastContainer)`
+const StyledNotificationContainer = styled(ToastContainer)`
   padding: 0;
 
   min-width: 600px;
@@ -29,17 +25,8 @@ const NotificationContainer = styled(ToastContainer)`
 
 
 const Notification = () => {
-  const { state } = useContext(AppContext);
-  const { toastValue } = state;
-
-  const showToast = (text, type) => toastValue?.isShow && toast(
-    <Message text={text} type={type} />
-  );
-
-  useEffect(() => showToast(toastValue?.text, toastValue?.type), [toastValue]);
-
   return (
-    <NotificationContainer
+    <StyledNotificationContainer
       position="bottom-center"
       autoClose={4000}
       hideProgressBar
