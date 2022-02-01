@@ -5,16 +5,15 @@ import { useQuery } from "react-query";
 export const useGetSubscriptionPaymentMethod = (props) => {
   const { shopIdentifier, subscriptionId, onSuccess } = props;
 
-  const { data, isLoading, refetch, isFetching } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ["subscriptionPaymentMethod", shopIdentifier, subscriptionId],
     () => SubscriptionsService.getSubscriptionPaymentMethod({ shopIdentifier, subscriptionId }),
-    { onSuccess }
+    { onSuccess, enabled: Boolean(shopIdentifier && subscriptionId) }
   );
 
   return {
     subscriptionPaymentMethod: data,
     isSubscriptionPaymentMethodLoading: isLoading,
-    isSubscriptionPaymentMethodFetching: isFetching,
     fetchSubscriptionPaymentMethod: refetch
   };
 };

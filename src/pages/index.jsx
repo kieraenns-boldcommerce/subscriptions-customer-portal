@@ -10,7 +10,6 @@ import FrequencyAndPayment from "../components/FrequencyAndPayment";
 import TopSection from "../components/TopSection";
 import Section from "../components/Section";
 import ModalConfirm from "../components/ModalConfirm";
-import Message from "../components/Message";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
 
@@ -73,18 +72,6 @@ const StyledSpinner = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-const StyledNotifyMessage = styled.div`
-  margin-top: 38px;
-  margin-left: auto;
-  margin-right: auto;
-
-  max-width: 600px;
-  min-height: 60px;
-
-  display: grid;
-  justify-content: stretch;
 `;
 
 
@@ -314,10 +301,6 @@ const IndexPage = () => {
       
             <ProductList />
 
-            <StyledNotifyMessage>
-              <Message text="Changes saved" type="success" />
-            </StyledNotifyMessage>
-      
             {activeMenuValue === "pause" && (
               <ModalConfirm
                 isVisible={showModal}

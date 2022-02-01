@@ -9,6 +9,7 @@ import { usePauseSubscription } from "../hooks/queries/subscriptions/usePauseSub
 import { useReactivateSubscription } from "../hooks/queries/subscriptions/useReactivateSubscription";
 import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
 import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/useChangeSubscriptionInterval";
+import { useGetSubscriptionPaymentMethod } from "../hooks/queries/subscriptions/useGetSubscriptionPaymentMethod";
 
 
 const ChildType = PT.oneOfType([
@@ -56,7 +57,18 @@ const AppStateProvider = (props) => {
     subscriptionId: activeSubscriptionId
   });
 
-  const { changeAddress, isChangeAddressLoading } = useChangeAddress({
+  const {
+    subscriptionPaymentMethod,
+    isSubscriptionPaymentMethodLoading
+  } = useGetSubscriptionPaymentMethod({
+    shopIdentifier: shopId,
+    subscriptionId: activeSubscriptionId
+  });
+
+  const {
+    changeAddress,
+    isChangeAddressLoading
+  } = useChangeAddress({
     onSuccess: onSuccessChangeAddress
   });
 
@@ -125,6 +137,7 @@ const AppStateProvider = (props) => {
   const isAppLoading = 
     isShopInfoLoading ||
     isSubscriptionsLoading ||
+    isSubscriptionPaymentMethodLoading ||
     isPauseSubscriptionLoading ||
     isReactivateSubscriptionLoading ||
     isCancelSubscriptionLoading;
@@ -139,6 +152,7 @@ const AppStateProvider = (props) => {
       subscriptionOptions,
       subscriptionIntervals,
       messageProps,
+      subscriptionPaymentMethod,
       isAppLoading,
       isChangeAddressLoading,
       isChangeSubscriptionIntervalLoading

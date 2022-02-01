@@ -48,6 +48,38 @@ const adaptIntervalFromServer = (interval) => {
   };
 };
 
+const adaptPaymentMethodFromServer = (payment) => {
+  const renames = renameKeys(
+    payment,
+    [
+      "type",
+      "cc_type",
+      "last_four"
+    ],
+    [
+      "cardType",
+      "paymentSystem",
+      "lastFourNumbers"
+    ]
+  );
+
+  const { expiration } = renames;
+
+  const convertDate = new Date(expiration?.date);
+  const year = convertDate.getFullYear().toString().slice(-2);
+  const month = convertDate.getMonth() + 1;
+
+  const adaptExpiresDate = `${month}/${year}`;
+
+  return {
+    ...renames,
+    expiration: {
+      ...expiration,
+      date: adaptExpiresDate
+    }
+  };
+};
+
 const adaptProductsFromServer = (product) => {
   const {
     id,
@@ -231,7 +263,9 @@ class SubscriptionsService {
 
     const response = await ServiceBase.callApi({ method, url });
 
-    return response;
+    const result = adaptPaymentMethodFromServer(response?.payment_method);
+  
+    return result;
   }
 
   static async reactivateSubscription(params) {
