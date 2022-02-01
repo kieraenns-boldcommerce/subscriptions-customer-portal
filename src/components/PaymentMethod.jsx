@@ -26,7 +26,6 @@ const StyledPaymentContent = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  column-gap: 4px;
 
   font-size: 14px;
   line-height: 20px;
@@ -35,6 +34,8 @@ const StyledPaymentContent = styled.div`
 const StyledPaymentCardIcon = styled.img`
   width: 44px;
   height: 26px;
+  margin-right: 4px;
+  margin-left: 4px;
 `;
 
 const StyledSpinner = styled.div`

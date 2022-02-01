@@ -32,9 +32,7 @@ const AppStateProvider = (props) => {
   const [toastValue, setToastValue] = useState(null);
 
   // * Handlers
-  const onSuccessChangeAddress = (response) => {
-    if (!response) return;
-
+  const onSuccessChangeAddress = () => {
     fetchSubscriptions();
     setToastValue({
       isShow: true,
@@ -42,9 +40,14 @@ const AppStateProvider = (props) => {
       type: "success"
     });
   };
-  const onSuccessPauseSubscription = (response) => {
-    if (!response) return;
-
+  const onErrorChangeAddress = (error) => {
+    setToastValue({
+      isShow: true,
+      text: error?.message,
+      type: "alert"
+    });
+  };
+  const onSuccessPauseSubscription = () => {
     fetchSubscriptions();
     setToastValue({
       isShow: true,
@@ -52,9 +55,15 @@ const AppStateProvider = (props) => {
       type: "success"
     });
   };
-  const onSuccessCancelSubscription = (response) => {
-    if (!response) return;
-
+  const onSuccessReactivateSubscription = () => {
+    fetchSubscriptions();
+    setToastValue({
+      isShow: true,
+      text: "Subscription reactivate successfully",
+      type: "success"
+    });
+  };
+  const onSuccessCancelSubscription = () => {
     fetchSubscriptions();
     setToastValue({
       isShow: true,
@@ -62,9 +71,7 @@ const AppStateProvider = (props) => {
       type: "success"
     });
   };
-  const onSuccessChangeSubscriptionInterval = (response) => {
-    if (!response) return;
-
+  const onSuccessChangeSubscriptionInterval = () => {
     fetchSubscriptions();
     setToastValue({
       isShow: true,
@@ -106,7 +113,8 @@ const AppStateProvider = (props) => {
     changeAddress,
     isChangeAddressLoading
   } = useChangeAddress({
-    onSuccess: onSuccessChangeAddress
+    onSuccess: onSuccessChangeAddress,
+    onError: onErrorChangeAddress
   });
 
   const {
@@ -120,7 +128,7 @@ const AppStateProvider = (props) => {
     reactivateSubscription,
     isReactivateSubscriptionLoading
   } = useReactivateSubscription({
-    onSuccess: onSuccessPauseSubscription
+    onSuccess: onSuccessReactivateSubscription
   });
 
   const {
