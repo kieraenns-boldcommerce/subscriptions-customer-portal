@@ -27,14 +27,51 @@ const AppStateProviderPropTypes = {
 const AppStateProvider = (props) => {
   const { children } = props;
 
-  // * State
+  // * States
   const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
+  const [toastValue, setToastValue] = useState(null);
 
   // * Handlers
-  const onSuccessChangeAddress = (response) => response && fetchSubscriptions();
-  const onSuccessPauseSubscription = (response) => response && fetchSubscriptions();
-  const onSuccessCancelSubscription = (response) => response && fetchSubscriptions();
-  const onSuccessChangeSubscriptionInterval = (response) => response && fetchSubscriptions();
+  const onSuccessChangeAddress = (response) => {
+    if (!response) return;
+
+    fetchSubscriptions();
+    setToastValue({
+      isShow: true,
+      text: "Address changed successfully",
+      type: "success"
+    });
+  };
+  const onSuccessPauseSubscription = (response) => {
+    if (!response) return;
+
+    fetchSubscriptions();
+    setToastValue({
+      isShow: true,
+      text: "Subscription paused successfully",
+      type: "success"
+    });
+  };
+  const onSuccessCancelSubscription = (response) => {
+    if (!response) return;
+
+    fetchSubscriptions();
+    setToastValue({
+      isShow: true,
+      text: "Subscription closed successfully",
+      type: "success"
+    });
+  };
+  const onSuccessChangeSubscriptionInterval = (response) => {
+    if (!response) return;
+
+    fetchSubscriptions();
+    setToastValue({
+      isShow: true,
+      text: "Frequency changed successfully",
+      type: "success"
+    });
+  };
 
   // * Hooks
   const { shop, isShopInfoLoading } = useGetShopInfo();
@@ -152,6 +189,7 @@ const AppStateProvider = (props) => {
       subscriptionIntervals,
       messageProps,
       subscriptionPaymentMethod,
+      toastValue,
       isAppLoading,
       isChangeAddressLoading,
       isChangeSubscriptionIntervalLoading,
