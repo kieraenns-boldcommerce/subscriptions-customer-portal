@@ -9,16 +9,10 @@ import AppContext from "../contexts/AppContext";
 
 const TopSectionPropTypes = {
   label: PT.string.isRequired,
-  showMessage: PT.bool,
   onMessageButtonClick: PT.func,
   onSubscriptionChange: PT.func,
   onMenuItemChange: PT.func
 };
-
-const TopSectionDefaultProps = {
-  showMessage: false
-};
-
 
 const StyledTopSection = styled.div`
   display: grid;
@@ -68,7 +62,6 @@ const StyledSubscriptionMessage = styled.div`
 const TopSection = (props) => {
   const {
     label,
-    showMessage,
     onMessageButtonClick,
     onSubscriptionChange,
     onMenuItemChange
@@ -89,6 +82,7 @@ const TopSection = (props) => {
   } = methods;
 
   const showMenu = activeSubscription?.status !== "inactive";
+  const showMessage = activeSubscription?.status !== "active";
 
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
@@ -154,7 +148,6 @@ const TopSection = (props) => {
 };
 
 TopSection.propTypes = TopSectionPropTypes;
-TopSection.defaultProps = TopSectionDefaultProps;
 
 export default TopSection;
 

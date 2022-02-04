@@ -1,6 +1,8 @@
+import { useContext } from "react";
 import PT from "prop-types";
 import { Button } from "@boldcommerce/stacks-ui";
 import styled,  { css } from "styled-components";
+import AppContext from "../contexts/AppContext";
 
 const MessagePropTypes = {
   text: PT.string.isRequired,
@@ -69,6 +71,9 @@ const StyledMessage = styled.div`
 const Message = (props) => {
   const { type, text, buttonText, onButtonClick } = props;
 
+  const { state } = useContext(AppContext);
+  const { isAppLoading } = state;
+
   const showButton = Boolean(buttonText);
 
   return (
@@ -76,7 +81,10 @@ const Message = (props) => {
       { text }
 
       {showButton && (
-        <Button onClick={onButtonClick}>
+        <Button
+          disabled={isAppLoading}
+          onClick={onButtonClick}
+        >
           { buttonText }
         </Button>
       )}

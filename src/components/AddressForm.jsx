@@ -9,6 +9,7 @@ import AppContext from "../contexts/AppContext";
 import getCountries from "../utils/getCountries";
 import getStatesOfCountry from "../utils/getStatesOfCountry";
 import getCitiesOfState from "../utils/getCitiesOfState";
+import getCitiesOfCountry from "../utils/getCitiesOfCountry";
 
 const formatCountryOption = (country) => {
   const { name, code: value } = country;
@@ -100,7 +101,12 @@ const AddressForm = (props) => {
 
   const countries = getCountries();
   const states = getStatesOfCountry(countryCode);
-  const cities = getCitiesOfState(countryCode, stateCode);
+  const citiesOfState = getCitiesOfState(countryCode, stateCode);
+  const citiesOfCountry = getCitiesOfCountry(countryCode);
+
+  const cities = countryCode && states.length === 0
+    ? citiesOfCountry
+    : citiesOfState;
 
   const countryOptions = countries.map(formatCountryOption);
   const stateOptions = states.map(formatStateOption);

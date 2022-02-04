@@ -32,7 +32,7 @@ const StyledMenuList = styled.div`
   border-radius: 3px;
 
   background-color: #ffffff;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
 
   &::after,
   &::before {
@@ -53,7 +53,7 @@ const StyledMenuList = styled.div`
 
   &::after {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.14);
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.4);
     z-index: -1;
   }
 `;

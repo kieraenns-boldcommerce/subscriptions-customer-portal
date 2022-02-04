@@ -84,7 +84,6 @@ const IndexPage = () => {
   const [showShippingAddress, setShowShippingAddress] = useState(false);
   const [showPaymentMethod, setShowPaymentMethod] = useState(false);
   const [showOrderFrequency, setShowOrderFrequency] = useState(false);
-  const [showSubscriptionMessage, setShowSubscriptionMessage] = useState(false);
   const [showAnyForm, setShowAnyForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -105,6 +104,7 @@ const IndexPage = () => {
     cancelSubscription
   } = methods;
 
+  const isSubscriptionActive = activeSubscription?.status === "active";
 
   // * Handlers
   const onMenuItemChange = (item) => {
@@ -123,30 +123,26 @@ const IndexPage = () => {
 
     if (activeMenuValue === "resume") {
       reactivateSubscription({
-        shopID: shopID,
+        shopID,
         subscriptionID: activeSubscriptionId
       });
 
-      setShowSubscriptionMessage(false);
       return;
     }
 
     if (activeMenuValue === "inactive") {
       cancelSubscription({
-        shopID: shopID,
+        shopID,
         subscriptionID: activeSubscriptionId
       });
 
-      setShowSubscriptionMessage(true);
       return;
     }
 
     pauseSubscription({
-      shopID: shopID,
+      shopID,
       subscriptionID: activeSubscriptionId
     });
-
-    setShowSubscriptionMessage(true);
   };
 
   const onEditShippingAddress = () => {
@@ -194,15 +190,11 @@ const IndexPage = () => {
       subscriptionID: activeSubscriptionId
     });
 
-    setShowSubscriptionMessage(false);
   };
 
   useEffect(() => {
     if (!activeSubscriptionId) return;
 
-    const isInactiveSubscription = activeSubscription.status === "inactive" || activeSubscription.status === "paused";
-
-    setShowSubscriptionMessage(isInactiveSubscription);
     setShowAnyForm(false);
     setShowOrderFrequency(false);
   }, [activeSubscriptionId]);
@@ -215,7 +207,7 @@ const IndexPage = () => {
         <Address
           type="shipping"
           data={activeSubscription?.shippingAddress}
-          showEditButton={!showShippingAddress && !showSubscriptionMessage}
+          showEditButton={!showShippingAddress && isSubscriptionActive}
           altTextEditButton="Edit shipping address"
           onEdit={onEditShippingAddress}
         />
@@ -227,7 +219,7 @@ const IndexPage = () => {
         <Address
           type="billing"
           data={activeSubscription?.billingAddress}
-          showEditButton={!showBillingAddress && !showSubscriptionMessage}
+          showEditButton={!showBillingAddress && isSubscriptionActive}
           altTextEditButton="Edit billing address"
           onEdit={onEditBillingAddress}
         />
@@ -238,7 +230,7 @@ const IndexPage = () => {
       content: (
         <FrequencyAndPayment
           editModeFrequency={showOrderFrequency}
-          editModePayment={!showPaymentMethod && !showSubscriptionMessage}
+          editModePayment={!showPaymentMethod && isSubscriptionActive}
           onEditFrequency={onEditOrderFrequency}
           onEditPayment={onEditPaymentMethod}
         />
@@ -282,7 +274,6 @@ const IndexPage = () => {
               <TopSection
                 label="Subscriptions"
                 onMenuItemChange={onMenuItemChange}
-                showMessage={showSubscriptionMessage}
                 onMessageButtonClick={onMessageButtonClick}
               />
             </StyledTopSectionContainer>

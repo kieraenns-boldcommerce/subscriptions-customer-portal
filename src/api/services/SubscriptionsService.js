@@ -4,7 +4,7 @@ import AddressesAdapter from "../adapters/AddressesAdapter";
 import IntervalsAdapter from "../adapters/IntervalsAdapter";
 import renameKeys from "../../utils/renameKeys";
 
-const CUSTOMER_ID = "157162545";
+const CUSTOMER_ID = "157112978";
 
 const adaptPaymentMethodFromServer = (payment) => {
   const renames = renameKeys(

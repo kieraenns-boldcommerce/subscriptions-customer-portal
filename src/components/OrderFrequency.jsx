@@ -91,6 +91,8 @@ const OrderFrequency = (props) => {
     setShowEditButton(!editMode);
   }, [editMode]);
 
+  const isSubscriptionActive = activeSubscription?.status === "active";
+
   const intervalOptions = subscriptionIntervals?.map(formatIntervalOption);
 
   const onSaveButtonClick = () => {
@@ -131,13 +133,13 @@ const OrderFrequency = (props) => {
       <StyledTitle>
         <TitleWithEditButton
           title="Order frequency"
-          showEditButton={showEditButton}
+          showEditButton={showEditButton && isSubscriptionActive}
           altTextButton="Change frequency"
           onEdit={onOpenForm}
         />
       </StyledTitle>
 
-      {showForm ? (
+      {showForm && isSubscriptionActive ? (
         <StyledForm>
           <SelectField
             placeholder={activeIntervalID ? "" : "Select interval"}
