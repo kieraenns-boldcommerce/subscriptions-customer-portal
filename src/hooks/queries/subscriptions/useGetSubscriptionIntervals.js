@@ -3,12 +3,12 @@ import { useQuery } from "react-query";
 
 
 export const useGetSubscriptionIntervals = (props) => {
-  const { shopIdentifier, subscriptionId, onSuccess } = props;
+  const { shopID, subscriptionID, onSuccess } = props;
 
   const { data, isLoading, refetch, isFetching } = useQuery(
-    ["subscriptionIntervals", shopIdentifier, subscriptionId],
-    () => SubscriptionsService.getSubscriptionIntervals({ shopIdentifier, subscriptionId }),
-    { onSuccess, enabled: Boolean(shopIdentifier && subscriptionId) }
+    ["subscriptionIntervals", shopID, subscriptionID],
+    () => SubscriptionsService.getSubscriptionIntervals({ shopID, subscriptionID }),
+    { onSuccess, enabled: Boolean(shopID && subscriptionID) }
   );
 
   return {

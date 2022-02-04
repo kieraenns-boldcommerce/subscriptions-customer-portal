@@ -9,16 +9,10 @@ import AppContext from "../contexts/AppContext";
 
 const TopSectionPropTypes = {
   label: PT.string.isRequired,
-  showMessage: PT.bool,
   onMessageButtonClick: PT.func,
   onSubscriptionChange: PT.func,
   onMenuItemChange: PT.func
 };
-
-const TopSectionDefaultProps = {
-  showMessage: false
-};
-
 
 const StyledTopSection = styled.div`
   display: grid;
@@ -68,7 +62,6 @@ const StyledSubscriptionMessage = styled.div`
 const TopSection = (props) => {
   const {
     label,
-    showMessage,
     onMessageButtonClick,
     onSubscriptionChange,
     onMenuItemChange
@@ -81,13 +74,15 @@ const TopSection = (props) => {
     activeSubscriptionOption,
     subscriptions,
     subscriptionOptions,
-    messageProps
+    messageProps,
+    isAppLoading
   } = state;
   const {
     setActiveSubscriptionId
   } = methods;
 
   const showMenu = activeSubscription?.status !== "inactive";
+  const showMessage = activeSubscription?.status !== "active";
 
   const showSubscriptionsSelect = subscriptionOptions.length > 1;
 
@@ -104,12 +99,10 @@ const TopSection = (props) => {
 
   const onMenuItemClick = (item) => onMenuItemChange(item);
 
-
   const MENU_ITEMS = [
     { name: `${showMessage ? "Resume" : "Pause"} subscription`, value: showMessage ? "resume" : "pause" },
     { type: "alert", name: "Cancel subscription", value: "inactive" }
   ];
-
 
   return (
     <StyledTopSection>
@@ -119,6 +112,7 @@ const TopSection = (props) => {
           options={subscriptionOptions}
           value={activeSubscriptionOption?.value}
           label={label}
+          disabled={isAppLoading}
           onChange={onOptionChange}
         />
       )}
@@ -154,7 +148,6 @@ const TopSection = (props) => {
 };
 
 TopSection.propTypes = TopSectionPropTypes;
-TopSection.defaultProps = TopSectionDefaultProps;
 
 export default TopSection;
 

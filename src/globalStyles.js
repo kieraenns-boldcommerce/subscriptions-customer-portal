@@ -18,10 +18,6 @@ export const Resets = createGlobalStyle`
     text-transform: none;
   }
 
-  .stx-select__icon {
-    pointer-events: none;
-  }
-
   button {
     border: none;
     border-radius: 0;
@@ -29,42 +25,18 @@ export const Resets = createGlobalStyle`
 
     background-color: transparent;
     cursor: pointer;
-  }
 
-  .confirm-button-Message {
-    padding: 8px 30px;
-
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .button-AddressForm {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .stx-field {
-    display: grid;
-    position: static;
-    margin: 0;
-
-    .stx-field__label {
-      margin-bottom: 4px;
-      font-size: 13px;
+    &:disabled {
+      cursor: not-allowed;
     }
   }
 
-  .stx-input__input-element {
-    line-height: 20px;
+  .stx-field {
+    margin-bottom: 0;
   }
 
-  .stx-field--with-select {
-    display: grid;
-    align-content: center;
-  }
-
-  .stx-select__select-element {
-    z-index: 1;
+  .stx-select__icon {
+    pointer-events: none;
   }
 
   .stx-price__amount {
@@ -94,43 +66,34 @@ export const Resets = createGlobalStyle`
 
 export const Vars = createGlobalStyle`
   :root {
-    --color-text-default: rgba(0, 0, 0, 0.9);
+    --color-text-default: rgba(0, 0, 0, 0.8);
     --color-text-link: #0a75c2;
   }
 `;
 
-
 export const Fonts = createGlobalStyle`
   @font-face {
     font-family: 'SF Pro Display';
-    src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'),
-        url('./assets/fonts/SFProDisplay-Bold.woff2') format('woff2'),
-        url('./assets/fonts/SFProDisplay-Bold.woff') format('woff'),
-        url('./assets/fonts/SFProDisplay-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
+
+    src:
+      url('./assets/fonts/SFProDisplay-Bold.woff2') format('woff2'),
+      url('./assets/fonts/SFProDisplay-Bold.woff') format('woff'),
+      url('./assets/fonts/SFProDisplay-Bold.ttf') format('truetype');
   }
 
   @font-face {
     font-family: 'SF Pro Display';
-    src: local('SF Pro Display Semibold'), local('SFProDisplay-Semibold'),
-        url('./assets/fonts/SFProDisplay-Semibold.woff2') format('woff2'),
-        url('./assets/fonts/SFProDisplay-Semibold.woff') format('woff'),
-        url('./assets/fonts/SFProDisplay-Semibold.ttf') format('truetype');
-    font-weight: 600;
+    font-weight: 400;
     font-style: normal;
     font-display: swap;
-  }
 
-  @font-face {
-    font-family: 'SF Pro Display';
-    src: local('SF Pro Display Regular'), local('SFProDisplay-Regular'),
-        url('./assets/fonts/SFProDisplay-Regular.woff2') format('woff2'),
-        url('./assets/fonts/SFProDisplay-Regular.woff') format('woff'),
-        url('./assets/fonts/SFProDisplay-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+    src:
+      url('./assets/fonts/SFProDisplay-Regular.woff2') format('woff2'),
+      url('./assets/fonts/SFProDisplay-Regular.woff') format('woff'),
+      url('./assets/fonts/SFProDisplay-Regular.ttf') format('truetype');
   }
 
   body {

@@ -6,16 +6,8 @@ export const useChangeAddress = (props) => {
   const { onSuccess, onError } = props;
 
   const { mutate, isLoading } = useMutation(
-    ({ shopIdentifier, customerId, addressId, data }) => SubscriptionsService.changeAddress({ shopIdentifier, customerId, addressId, data }), 
-    {
-      onSuccess,
-      onError: async (error) => {
-        const errorResp = await error.response?.data;
-
-        if (!onError) return;
-        return onError(errorResp);
-      }
-    }
+    ({ shopID, customerId, addressId, data }) => SubscriptionsService.changeAddress({ shopID, customerId, addressId, data }),
+    { onSuccess, onError }
   );
 
   return { changeAddress: mutate, isChangeAddressLoading: isLoading };

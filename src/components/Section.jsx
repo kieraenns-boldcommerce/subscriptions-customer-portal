@@ -17,7 +17,7 @@ const SectionPropTypes = {
 const StyledSection = styled.div`
   position: relative;
 
-  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 24px;
 
   @media (min-width: 576px) {

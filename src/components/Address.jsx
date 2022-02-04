@@ -11,9 +11,9 @@ const AddressPropTypes = {
     firstName: PT.string.isRequired,
     lastName: PT.string.isRequired,
     phone: PT.string,
-    province: PT.string.isRequired,
-    addressLineFirst: PT.string.isRequired,
-    addressLineSecond: PT.string,
+    state: PT.string.isRequired,
+    lineFirst: PT.string.isRequired,
+    lineSecond: PT.string,
     zip: PT.string.isRequired
   }),
   showEditButton: PT.bool,
@@ -65,9 +65,9 @@ const Address = (props) => {
     firstName,
     lastName,
     phone,
-    province,
-    addressLineFirst,
-    addressLineSecond,
+    state,
+    lineFirst,
+    lineSecond,
     zip
   } = data;
 
@@ -87,9 +87,9 @@ const Address = (props) => {
         { firstName } { lastName }
       </StyledFullName>
 
-      { addressLineFirst }<br />
-      { addressLineSecond && <>{ addressLineSecond }<br /></> }
-      { city }, { province }, { zip }<br />
+      { lineFirst }<br />
+      { lineSecond && <>{ lineSecond }<br /></> }
+      { city }, { state }, { zip }<br />
       { country }<br />
       { company && <>Company: { company }<br /></> }
       { phone && <>Phone: { phone }</>}

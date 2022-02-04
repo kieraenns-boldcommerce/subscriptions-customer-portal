@@ -1,7 +1,9 @@
 import PT from "prop-types";
 import { useEffect, useState } from "react";
 import AppContext from "../contexts/AppContext";
-import { useGetShopInfo } from "../hooks/queries/shops/useGetShopInfo";
+
+import useGetShop from "../hooks/queries/shops/useGetShop";
+
 import { useGetSubscriptions } from "../hooks/queries/subscriptions/useGetSubscriptions";
 import { useGetSubscriptionIntervals } from "../hooks/queries/subscriptions/useGetSubscriptionIntervals";
 import { useChangeAddress } from "../hooks/queries/subscriptions/useChangeAddress";
@@ -12,7 +14,6 @@ import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/us
 import { useGetSubscriptionPaymentMethod } from "../hooks/queries/subscriptions/useGetSubscriptionPaymentMethod";
 import { toast } from "react-toastify";
 import Message from "../components/Message";
-
 
 const ChildType = PT.oneOfType([
   PT.bool,
@@ -25,59 +26,78 @@ const AppStateProviderPropTypes = {
   children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
 };
 
-
 const AppStateProvider = (props) => {
   const { children } = props;
 
   // * States
   const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
+  const [addressFormErrors, setAddressFormErrors] = useState(null);
 
   // * Handlers
-  const onSuccessPauseSubscription = () => fetchSubscriptions();
-  const onSuccessCancelSubscription = () => fetchSubscriptions();
+  const onSuccessPauseSubscription = () => refetchSubscriptions();
+  const onSuccessCancelSubscription = () => refetchSubscriptions();
   const onSuccessChangeAddress = () => {
-    fetchSubscriptions();
+    refetchSubscriptions();
     toast(<Message text="Address changed successfully" type="success" />);
   };
   const onErrorChangeAddress = (error) => {
-    toast(<Message text={error?.message} type="alert" />);
+    const { message, fieldErrors } = error;
+    toast(<Message text={message} type="alert" />);
+    setAddressFormErrors(fieldErrors);
   };
   const onSuccessReactivateSubscription = () => {
-    fetchSubscriptions();
+    refetchSubscriptions();
     toast(<Message text="Subscription reactivated successfully" type="success" />);
   };
   const onSuccessChangeSubscriptionInterval = () => {
-    fetchSubscriptions();
+    refetchSubscriptions();
     toast(<Message text="Frequency changed successfully" type="success" />);
   };
 
   // * Hooks
-  const { shop, isShopInfoLoading } = useGetShopInfo();
-  const shopId = shop?.shopIdentifier;
+  const { shop, isShopLoading } = useGetShop();
+  const shopID = shop?.shopID;
 
   const {
-    subscriptionsData,
-    isSubscriptionsLoading,
-    fetchSubscriptions
-  } = useGetSubscriptions({
-    shopIdentifier: shopId
-  });
-  const subscriptions = subscriptionsData?.subscriptions;
+    subscriptions,
+    areSubscriptionsLoading,
+    refetchSubscriptions
+  } = useGetSubscriptions({ shopID });
 
   const {
-    subscriptionIntervals,
-    fetchSubscriptionIntervals
+    subscriptionIntervals
   } = useGetSubscriptionIntervals({
-    shopIdentifier: shopId,
-    subscriptionId: activeSubscriptionId
+    shopID,
+    subscriptionID: activeSubscriptionId
   });
 
   const {
     subscriptionPaymentMethod,
     isSubscriptionPaymentMethodLoading
   } = useGetSubscriptionPaymentMethod({
-    shopIdentifier: shopId,
-    subscriptionId: activeSubscriptionId
+    shopID,
+    subscriptionID: activeSubscriptionId
+  });
+
+  const {
+    pauseSubscription,
+    isPauseSubscriptionLoading
+  } = usePauseSubscription({
+    onSuccess: onSuccessPauseSubscription
+  });
+
+  const {
+    cancelSubscription,
+    isCancelSubscriptionLoading
+  } = useCancelSubscription({
+    onSuccess: onSuccessCancelSubscription
+  });
+
+  const {
+    reactivateSubscription,
+    isReactivateSubscriptionLoading
+  } = useReactivateSubscription({
+    onSuccess: onSuccessReactivateSubscription
   });
 
   const {
@@ -89,27 +109,6 @@ const AppStateProvider = (props) => {
   });
 
   const {
-    pauseSubscription,
-    isPauseSubscriptionLoading
-  } = usePauseSubscription({
-    onSuccess: onSuccessPauseSubscription
-  });
-
-  const {
-    reactivateSubscription,
-    isReactivateSubscriptionLoading
-  } = useReactivateSubscription({
-    onSuccess: onSuccessReactivateSubscription
-  });
-
-  const {
-    cancelSubscription,
-    isCancelSubscriptionLoading
-  } = useCancelSubscription({
-    onSuccess: onSuccessCancelSubscription
-  });
-
-  const {
     changeSubscriptionInterval,
     isChangeSubscriptionIntervalLoading
   } = useChangeSubscriptionInterval({
@@ -117,7 +116,7 @@ const AppStateProvider = (props) => {
   });
 
   useEffect(() => {
-    if (!activeSubscriptionId && subscriptions) setActiveSubscriptionId(subscriptions[0].id);
+    if (!activeSubscriptionId && subscriptions?.length) setActiveSubscriptionId(subscriptions[0].id);
   }, [activeSubscriptionId, subscriptions]);
 
   const subscriptionOptions = subscriptions?.map((subscription) => {
@@ -150,24 +149,29 @@ const AppStateProvider = (props) => {
     buttonText: `${isSubscriptionPaused ? "Resume" : "Reactivate"} subscription`
   };
 
-  const isAppLoading = 
-    isShopInfoLoading ||
-    isSubscriptionsLoading ||
+  const isAppLoadingInitial = isShopLoading || areSubscriptionsLoading;
+
+  const isAppLoading =
+    areSubscriptionsLoading ||
     isPauseSubscriptionLoading ||
+    isCancelSubscriptionLoading ||
     isReactivateSubscriptionLoading ||
-    isCancelSubscriptionLoading;
+    isChangeAddressLoading ||
+    isChangeSubscriptionIntervalLoading;
 
   const state = {
     state: {
-      shopId,
+      shopID,
       activeSubscription,
       activeSubscriptionOption,
       activeSubscriptionId,
       subscriptions,
       subscriptionOptions,
       subscriptionIntervals,
+      addressFormErrors,
       messageProps,
       subscriptionPaymentMethod,
+      isAppLoadingInitial,
       isAppLoading,
       isChangeAddressLoading,
       isChangeSubscriptionIntervalLoading,
@@ -175,7 +179,7 @@ const AppStateProvider = (props) => {
     },
     methods: {
       setActiveSubscriptionId,
-      fetchSubscriptionIntervals,
+      setAddressFormErrors,
       changeAddress,
       pauseSubscription,
       reactivateSubscription,

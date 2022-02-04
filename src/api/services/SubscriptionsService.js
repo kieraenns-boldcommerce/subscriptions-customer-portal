@@ -1,52 +1,10 @@
-import { ServiceBase } from "../core";
-import { renameKeys } from "../../helpers/utils";
+import ServiceBase, { Method } from "../core";
+import SubscriptionsAdapter from "../adapters/SubscriptionsAdapter";
+import AddressesAdapter from "../adapters/AddressesAdapter";
+import IntervalsAdapter from "../adapters/IntervalsAdapter";
+import renameKeys from "../../utils/renameKeys";
 
-
-const adaptAddressDataFromServer = (address) => renameKeys(
-  address,
-  [
-    "customer_id",
-    "first_name",
-    "last_name",
-    "street1",
-    "street2"
-  ],
-  [
-    "customerId",
-    "firstName",
-    "lastName",
-    "addressLineFirst",
-    "addressLineSecond"
-  ]
-);
-
-const adaptAddressDataToServer = (address) => renameKeys(
-  address,
-  [
-    "customerId",
-    "firstName",
-    "lastName",
-    "addressLineFirst",
-    "addressLineSecond"
-  ],
-  [
-    "customer_id",
-    "first_name",
-    "last_name",
-    "street1",
-    "street2"
-  ]
-);
-
-const adaptIntervalFromServer = (interval) => {
-  const { interval_name, id } = interval;
-
-  return {
-    id,
-    name: interval_name,
-    value: String(id)
-  };
-};
+const CUSTOMER_ID = "157112978";
 
 const adaptPaymentMethodFromServer = (payment) => {
   const renames = renameKeys(
@@ -80,253 +38,105 @@ const adaptPaymentMethodFromServer = (payment) => {
   };
 };
 
-const adaptProductsFromServer = (product) => {
-  const {
-    id,
-    image,
-    price,
-    product_name,
-    variant_name,
-    quantity
-  } = product;
-
-  return {
-    id,
-    image,
-    name: product_name,
-    variant: variant_name,
-    price,
-    quantity
-  };
-};
-
-
-class SubscriptionsService {
+class SubscriptionsService extends ServiceBase {
   static async getSubscriptions(params) {
-    const { shopIdentifier } = params;
+    const { shopID } = params;
 
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/customers/${157112978}/subscriptions`;
+    const method = Method.GET;
+    const url = `/subscriptions/v1/shops/${shopID}/customers/${CUSTOMER_ID}/subscriptions`;
 
-    const data = {
-      method,
-      url
-    };
+    const { subscriptions } = await this.callAPI({ method, url });
 
-    const {
-      subscriptionStatus,
-      boldPlatformCustomerId,
-      expand,
-      limit,
-      sinceId,
-      filter
-    } = params;
-
-    if (subscriptionStatus) data.params = { ...data.params, subscriptionStatus };
-    if (boldPlatformCustomerId) data.params = { ...data.params, boldPlatformCustomerId };
-    if (expand) data.params = { ...data.params, expand };
-    if (limit) data.params = { ...data.params, limit };
-    if (sinceId) data.params = { ...data.params, sinceId };
-    if (filter) data.url = `${data.url}${filter}`;
-
-    const response = await ServiceBase.callApi(data);
-
-    const innerSubscriptions = response.subscriptions.map((subscription) => {
-      const {
-        id,
-        base_currency: baseCurrency,
-        billing_address,
-        billing_address_id: billingAddressId,
-        charged_currency: currency,
-        line_items: products,
-        next_order_datetime: nextOrderDatetime,
-        next_payment_datetime: nextPaymentDatetime,
-        order_rrule_text: frequency,
-        payment_rrule_text: paymentText,
-        shipping_address,
-        shipping_address_id: shippingAddressId,
-        shipping_lines: shippingLines,
-        shop_id: shopId,
-        subscription_status: status
-      } = subscription;
-
-      const billingAddress = adaptAddressDataFromServer(billing_address);
-      const shippingAddress = adaptAddressDataFromServer(shipping_address);
-      const innerProducts = products.map(adaptProductsFromServer);
-
-      return {
-        id,
-        baseCurrency,
-        billingAddress,
-        billingAddressId,
-        currency,
-        products: innerProducts,
-        nextOrderDatetime,
-        nextPaymentDatetime,
-        frequency,
-        paymentText,
-        shippingAddress,
-        shippingAddressId,
-        shippingLines,
-        shopId,
-        status
-      };
-    });
-
-    return {
-      ...response,
-      subscriptions: innerSubscriptions
-    };
-  }
-
-  static async getSubscriptionById(params) {
-    const { shopIdentifier, id } = params;
-
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${id}`;
-
-    const response = await ServiceBase.callApi({ method, url });
-
-    return response;
-  }
-
-  static async createSubscription(params) {
-    const { shopIdentifier, data } = params;
-
-    const method = "POST";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions`;
-
-    const response = await ServiceBase.callApi({ data, method, url });
-
-    return response;
-  }
-
-  static async changeAddress(params) {
-    const { shopIdentifier, customerId, addressId, data } = params;
-
-    const method = "PUT";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/customers/${customerId}/addresses/${addressId}`;
-
-    const response = await ServiceBase.callApi({
-      data: {
-        customer_address: {
-          ...adaptAddressDataToServer(data)
-        }
-      },
-      method,
-      url
-    });
-
-    return response;
+    return subscriptions.map(SubscriptionsAdapter.fromServer);
   }
 
   static async getSubscriptionIntervals(params) {
-    const { shopIdentifier, subscriptionId } = params;
+    const { shopID, subscriptionID } = params;
 
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/intervals`;
+    const method = Method.GET;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/intervals`;
 
-    const response = await ServiceBase.callApi({ method, url });
+    const { intervals } = await this.callAPI({ method, url });
 
-    const result = response?.intervals.map(adaptIntervalFromServer);
-  
-    return result;
-  }
-
-  static async changeSubscriptionInterval(params) {
-    const { shopIdentifier, subscriptionIntervalId, subscriptionId } = params;
-
-    const method = "PUT";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/interval/${subscriptionIntervalId}`;
-
-    const response = await ServiceBase.callApi({ method, url });
-
-    return response;
-  }
-
-  static async getSubscriptionPaymentMethods(params) {
-    const { shopIdentifier, subscriptionId } = params;
-
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/payment_methods`;
-
-    const response = await ServiceBase.callApi({ method, url });
-
-    return response;
+    return intervals.map(IntervalsAdapter.fromServer);
   }
 
   static async getSubscriptionPaymentMethod(params) {
-    const { shopIdentifier, subscriptionId } = params;
+    const { shopID, subscriptionID } = params;
 
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/payment_method`;
+    const method = Method.GET;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/payment_method`;
 
-    const response = await ServiceBase.callApi({ method, url });
+    const response = await this.callAPI({ method, url });
 
     const result = adaptPaymentMethodFromServer(response?.payment_method);
-  
+
     return result;
   }
 
-  static async reactivateSubscription(params) {
-    const { shopIdentifier, subscriptionId } = params;
+  static async pauseSubscription(params) {
+    const { shopID, subscriptionID } = params;
 
-    const method = "POST";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/activate`;
+    const method = Method.POST;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/pause`;
 
-    const response = await ServiceBase.callApi({ method, url });
+    const response = await this.callAPI({ method, url });
 
     return response;
   }
 
   static async cancelSubscription(params) {
-    const { shopIdentifier, subscriptionId } = params;
+    const { shopID, subscriptionID } = params;
 
-    const method = "POST";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/cancel`;
+    const method = Method.POST;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/cancel`;
 
-    const response = await ServiceBase.callApi({ method, url });
-
-    return response;
-  }
-
-  static async pauseSubscription(params) {
-    const { shopIdentifier, subscriptionId } = params;
-
-    const method = "POST";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/pause`;
-
-    const response = await ServiceBase.callApi({ method, url });
+    const response = await this.callAPI({ method, url });
 
     return response;
   }
 
-  static async getSubscriptionOrders(params) {
-    const { shopIdentifier, subscriptionId, page, limit } = params;
+  static async reactivateSubscription(params) {
+    const { shopID, subscriptionID } = params;
 
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/orders`;
+    const method = Method.POST;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/activate`;
 
-    const data = {
-      method,
-      url
-    };
-
-    if (page) data.params = { ...data.params, page };
-    if (limit) data.params = { ...data.params, limit };
-
-    const response = await ServiceBase.callApi(data);
+    const response = await this.callAPI({ method, url });
 
     return response;
   }
 
-  static async getSubscriptionOrderById(params) {
-    const { shopIdentifier, subscriptionId, orderId } = params;
+  static async changeAddress(params) {
+    const { shopID, addressId, data } = params;
 
-    const method = "GET";
-    const url = `/subscriptions/v1/shops/${shopIdentifier}/subscriptions/${subscriptionId}/orders/${orderId}`;
+    const method = Method.PUT;
+    const url = `/subscriptions/v1/shops/${shopID}/customers/${CUSTOMER_ID}/addresses/${addressId}`;
 
-    const response = await ServiceBase.callApi({ method, url });
+    try {
+      const response = await this.callAPI({
+        data: {
+          customer_address: {
+            ...AddressesAdapter.toServer(data)
+          }
+        },
+        method,
+        url
+      });
+
+      return response;
+    } catch (error) {
+      throw AddressesAdapter.errorUpdate(error);
+    }
+  }
+
+  static async changeSubscriptionInterval(params) {
+    const { shopID, subscriptionIntervalId, subscriptionID } = params;
+
+    const method = Method.PUT;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/interval/${subscriptionIntervalId}`;
+
+    const response = await this.callAPI({ method, url });
 
     return response;
   }

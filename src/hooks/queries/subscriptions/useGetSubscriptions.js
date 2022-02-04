@@ -1,19 +1,18 @@
-import SubscriptionsService from "../../../api/services/SubscriptionsService";
 import { useQuery } from "react-query";
-
+import SubscriptionsService from "../../../api/services/SubscriptionsService";
 
 export const useGetSubscriptions = (params) => {
-  const { shopIdentifier } = params;
+  const { shopID } = params;
 
   const { data, isLoading, refetch } = useQuery(
     ["subscriptions", params],
     () => SubscriptionsService.getSubscriptions(params),
-    { enabled: Boolean(shopIdentifier) }
+    { enabled: Boolean(shopID) }
   );
 
   return {
-    subscriptionsData: data,
-    isSubscriptionsLoading: isLoading,
-    fetchSubscriptions: refetch
+    subscriptions: data,
+    areSubscriptionsLoading: isLoading,
+    refetchSubscriptions: refetch
   };
 };
