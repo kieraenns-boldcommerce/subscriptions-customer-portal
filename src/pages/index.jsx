@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
+import NoSubscriptions from "../components/NoSubscriptions";
 import Tabs from "../components/Tabs";
 import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
@@ -91,12 +92,12 @@ const IndexPage = () => {
 
   const { state, methods } = useContext(AppContext);
   const {
-    shopId,
+    shopID,
     activeSubscription,
     activeSubscriptionId,
-    isAppLoading,
-    isChangeAddressLoading,
-    isChangeSubscriptionIntervalLoading
+    subscriptions,
+    isAppLoadingInitial,
+    isChangeAddressLoading
   } = state;
   const {
     pauseSubscription,
@@ -112,9 +113,9 @@ const IndexPage = () => {
   };
 
   const onCancelFormButtonClick = () => setShowAnyForm(false);
-  const onConfirmFormButtonClick = () => setShowAnyForm(false);
 
   const onCancelModalButtonClick = () => setShowModal(false);
+
   const onConfirmModalButtonClick = () => {
     setShowModal(false);
     setShowAnyForm(false);
@@ -122,8 +123,8 @@ const IndexPage = () => {
 
     if (activeMenuValue === "resume") {
       reactivateSubscription({
-        shopIdentifier: shopId,
-        subscriptionId: activeSubscriptionId
+        shopID: shopID,
+        subscriptionID: activeSubscriptionId
       });
 
       setShowSubscriptionMessage(false);
@@ -132,8 +133,8 @@ const IndexPage = () => {
 
     if (activeMenuValue === "inactive") {
       cancelSubscription({
-        shopIdentifier: shopId,
-        subscriptionId: activeSubscriptionId
+        shopID: shopID,
+        subscriptionID: activeSubscriptionId
       });
 
       setShowSubscriptionMessage(true);
@@ -141,8 +142,8 @@ const IndexPage = () => {
     }
 
     pauseSubscription({
-      shopIdentifier: shopId,
-      subscriptionId: activeSubscriptionId
+      shopID: shopID,
+      subscriptionID: activeSubscriptionId
     });
 
     setShowSubscriptionMessage(true);
@@ -150,18 +151,20 @@ const IndexPage = () => {
 
   const onEditShippingAddress = () => {
     setShowAnyForm(true);
-    setShowShippingAddress(true);
     setShowBillingAddress(false);
-    setShowPaymentMethod(false);
+    setShowShippingAddress(true);
+
     setShowOrderFrequency(false);
+    setShowPaymentMethod(false);
   };
 
   const onEditBillingAddress = () => {
     setShowAnyForm(true);
-    setShowBillingAddress(true);
     setShowShippingAddress(false);
-    setShowPaymentMethod(false);
+    setShowBillingAddress(true);
+
     setShowOrderFrequency(false);
+    setShowPaymentMethod(false);
   };
 
   const onEditPaymentMethod = () => {
@@ -173,7 +176,7 @@ const IndexPage = () => {
   };
 
   const onEditOrderFrequency = () => {
-    setShowOrderFrequency((v) => !v);
+    setShowOrderFrequency(true);
     setShowAnyForm(false);
   };
 
@@ -187,8 +190,8 @@ const IndexPage = () => {
 
   const onMessageButtonClick = () => {
     reactivateSubscription({
-      shopIdentifier: shopId,
-      subscriptionId: activeSubscriptionId
+      shopID: shopID,
+      subscriptionID: activeSubscriptionId
     });
 
     setShowSubscriptionMessage(false);
@@ -204,6 +207,7 @@ const IndexPage = () => {
     setShowOrderFrequency(false);
   }, [activeSubscriptionId]);
 
+  useEffect(() => setShowAnyForm(false), [subscriptions]);
 
   const tabs = [
     {
@@ -230,10 +234,10 @@ const IndexPage = () => {
       ),
       isActive: showBillingAddress
     },
-    { 
+    {
       content: (
-        <FrequencyAndPayment 
-          editModeFrequency={!showOrderFrequency && !showSubscriptionMessage && !isChangeSubscriptionIntervalLoading}
+        <FrequencyAndPayment
+          editModeFrequency={showOrderFrequency}
           editModePayment={!showPaymentMethod && !showSubscriptionMessage}
           onEditFrequency={onEditOrderFrequency}
           onEditPayment={onEditPaymentMethod}
@@ -243,20 +247,37 @@ const IndexPage = () => {
     }
   ];
 
+  const showSpinner = isAppLoadingInitial;
+  const showNoSubscriptions = !showSpinner && subscriptions.length === 0;
+  const showSubscriptions = !showSpinner && !showNoSubscriptions;
+
   return (
     <DefaultLayout>
       <Container>
 
         <Notification />
 
-        {isAppLoading ? (
+        {showSpinner && (
           <StyledFullPageSpinner>
             <LoadingSpinner />
           </StyledFullPageSpinner>
-        ) : (
+        )}
+
+        {showNoSubscriptions && (
           <>
+
             <StyledTitle>My Subscriptions</StyledTitle>
-      
+
+            <NoSubscriptions />
+
+          </>
+        )}
+
+        {showSubscriptions && (
+          <>
+
+            <StyledTitle>My Subscriptions</StyledTitle>
+
             <StyledTopSectionContainer>
               <TopSection
                 label="Subscriptions"
@@ -285,7 +306,6 @@ const IndexPage = () => {
                 <AddressForm
                   type="billing"
                   data={activeSubscription?.billingAddress}
-                  onConfirm={onConfirmFormButtonClick}
                   onCancel={onCancelFormButtonClick}
                 />
               )}
@@ -293,7 +313,6 @@ const IndexPage = () => {
                 <AddressForm
                   type="shipping"
                   data={activeSubscription?.shippingAddress}
-                  onConfirm={onConfirmFormButtonClick}
                   onCancel={onCancelFormButtonClick}
                 />
               )}
@@ -301,7 +320,7 @@ const IndexPage = () => {
                 <StyledPaymentContent />
               )}
             </StyledFormContainer>
-      
+
             <ProductList />
 
             {activeMenuValue === "pause" && (
@@ -338,6 +357,7 @@ const IndexPage = () => {
                 onConfirm={onConfirmModalButtonClick}
               />
             )}
+
           </>
         )}
 

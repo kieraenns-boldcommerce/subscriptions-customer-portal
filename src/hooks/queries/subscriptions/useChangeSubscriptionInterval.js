@@ -7,10 +7,10 @@ export const useChangeSubscriptionInterval = (props) => {
 
   const { mutate, isLoading } = useMutation(
     ({
-      shopIdentifier,
+      shopID,
       subscriptionIntervalId,
-      subscriptionId
-    }) => SubscriptionsService.changeSubscriptionInterval({ shopIdentifier, subscriptionIntervalId, subscriptionId }), 
+      subscriptionID
+    }) => SubscriptionsService.changeSubscriptionInterval({ shopID, subscriptionIntervalId, subscriptionID }),
     {
       onSuccess,
       onError: async (error) => {

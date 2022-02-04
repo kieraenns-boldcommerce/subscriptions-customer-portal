@@ -81,7 +81,8 @@ const TopSection = (props) => {
     activeSubscriptionOption,
     subscriptions,
     subscriptionOptions,
-    messageProps
+    messageProps,
+    isAppLoading
   } = state;
   const {
     setActiveSubscriptionId
@@ -104,12 +105,10 @@ const TopSection = (props) => {
 
   const onMenuItemClick = (item) => onMenuItemChange(item);
 
-
   const MENU_ITEMS = [
     { name: `${showMessage ? "Resume" : "Pause"} subscription`, value: showMessage ? "resume" : "pause" },
     { type: "alert", name: "Cancel subscription", value: "inactive" }
   ];
-
 
   return (
     <StyledTopSection>
@@ -119,6 +118,7 @@ const TopSection = (props) => {
           options={subscriptionOptions}
           value={activeSubscriptionOption?.value}
           label={label}
+          disabled={isAppLoading}
           onChange={onOptionChange}
         />
       )}

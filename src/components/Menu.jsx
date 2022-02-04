@@ -1,6 +1,7 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import PT from "prop-types";
 import styled, { css } from "styled-components";
+import AppContext from "../contexts/AppContext";
 import ellipsis from "../assets/icons/ellipsis.svg";
 
 
@@ -91,6 +92,10 @@ const StyledMenuButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:disabled {
+    opacity: 0.4;
+  }
 `;
 
 const StyledIcon = styled.img`
@@ -103,6 +108,9 @@ const Menu = (props) => {
   const { items, onItemChange } = props;
 
   const [showMenuList, setShowMenuList] = useState(false);
+
+  const { state } = useContext(AppContext);
+  const { isAppLoading } = state;
 
   const menuListRef = useRef(null);
 
@@ -121,7 +129,12 @@ const Menu = (props) => {
 
   return (
     <StyledMenu>
-      <StyledMenuButton aria-label="Subscription quick action menu" onClick={onShowMenuListButtonClick}>
+      <StyledMenuButton
+        type="button"
+        aria-label="Subscription quick action menu"
+        disabled={isAppLoading}
+        onClick={onShowMenuListButtonClick}
+      >
         <StyledIcon src={ellipsis} />
       </StyledMenuButton>
 

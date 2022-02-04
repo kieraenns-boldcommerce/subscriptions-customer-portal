@@ -76,10 +76,7 @@ const Message = (props) => {
       { text }
 
       {showButton && (
-        <Button
-          className="confirm-button-Message"
-          onClick={onButtonClick}
-        >
+        <Button onClick={onButtonClick}>
           { buttonText }
         </Button>
       )}

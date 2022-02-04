@@ -1,4 +1,4 @@
-export const renameKeys = (object, oldKeys, newKeys) => {
+const renameKeys = (object, oldKeys, newKeys) => {
   const objectCopy = { ...object };
 
   oldKeys.forEach((oldKey, index) => {
@@ -10,3 +10,5 @@ export const renameKeys = (object, oldKeys, newKeys) => {
 
   return objectCopy;
 };
+
+export default renameKeys;
