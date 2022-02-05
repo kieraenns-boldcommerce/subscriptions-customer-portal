@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import AppContext from "../contexts/AppContext";
 
 import useGetShop from "../hooks/queries/shops/useGetShop";
+import useGetSubscriptions from "../hooks/queries/subscriptions/useGetSubscriptions";
+import useGetIntervals from "../hooks/queries/subscriptions/useGetIntervals";
+import useGetPaymentMethod from "../hooks/queries/subscriptions/useGetPaymentMethod";
+import usePauseSubscription from "../hooks/queries/subscriptions/usePauseSubscription";
+import useCancelSubscription from "../hooks/queries/subscriptions/useCancelSubscription";
+import useActivateSubscription from "../hooks/queries/subscriptions/useActivateSubscription";
+import useUpdateAddress from "../hooks/queries/subscriptions/useUpdateAddress";
+import useUpdateInterval from "../hooks/queries/subscriptions/useUpdateInterval";
 
-import { useGetSubscriptions } from "../hooks/queries/subscriptions/useGetSubscriptions";
-import { useGetSubscriptionIntervals } from "../hooks/queries/subscriptions/useGetSubscriptionIntervals";
-import { useChangeAddress } from "../hooks/queries/subscriptions/useChangeAddress";
-import { usePauseSubscription } from "../hooks/queries/subscriptions/usePauseSubscription";
-import { useReactivateSubscription } from "../hooks/queries/subscriptions/useReactivateSubscription";
-import { useCancelSubscription } from "../hooks/queries/subscriptions/useCancelSubscription";
-import { useChangeSubscriptionInterval } from "../hooks/queries/subscriptions/useChangeSubscriptionInterval";
-import { useGetSubscriptionPaymentMethod } from "../hooks/queries/subscriptions/useGetSubscriptionPaymentMethod";
 import { toast } from "react-toastify";
 import Message from "../components/Message";
 
@@ -36,20 +36,20 @@ const AppStateProvider = (props) => {
   // * Handlers
   const onSuccessPauseSubscription = () => refetchSubscriptions();
   const onSuccessCancelSubscription = () => refetchSubscriptions();
-  const onSuccessChangeAddress = () => {
+  const onSuccessUpdateAddress = () => {
     refetchSubscriptions();
     toast(<Message text="Address changed successfully" type="success" />);
   };
-  const onErrorChangeAddress = (error) => {
+  const onErrorUpdateAddress = (error) => {
     const { message, fieldErrors } = error;
     toast(<Message text={message} type="alert" />);
     setAddressFormErrors(fieldErrors);
   };
-  const onSuccessReactivateSubscription = () => {
+  const onSuccessActivateSubscription = () => {
     refetchSubscriptions();
     toast(<Message text="Subscription reactivated successfully" type="success" />);
   };
-  const onSuccessChangeSubscriptionInterval = () => {
+  const onSuccessUpdateInterval = () => {
     refetchSubscriptions();
     toast(<Message text="Frequency changed successfully" type="success" />);
   };
@@ -65,54 +65,56 @@ const AppStateProvider = (props) => {
   } = useGetSubscriptions({ shopID });
 
   const {
-    subscriptionIntervals
-  } = useGetSubscriptionIntervals({
+    intervals,
+    // eslint-disable-next-line no-unused-vars
+    areIntervalsLoading
+  } = useGetIntervals({
     shopID,
     subscriptionID: activeSubscriptionId
   });
 
   const {
-    subscriptionPaymentMethod,
-    isSubscriptionPaymentMethodLoading
-  } = useGetSubscriptionPaymentMethod({
+    paymentMethod,
+    isPaymentMethodLoading
+  } = useGetPaymentMethod({
     shopID,
     subscriptionID: activeSubscriptionId
   });
 
   const {
-    pauseSubscription,
-    isPauseSubscriptionLoading
+    isSubscriptionPausing,
+    pauseSubscription
   } = usePauseSubscription({
     onSuccess: onSuccessPauseSubscription
   });
 
   const {
-    cancelSubscription,
-    isCancelSubscriptionLoading
+    isSubscriptionCancelling,
+    cancelSubscription
   } = useCancelSubscription({
     onSuccess: onSuccessCancelSubscription
   });
 
   const {
-    reactivateSubscription,
-    isReactivateSubscriptionLoading
-  } = useReactivateSubscription({
-    onSuccess: onSuccessReactivateSubscription
+    isSubscriptionActivating,
+    activateSubscription
+  } = useActivateSubscription({
+    onSuccess: onSuccessActivateSubscription
   });
 
   const {
-    changeAddress,
-    isChangeAddressLoading
-  } = useChangeAddress({
-    onSuccess: onSuccessChangeAddress,
-    onError: onErrorChangeAddress
+    isAddressUpdating,
+    updateAddress
+  } = useUpdateAddress({
+    onSuccess: onSuccessUpdateAddress,
+    onError: onErrorUpdateAddress
   });
 
   const {
-    changeSubscriptionInterval,
-    isChangeSubscriptionIntervalLoading
-  } = useChangeSubscriptionInterval({
-    onSuccess: onSuccessChangeSubscriptionInterval
+    isIntervalUpdating,
+    updateInterval
+  } = useUpdateInterval({
+    onSuccess: onSuccessUpdateInterval
   });
 
   useEffect(() => {
@@ -153,11 +155,11 @@ const AppStateProvider = (props) => {
 
   const isAppLoading =
     areSubscriptionsLoading ||
-    isPauseSubscriptionLoading ||
-    isCancelSubscriptionLoading ||
-    isReactivateSubscriptionLoading ||
-    isChangeAddressLoading ||
-    isChangeSubscriptionIntervalLoading;
+    isSubscriptionPausing ||
+    isSubscriptionCancelling ||
+    isSubscriptionActivating ||
+    isAddressUpdating ||
+    isIntervalUpdating;
 
   const state = {
     state: {
@@ -167,24 +169,24 @@ const AppStateProvider = (props) => {
       activeSubscriptionId,
       subscriptions,
       subscriptionOptions,
-      subscriptionIntervals,
+      intervals,
       addressFormErrors,
       messageProps,
-      subscriptionPaymentMethod,
+      paymentMethod,
       isAppLoadingInitial,
       isAppLoading,
-      isChangeAddressLoading,
-      isChangeSubscriptionIntervalLoading,
-      isSubscriptionPaymentMethodLoading
+      isAddressUpdating,
+      isIntervalUpdating,
+      isPaymentMethodLoading
     },
     methods: {
       setActiveSubscriptionId,
       setAddressFormErrors,
-      changeAddress,
+      updateAddress,
       pauseSubscription,
-      reactivateSubscription,
+      activateSubscription,
       cancelSubscription,
-      changeSubscriptionInterval
+      updateInterval
     }
   };
 

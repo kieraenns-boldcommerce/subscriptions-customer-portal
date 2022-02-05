@@ -47,14 +47,14 @@ const PaymentMethod = (props) => {
   const { editMode, onEdit } = props;
 
   const { state } = useContext(AppContext);
-  const { subscriptionPaymentMethod, isSubscriptionPaymentMethodLoading } = state;
+  const { paymentMethod, isPaymentMethodLoading } = state;
 
   const onOpenForm = () => onEdit && onEdit();
 
   let cardIcon;
   let innerCardType;
 
-  switch (subscriptionPaymentMethod?.paymentSystem) {
+  switch (paymentMethod?.paymentSystem) {
   case "mastercard":
     cardIcon = mastercardIcon;
     break;
@@ -63,7 +63,7 @@ const PaymentMethod = (props) => {
     break;
   }
 
-  switch (subscriptionPaymentMethod?.cardType) {
+  switch (paymentMethod?.cardType) {
   case "credit_card":
     innerCardType = "Credit card";
     break;
@@ -80,15 +80,15 @@ const PaymentMethod = (props) => {
         />
       </StyledTitle>
 
-      {isSubscriptionPaymentMethodLoading ? (
+      {isPaymentMethodLoading ? (
         <StyledSpinner>
           <LoadingSpinner />
         </StyledSpinner>
       ) : (
         <StyledPaymentContent>
-          { innerCardType } - 
+          { innerCardType } -
           <StyledPaymentCardIcon src={cardIcon} />
-        ending in { subscriptionPaymentMethod?.lastFourNumbers } - Expires { subscriptionPaymentMethod?.expiration.date }
+        ending in { paymentMethod?.lastFourNumbers } - Expires { paymentMethod?.expiration.date }
         </StyledPaymentContent>
       )}
 

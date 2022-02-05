@@ -62,21 +62,6 @@ const StyledFullPageSpinner = styled.div`
   }
 `;
 
-const StyledSpinner = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  background-color: #ffffff;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-
 const IndexPage = () => {
   // * States
   const [activeMenuValue, setActiveMenuValue] = useState(null);
@@ -95,12 +80,11 @@ const IndexPage = () => {
     activeSubscription,
     activeSubscriptionId,
     subscriptions,
-    isAppLoadingInitial,
-    isChangeAddressLoading
+    isAppLoadingInitial
   } = state;
   const {
     pauseSubscription,
-    reactivateSubscription,
+    activateSubscription,
     cancelSubscription
   } = methods;
 
@@ -122,7 +106,7 @@ const IndexPage = () => {
     setActiveMenuValue(null);
 
     if (activeMenuValue === "resume") {
-      reactivateSubscription({
+      activateSubscription({
         shopID,
         subscriptionID: activeSubscriptionId
       });
@@ -185,7 +169,7 @@ const IndexPage = () => {
   };
 
   const onMessageButtonClick = () => {
-    reactivateSubscription({
+    activateSubscription({
       shopID: shopID,
       subscriptionID: activeSubscriptionId
     });
@@ -280,12 +264,6 @@ const IndexPage = () => {
 
             <Section>
               <Tabs tabs={tabs} />
-
-              {isChangeAddressLoading && (
-                <StyledSpinner>
-                  <LoadingSpinner />
-                </StyledSpinner>
-              )}
             </Section>
 
             <StyledFormContainer

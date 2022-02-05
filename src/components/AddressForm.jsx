@@ -73,10 +73,10 @@ const AddressForm = (props) => {
   const {
     shopID,
     addressFormErrors,
-    isChangeAddressLoading
+    isAddressUpdating
   } = state;
 
-  const { setAddressFormErrors, changeAddress } = methods;
+  const { setAddressFormErrors, updateAddress } = methods;
 
   const [addressDataForm, setAddressDataForm] = useState(data);
 
@@ -85,8 +85,6 @@ const AddressForm = (props) => {
   }, []);
 
   const {
-    id,
-    customerId,
     company,
     countryCode,
     stateCode,
@@ -112,18 +110,16 @@ const AddressForm = (props) => {
   const stateOptions = states.map(formatStateOption);
   const cityOptions = cities.map(formatCityOption);
 
-  const isStateFieldDisabled = isChangeAddressLoading || stateOptions.length === 0;
-  const isCityFieldDisabled = isChangeAddressLoading || cityOptions.length === 0;
+  const isStateFieldDisabled = isAddressUpdating || stateOptions.length === 0;
+  const isCityFieldDisabled = isAddressUpdating || cityOptions.length === 0;
 
   const title = type === "shipping"
     ? "Editing shipping address"
     : "Editing billing address";
 
-  const onConfirmAddressButtonClick = () => changeAddress({
+  const onConfirmAddressButtonClick = () => updateAddress({
     shopID,
-    customerId,
-    addressId: id,
-    data: addressDataForm
+    address: addressDataForm
   });
 
   const onFormFieldChange = (event, key) => setAddressDataForm((prev) => ({
@@ -175,7 +171,7 @@ const AddressForm = (props) => {
               placeholder="Enter first name"
               messageType={addressFormErrors?.firstName && "alert"}
               messageText={addressFormErrors?.firstName}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "firstName")}
             />
             <InputField
@@ -184,7 +180,7 @@ const AddressForm = (props) => {
               placeholder="Enter last name"
               messageType={addressFormErrors?.lastName && "alert"}
               messageText={addressFormErrors?.lastName}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "lastName")}
             />
             <InputField
@@ -193,7 +189,7 @@ const AddressForm = (props) => {
               placeholder="Enter address line 1"
               messageType={addressFormErrors?.lineFirst && "alert"}
               messageText={addressFormErrors?.lineFirst}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "lineFirst")}
             />
             <InputField
@@ -202,7 +198,7 @@ const AddressForm = (props) => {
               placeholder="Enter address line 2"
               messageType={addressFormErrors?.lineSecond && "alert"}
               messageText={addressFormErrors?.lineSecond}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "lineSecond")}
             />
           </FieldsLayout>
@@ -216,7 +212,7 @@ const AddressForm = (props) => {
                 placeholder={countryCode ? "" : "Select country"}
                 messageType={addressFormErrors?.country && "alert"}
                 messageText={addressFormErrors?.country}
-                disabled={isChangeAddressLoading}
+                disabled={isAddressUpdating}
                 onChange={onCountryChange}
               />
               <SelectField
@@ -249,7 +245,7 @@ const AddressForm = (props) => {
               placeholder="Enter zip/postal code"
               messageType={addressFormErrors?.zip && "alert"}
               messageText={addressFormErrors?.zip}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "zip")}
             />
             <InputField
@@ -258,7 +254,7 @@ const AddressForm = (props) => {
               placeholder="Enter phone number"
               messageType={addressFormErrors?.phone && "alert"}
               messageText={addressFormErrors?.phone}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "phone")}
             />
             <InputField
@@ -267,21 +263,21 @@ const AddressForm = (props) => {
               placeholder="Enter company name"
               messageType={addressFormErrors?.company && "alert"}
               messageText={addressFormErrors?.company}
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onInput={(event) => onFormFieldChange(event, "company")}
             />
           </FieldsLayout>
 
           <StyledButtonsWrapper>
             <Button
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onClick={onCancel}
             >
               Discard changes
             </Button>
             <Button
               primary
-              disabled={isChangeAddressLoading}
+              disabled={isAddressUpdating}
               onClick={onConfirmAddressButtonClick}
             >
               Save changes

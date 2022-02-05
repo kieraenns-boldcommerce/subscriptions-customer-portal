@@ -2,41 +2,9 @@ import ServiceBase, { Method } from "../core";
 import SubscriptionsAdapter from "../adapters/SubscriptionsAdapter";
 import AddressesAdapter from "../adapters/AddressesAdapter";
 import IntervalsAdapter from "../adapters/IntervalsAdapter";
-import renameKeys from "../../utils/renameKeys";
+import PaymentMethodsAdapter from "../adapters/PaymentMethodsAdapter";
 
 const CUSTOMER_ID = "157112978";
-
-const adaptPaymentMethodFromServer = (payment) => {
-  const renames = renameKeys(
-    payment,
-    [
-      "type",
-      "cc_type",
-      "last_four"
-    ],
-    [
-      "cardType",
-      "paymentSystem",
-      "lastFourNumbers"
-    ]
-  );
-
-  const { expiration } = renames;
-
-  const convertDate = new Date(expiration?.date);
-  const year = convertDate.getFullYear().toString().slice(-2);
-  const month = convertDate.getMonth() + 1;
-
-  const adaptExpiresDate = `${month}/${year}`;
-
-  return {
-    ...renames,
-    expiration: {
-      ...expiration,
-      date: adaptExpiresDate
-    }
-  };
-};
 
 class SubscriptionsService extends ServiceBase {
   static async getSubscriptions(params) {
@@ -50,7 +18,7 @@ class SubscriptionsService extends ServiceBase {
     return subscriptions.map(SubscriptionsAdapter.fromServer);
   }
 
-  static async getSubscriptionIntervals(params) {
+  static async getIntervals(params) {
     const { shopID, subscriptionID } = params;
 
     const method = Method.GET;
@@ -61,17 +29,15 @@ class SubscriptionsService extends ServiceBase {
     return intervals.map(IntervalsAdapter.fromServer);
   }
 
-  static async getSubscriptionPaymentMethod(params) {
+  static async getPaymentMethod(params) {
     const { shopID, subscriptionID } = params;
 
     const method = Method.GET;
     const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/payment_method`;
 
-    const response = await this.callAPI({ method, url });
+    const { payment_method } = await this.callAPI({ method, url });
 
-    const result = adaptPaymentMethodFromServer(response?.payment_method);
-
-    return result;
+    return PaymentMethodsAdapter.fromServer(payment_method);
   }
 
   static async pauseSubscription(params) {
@@ -80,9 +46,7 @@ class SubscriptionsService extends ServiceBase {
     const method = Method.POST;
     const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/pause`;
 
-    const response = await this.callAPI({ method, url });
-
-    return response;
+    await this.callAPI({ method, url });
   }
 
   static async cancelSubscription(params) {
@@ -91,54 +55,40 @@ class SubscriptionsService extends ServiceBase {
     const method = Method.POST;
     const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/cancel`;
 
-    const response = await this.callAPI({ method, url });
-
-    return response;
+    await this.callAPI({ method, url });
   }
 
-  static async reactivateSubscription(params) {
+  static async activateSubscription(params) {
     const { shopID, subscriptionID } = params;
 
     const method = Method.POST;
     const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/activate`;
 
-    const response = await this.callAPI({ method, url });
-
-    return response;
+    await this.callAPI({ method, url });
   }
 
-  static async changeAddress(params) {
-    const { shopID, addressId, data } = params;
+  static async updateAddress(params) {
+    const { shopID, address } = params;
+    const { id } = address;
 
     const method = Method.PUT;
-    const url = `/subscriptions/v1/shops/${shopID}/customers/${CUSTOMER_ID}/addresses/${addressId}`;
+    const url = `/subscriptions/v1/shops/${shopID}/customers/${CUSTOMER_ID}/addresses/${id}`;
+    const data = { customer_address: AddressesAdapter.toServer(address) };
 
     try {
-      const response = await this.callAPI({
-        data: {
-          customer_address: {
-            ...AddressesAdapter.toServer(data)
-          }
-        },
-        method,
-        url
-      });
-
-      return response;
+      await this.callAPI({ method, url, data });
     } catch (error) {
       throw AddressesAdapter.errorUpdate(error);
     }
   }
 
-  static async changeSubscriptionInterval(params) {
-    const { shopID, subscriptionIntervalId, subscriptionID } = params;
+  static async updateInterval(params) {
+    const { shopID, subscriptionID, intervalID } = params;
 
     const method = Method.PUT;
-    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/interval/${subscriptionIntervalId}`;
+    const url = `/subscriptions/v1/shops/${shopID}/subscriptions/${subscriptionID}/interval/${intervalID}`;
 
-    const response = await this.callAPI({ method, url });
-
-    return response;
+    await this.callAPI({ method, url });
   }
 }
 

@@ -73,13 +73,13 @@ const OrderFrequency = (props) => {
   const { state, methods } = useContext(AppContext);
   const {
     shopID,
-    subscriptionIntervals,
+    intervals,
     activeSubscription,
     activeSubscriptionId,
-    isChangeSubscriptionIntervalLoading
+    isIntervalUpdating
   } = state;
   const {
-    changeSubscriptionInterval
+    updateInterval
   } = methods;
 
   const [showForm, setShowForm] = useState(editMode);
@@ -93,13 +93,13 @@ const OrderFrequency = (props) => {
 
   const isSubscriptionActive = activeSubscription?.status === "active";
 
-  const intervalOptions = subscriptionIntervals?.map(formatIntervalOption);
+  const intervalOptions = intervals?.map(formatIntervalOption);
 
   const onSaveButtonClick = () => {
-    changeSubscriptionInterval({
+    updateInterval({
       shopID: shopID,
-      subscriptionIntervalId: activeIntervalID,
-      subscriptionID: activeSubscriptionId
+      subscriptionID: activeSubscriptionId,
+      intervalID: activeIntervalID
     });
   };
 
@@ -117,16 +117,16 @@ const OrderFrequency = (props) => {
   };
 
   useEffect(() => {
-    const matchOption = subscriptionIntervals?.find((interval) => interval.name === activeSubscription?.frequency);
+    const matchOption = intervals?.find((interval) => interval.name === activeSubscription?.frequency);
     if (matchOption) setActiveIntervalID(matchOption.id);
-  }, [showForm, activeSubscription, subscriptionIntervals]);
+  }, [showForm, activeSubscription, intervals]);
 
   useEffect(() => {
-    if (isChangeSubscriptionIntervalLoading) return;
+    if (isIntervalUpdating) return;
 
     setShowForm(false);
     setShowEditButton(true);
-  }, [isChangeSubscriptionIntervalLoading]);
+  }, [isIntervalUpdating]);
 
   return (
     <div>
@@ -145,21 +145,21 @@ const OrderFrequency = (props) => {
             placeholder={activeIntervalID ? "" : "Select interval"}
             value={activeIntervalID}
             options={intervalOptions}
-            disabled={isChangeSubscriptionIntervalLoading}
+            disabled={isIntervalUpdating}
             onChange={onChangeOption}
           />
           <StyledButtons>
             <Button
               className="button"
               primary
-              disabled={isChangeSubscriptionIntervalLoading}
+              disabled={isIntervalUpdating}
               onClick={onSaveButtonClick}
             >
               Save
             </Button>
             <Button
               className="button"
-              disabled={isChangeSubscriptionIntervalLoading}
+              disabled={isIntervalUpdating}
               onClick={onCancelButtonClick}
             >
               Cancel
