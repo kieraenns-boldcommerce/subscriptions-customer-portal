@@ -1,15 +1,14 @@
 import PT from "prop-types";
-import { Button } from "@boldcommerce/stacks-ui";
-import Modal from "../components/Modal";
 import styled from "styled-components";
-
+import { Button } from "@boldcommerce/stacks-ui";
+import Modal from "./Modal";
 
 const ModalConfirmPropTypes = {
   title: PT.string,
   description: PT.string,
   textButtonCancel: PT.string,
   textButtonConfirm: PT.string,
-  isVisible: PT.bool,
+  disabled: PT.bool,
   onConfirm: PT.func,
   onCancel: PT.func
 };
@@ -18,9 +17,8 @@ const ModalConfirmDefaultProps = {
   title: "Are you sure you want to continue?",
   textButtonCancel: "Cancel",
   textButtonConfirm: "Confirm",
-  isVisible: false
+  disabled: false
 };
-
 
 const StyledModalConfirm = styled.div`
   display: grid;
@@ -55,13 +53,13 @@ const ModalConfirm = (props) => {
     description,
     textButtonCancel,
     textButtonConfirm,
-    isVisible,
+    disabled,
     onConfirm,
     onCancel
   } = props;
 
   return (
-    <Modal isVisible={isVisible} onClose={onCancel}>
+    <Modal disabled={disabled} onClose={onCancel}>
       <StyledModalConfirm>
         <StyledTitle>
           { title }
@@ -74,10 +72,21 @@ const ModalConfirm = (props) => {
         )}
 
         <StyledButtons>
-          <Button className="button-ModalConfirm" block onClick={onCancel}>
+          <Button
+            className="button-ModalConfirm"
+            block
+            disabled={disabled}
+            onClick={onCancel}
+          >
             { textButtonCancel }
           </Button>
-          <Button className="button-ModalConfirm" block primary onClick={onConfirm}>
+          <Button
+            className="button-ModalConfirm"
+            block
+            primary
+            disabled={disabled}
+            onClick={onConfirm}
+          >
             { textButtonConfirm }
           </Button>
         </StyledButtons>

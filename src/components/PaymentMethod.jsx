@@ -1,22 +1,11 @@
 import { useContext } from "react";
-import PT from "prop-types";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import TitleWithEditButton from "./TitleWithEditButton";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
 import visaIcon from "../assets/icons/cards/visa.svg";
 import mastercardIcon from "../assets/icons/cards/mastercard.svg";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
-
-
-export const PaymentMethodPropTypes = {
-  onEdit: PT.func,
-  editMode: PT.bool
-};
-
-const PaymentMethodDefaultProps = {
-  editMode: false
-};
-
+import { SubscriptionStatus } from "../const";
 
 const StyledTitle = styled.div`
   margin-bottom: 8px;
@@ -43,18 +32,28 @@ const StyledSpinner = styled.div`
   align-items: center;
 `;
 
-const PaymentMethod = (props) => {
-  const { editMode, onEdit } = props;
+const PaymentMethod = () => {
+  const { state, actions } = useContext(AppContext);
 
-  const { state } = useContext(AppContext);
-  const { subscriptionPaymentMethod, isSubscriptionPaymentMethodLoading } = state;
+  const {
+    subscription,
+    paymentMethod,
+    isAppLoading,
+    isPaymentMethodLoading,
+    showPaymentMethodForm
+  } = state;
 
-  const onOpenForm = () => onEdit && onEdit();
+  const { startUpdatePaymentMethod } = actions;
+
+  const isSubscriptionActive = subscription?.status === SubscriptionStatus.ACTIVE;
+  const showEditButton = isSubscriptionActive && !showPaymentMethodForm;
+
+  const handleEditButtonClick = () => startUpdatePaymentMethod();
 
   let cardIcon;
   let innerCardType;
 
-  switch (subscriptionPaymentMethod?.paymentSystem) {
+  switch (paymentMethod?.system) {
   case "mastercard":
     cardIcon = mastercardIcon;
     break;
@@ -63,7 +62,7 @@ const PaymentMethod = (props) => {
     break;
   }
 
-  switch (subscriptionPaymentMethod?.cardType) {
+  switch (paymentMethod?.type) {
   case "credit_card":
     innerCardType = "Credit card";
     break;
@@ -71,32 +70,31 @@ const PaymentMethod = (props) => {
 
   return (
     <div>
+
       <StyledTitle>
         <TitleWithEditButton
           title="Payment method"
-          showEditButton={editMode}
-          altTextButton="Change payment method"
-          onEdit={onOpenForm}
+          editButtonLabel="Change payment method"
+          showEditButton={showEditButton}
+          editButtonDisabled={isAppLoading}
+          onEditButtonClick={handleEditButtonClick}
         />
       </StyledTitle>
 
-      {isSubscriptionPaymentMethodLoading ? (
+      {isPaymentMethodLoading ? (
         <StyledSpinner>
           <LoadingSpinner />
         </StyledSpinner>
       ) : (
         <StyledPaymentContent>
-          { innerCardType } - 
+          { innerCardType } -
           <StyledPaymentCardIcon src={cardIcon} />
-        ending in { subscriptionPaymentMethod?.lastFourNumbers } - Expires { subscriptionPaymentMethod?.expiration.date }
+          ending in { paymentMethod?.lastFourDigits } - Expires { paymentMethod?.expiration.date }
         </StyledPaymentContent>
       )}
 
     </div>
   );
 };
-
-PaymentMethod.propTypes = PaymentMethodPropTypes;
-PaymentMethod.defaultProps = PaymentMethodDefaultProps;
 
 export default PaymentMethod;

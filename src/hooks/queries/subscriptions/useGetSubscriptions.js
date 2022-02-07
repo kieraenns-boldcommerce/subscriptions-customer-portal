@@ -1,13 +1,13 @@
 import { useQuery } from "react-query";
 import SubscriptionsService from "../../../api/services/SubscriptionsService";
 
-export const useGetSubscriptions = (params) => {
-  const { shopID } = params;
+const useGetSubscriptions = (params) => {
+  const { shopID, onSuccess } = params;
 
   const { data, isLoading, refetch } = useQuery(
-    ["subscriptions", params],
-    () => SubscriptionsService.getSubscriptions(params),
-    { enabled: Boolean(shopID) }
+    ["subscriptions", { shopID }],
+    () => SubscriptionsService.getSubscriptions({ shopID }),
+    { enabled: Boolean(shopID), onSuccess }
   );
 
   return {
@@ -16,3 +16,5 @@ export const useGetSubscriptions = (params) => {
     refetchSubscriptions: refetch
   };
 };
+
+export default useGetSubscriptions;

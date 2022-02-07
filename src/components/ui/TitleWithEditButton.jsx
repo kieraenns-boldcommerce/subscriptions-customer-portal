@@ -1,18 +1,18 @@
-import { useContext } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import AppContext from "../contexts/AppContext";
-import editIcon from "../assets/icons/edit.svg";
+import editIcon from "../../assets/icons/edit.svg";
 
 const TitleWithEditButtonPropTypes = {
   title: PT.string.isRequired,
+  editButtonLabel: PT.string,
   showEditButton: PT.bool,
-  altTextButton: PT.string,
-  onEdit: PT.func
+  editButtonDisabled: PT.bool,
+  onEditButtonClick: PT.func
 };
 
 const TitleWithEditButtonDefaultProps = {
-  showEditButton: false
+  showEditButton: false,
+  editButtonDisabled: false
 };
 
 const StyledTitleWithEditButton = styled.div`
@@ -52,12 +52,17 @@ const StyledEditIcon = styled.img`
 `;
 
 const TitleWithEditButton = (props) => {
-  const { title, showEditButton, onEdit, altTextButton } = props;
+  const {
+    title,
+    editButtonLabel,
+    showEditButton,
+    editButtonDisabled,
+    onEditButtonClick
+  } = props;
 
-  const { state } = useContext(AppContext);
-  const { isAppLoading } = state;
-
-  const handleEditButtonClick = () => onEdit && onEdit();
+  const handleEditButtonClick = () => {
+    if (onEditButtonClick) onEditButtonClick();
+  };
 
   return (
     <StyledTitleWithEditButton>
@@ -68,8 +73,8 @@ const TitleWithEditButton = (props) => {
         <StyledEditButtonWrapper>
           <StyledEditButton
             type="button"
-            aria-label={altTextButton}
-            disabled={isAppLoading}
+            aria-label={editButtonLabel}
+            disabled={editButtonDisabled}
             onClick={handleEditButtonClick}
           >
             <StyledEditIcon src={editIcon} />

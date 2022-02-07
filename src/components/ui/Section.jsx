@@ -1,17 +1,11 @@
 import PT from "prop-types";
 import styled from "styled-components";
+import { ChildrenType } from "../../const";
 import TitleWithEditButton from "./TitleWithEditButton";
-
-const ChildType = PT.oneOfType([
-  PT.bool,
-  PT.number,
-  PT.string,
-  PT.node
-]);
 
 const SectionPropTypes = {
   title: PT.string,
-  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
+  children: ChildrenType.isRequired
 };
 
 const StyledSection = styled.div`

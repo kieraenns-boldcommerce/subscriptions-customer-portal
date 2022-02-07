@@ -1,18 +1,18 @@
 import { useMutation } from "react-query";
 import SubscriptionsService from "../../../api/services/SubscriptionsService";
 
-const usePauseSubscription = (params) => {
+const useActivateSubscription = (params) => {
   const { onSuccess } = params;
 
   const { isLoading, mutate } = useMutation(
-    (params) => SubscriptionsService.pauseSubscription(params),
+    (params) => SubscriptionsService.activateSubscription(params),
     { onSuccess }
   );
 
   return {
-    isSubscriptionPausing: isLoading,
-    pauseSubscription: mutate
+    isSubscriptionActivating: isLoading,
+    activateSubscription: mutate
   };
 };
 
-export default usePauseSubscription;
+export default useActivateSubscription;

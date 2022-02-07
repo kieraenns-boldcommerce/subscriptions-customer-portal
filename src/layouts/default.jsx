@@ -1,14 +1,7 @@
-import PT from "prop-types";
-
-const ChildType = PT.oneOfType([
-  PT.bool,
-  PT.number,
-  PT.string,
-  PT.node
-]);
+import { ChildrenType } from "../const";
 
 export const DefaultLayoutPropTypes = {
-  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
+  children: ChildrenType.isRequired
 };
 
 const DefaultLayout = (props) => {

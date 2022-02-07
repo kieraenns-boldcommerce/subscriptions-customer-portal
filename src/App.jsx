@@ -1,9 +1,8 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Resets, Vars, Fonts } from "./globalStyles";
-import "react-toastify/dist/ReactToastify.min.css";
-import IndexPage from "./pages/index";
 import AppStateProvider from "./providers/AppStateProvider";
-
+import IndexPage from "./pages/index";
+import { NotificationContainer } from "./components/ui/Notification";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,17 +16,21 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
 
-      <AppStateProvider>
-        <Fonts />
-        <Resets />
-        <Vars />
-  
-        <IndexPage />
-      </AppStateProvider>
+      <Resets />
+      <Fonts />
+      <Vars />
 
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppStateProvider>
+          <IndexPage />
+        </AppStateProvider>
+      </QueryClientProvider>
+
+      <NotificationContainer />
+
+    </>
   );
 };
 

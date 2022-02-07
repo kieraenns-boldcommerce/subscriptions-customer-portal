@@ -1,15 +1,8 @@
-import PT from "prop-types";
 import styled from "styled-components";
-
-const ChildType = PT.oneOfType([
-  PT.bool,
-  PT.number,
-  PT.string,
-  PT.node
-]);
+import { ChildrenType } from "../const";
 
 export const FieldsLayoutPropTypes = {
-  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
+  children: ChildrenType.isRequired
 };
 
 const StyledFieldsLayout = styled.div`

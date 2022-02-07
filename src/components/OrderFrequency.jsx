@@ -1,23 +1,10 @@
-import PT from "prop-types";
 import { Button, SelectField } from "@boldcommerce/stacks-ui";
-import TitleWithEditButton from "./TitleWithEditButton";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
 import styled from "styled-components";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import AppContext from "../contexts/AppContext";
-
-const formatIntervalOption = (interval) => {
-  const { id: value, name } = interval;
-  return { name, value };
-};
-
-export const OrderFrequencyPropTypes = {
-  onEdit: PT.func,
-  editMode: PT.bool
-};
-
-const OrderFrequencyDefaultProps = {
-  editMode: false
-};
+import formatIntervalOption from "../utils/formatIntervalOption";
+import { SubscriptionStatus } from "../const";
 
 const StyledTitle = styled.div`
   margin-bottom: 10px;
@@ -67,100 +54,65 @@ const StyledButtons = styled.div`
   }
 `;
 
-const OrderFrequency = (props) => {
-  const { editMode, onEdit } = props;
+const OrderFrequency = () => {
+  const { state, actions } = useContext(AppContext);
 
-  const { state, methods } = useContext(AppContext);
   const {
-    shopID,
-    subscriptionIntervals,
-    activeSubscription,
-    activeSubscriptionId,
-    isChangeSubscriptionIntervalLoading
+    intervals,
+    subscription,
+    isAppLoading,
+    showIntervalForm
   } = state;
-  const {
-    changeSubscriptionInterval
-  } = methods;
 
-  const [showForm, setShowForm] = useState(editMode);
-  const [showEditButton, setShowEditButton] = useState(!editMode);
-  const [activeIntervalID, setActiveIntervalID] = useState();
+  const { startUpdateInterval, stopUpdateInterval, finishUpdateInterval } = actions;
 
-  useEffect(() => {
-    setShowForm(editMode);
-    setShowEditButton(!editMode);
-  }, [editMode]);
+  const intervalOptions = intervals?.map(formatIntervalOption);
 
-  const isSubscriptionActive = activeSubscription?.status === "active";
+  const [intervalID, setIntervalID] = useState(null);
 
-  const intervalOptions = subscriptionIntervals?.map(formatIntervalOption);
+  const isSubscriptionActive = subscription?.status === SubscriptionStatus.ACTIVE;
+  const showEditButton = isSubscriptionActive && !showIntervalForm;
 
-  const onSaveButtonClick = () => {
-    changeSubscriptionInterval({
-      shopID: shopID,
-      subscriptionIntervalId: activeIntervalID,
-      subscriptionID: activeSubscriptionId
-    });
-  };
+  const onChangeOption = (event) => setIntervalID(event.target.value);
 
-  const onCancelButtonClick = () => {
-    setShowForm(false);
-    setShowEditButton(true);
-  };
-
-  const onChangeOption = (event) => setActiveIntervalID(event.target.value);
-
-  const onOpenForm = () => {
-    setShowForm(true);
-    setShowEditButton(false);
-    onEdit && onEdit();
-  };
-
-  useEffect(() => {
-    const matchOption = subscriptionIntervals?.find((interval) => interval.name === activeSubscription?.frequency);
-    if (matchOption) setActiveIntervalID(matchOption.id);
-  }, [showForm, activeSubscription, subscriptionIntervals]);
-
-  useEffect(() => {
-    if (isChangeSubscriptionIntervalLoading) return;
-
-    setShowForm(false);
-    setShowEditButton(true);
-  }, [isChangeSubscriptionIntervalLoading]);
+  const handleEditButtonClick = () => startUpdateInterval();
+  const handleConfirmButtonClick = () => finishUpdateInterval(intervalID);
+  const handleCancelButtonClick = () => stopUpdateInterval();
 
   return (
     <div>
       <StyledTitle>
         <TitleWithEditButton
           title="Order frequency"
-          showEditButton={showEditButton && isSubscriptionActive}
-          altTextButton="Change frequency"
-          onEdit={onOpenForm}
+          editButtonLabel="Change frequency"
+          showEditButton={showEditButton}
+          editButtonDisabled={isAppLoading}
+          onEditButtonClick={handleEditButtonClick}
         />
       </StyledTitle>
 
-      {showForm && isSubscriptionActive ? (
+      {showIntervalForm ? (
         <StyledForm>
           <SelectField
-            placeholder={activeIntervalID ? "" : "Select interval"}
-            value={activeIntervalID}
+            placeholder={intervalID ? "" : "Select interval"}
+            value={intervalID}
             options={intervalOptions}
-            disabled={isChangeSubscriptionIntervalLoading}
+            disabled={isAppLoading}
             onChange={onChangeOption}
           />
           <StyledButtons>
             <Button
               className="button"
               primary
-              disabled={isChangeSubscriptionIntervalLoading}
-              onClick={onSaveButtonClick}
+              disabled={isAppLoading}
+              onClick={handleConfirmButtonClick}
             >
               Save
             </Button>
             <Button
               className="button"
-              disabled={isChangeSubscriptionIntervalLoading}
-              onClick={onCancelButtonClick}
+              disabled={isAppLoading}
+              onClick={handleCancelButtonClick}
             >
               Cancel
             </Button>
@@ -168,14 +120,11 @@ const OrderFrequency = (props) => {
         </StyledForm>
       ) : (
         <StyledDescription>
-          { activeSubscription?.frequency }
+          { subscription?.frequency }
         </StyledDescription>
       )}
     </div>
   );
 };
-
-OrderFrequency.propTypes = OrderFrequencyPropTypes;
-OrderFrequency.defaultProps = OrderFrequencyDefaultProps;
 
 export default OrderFrequency;
