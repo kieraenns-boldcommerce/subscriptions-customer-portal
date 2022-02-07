@@ -2,13 +2,15 @@ import PT from "prop-types";
 import styled, { css } from "styled-components";
 import { Button } from "@boldcommerce/stacks-ui";
 
-const MessageTypeType = PT.oneOf([
-  "default",
-  "success",
-  "warning",
-  "alert",
-  "info"
-]);
+export const MessageType = {
+  DEFAULT: "default",
+  SUCCESS: "success",
+  WARNING: "warning",
+  ALERT: "alert",
+  INFO: "info"
+};
+
+const MessageTypeType = PT.oneOf(Object.values(MessageType));
 
 const MessagePropTypes = {
   type: MessageTypeType,

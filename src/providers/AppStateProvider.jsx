@@ -1,6 +1,6 @@
-import PT from "prop-types";
-import { useEffect, useState } from "react";
-import AppContext from "../contexts/AppContext";
+import { useState, useEffect } from "react";
+
+import { ChildrenType } from "../const";
 
 import useGetShop from "../hooks/queries/shops/useGetShop";
 import useGetSubscriptions from "../hooks/queries/subscriptions/useGetSubscriptions";
@@ -12,25 +12,19 @@ import useActivateSubscription from "../hooks/queries/subscriptions/useActivateS
 import useUpdateAddress from "../hooks/queries/subscriptions/useUpdateAddress";
 import useUpdateInterval from "../hooks/queries/subscriptions/useUpdateInterval";
 
-import { toast } from "react-toastify";
-import Message from "../components/ui/Message";
-
-const ChildType = PT.oneOfType([
-  PT.bool,
-  PT.number,
-  PT.string,
-  PT.node
-]);
+import AppContext from "../contexts/AppContext";
+import { Notify } from "../components/ui/Notification";
 
 const AppStateProviderPropTypes = {
-  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired
+  children: ChildrenType.isRequired
 };
 
 const AppStateProvider = (props) => {
   const { children } = props;
 
-  // States
+  // states
   const [subscriptionID, setSubscriptionID] = useState(null);
+
   const [addressFormErrors, setAddressFormErrors] = useState(null);
 
   const [showShippingAddressForm, setShowShippingAddressForm] = useState(false);
@@ -39,9 +33,9 @@ const AppStateProvider = (props) => {
   const [showPaymentMethodForm, setShowPaymentMethodForm] = useState(false);
 
   const [showModalPause, setShowModalPause] = useState(false);
-  const [showModalDeactivate, setShowModalDeactivate] = useState(false);
+  const [showModalCancel, setShowModalCancel] = useState(false);
 
-  // Handlers
+  // handlers for queries and mutations
   const handleGetSubscriptionsSuccess = () => {
     setShowShippingAddressForm(false);
     setShowBillingAddressForm(false);
@@ -49,7 +43,7 @@ const AppStateProvider = (props) => {
     setShowPaymentMethodForm(false);
 
     setShowModalPause(false);
-    setShowModalDeactivate(false);
+    setShowModalCancel(false);
   };
 
   const handlePauseSubscriptionSuccess = () => {
@@ -61,27 +55,27 @@ const AppStateProvider = (props) => {
   };
 
   const handleActivateSubscriptionSuccess = () => {
-    toast(<Message text="Subscription reactivated successfully" type="success" />);
+    Notify.success("Subscription reactivated successfully");
     refetchSubscriptions();
   };
 
   const handleUpdateAddressSuccess = () => {
-    toast(<Message text="Address changed successfully" type="success" />);
+    Notify.success("Address changed successfully");
     refetchSubscriptions();
   };
 
   const handleUpdateAddressError = (error) => {
     const { message, fieldErrors } = error;
     setAddressFormErrors(fieldErrors);
-    toast(<Message text={message} type="alert" />);
+    Notify.alert(message);
   };
 
   const handleUpdateIntervalSuccess = () => {
-    toast(<Message text="Frequency changed successfully" type="success" />);
+    Notify.success("Frequency changed successfully");
     refetchSubscriptions();
   };
 
-  // Hooks
+  // queries and mutations
   const { shop, isShopLoading } = useGetShop();
   const shopID = shop?.shopID;
 
@@ -169,6 +163,7 @@ const AppStateProvider = (props) => {
       setShowPaymentMethodForm(false);
     },
 
+    // pause
     startPauseSubscription: () => {
       setShowModalPause(true);
     },
@@ -179,16 +174,18 @@ const AppStateProvider = (props) => {
       pauseSubscription({ shopID, subscriptionID });
     },
 
+    // cancel
     startCancelSubscription: () => {
-      setShowModalDeactivate(true);
+      setShowModalCancel(true);
     },
     stopCancelSubscription: () => {
-      setShowModalDeactivate(false);
+      setShowModalCancel(false);
     },
     finishCancelSubscription: () => {
       cancelSubscription({ shopID, subscriptionID });
     },
 
+    // activate
     activateSubscription: () => activateSubscription({ shopID, subscriptionID }),
 
     startUpdateAddressShipping: () => {
@@ -252,7 +249,6 @@ const AppStateProvider = (props) => {
 
   const state = {
     state: {
-      shopID,
       subscription,
       subscriptionID,
       subscriptions,
@@ -265,7 +261,7 @@ const AppStateProvider = (props) => {
       isIntervalUpdating,
       isPaymentMethodLoading,
       showModalPause,
-      showModalDeactivate,
+      showModalCancel,
       showShippingAddressForm,
       showBillingAddressForm,
       showIntervalForm,

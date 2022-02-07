@@ -3,15 +3,13 @@ import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
 import NoSubscriptions from "../components/NoSubscriptions";
-import Tabs from "../components/Tabs";
+import Tabs from "../components/ui/Tabs";
 import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 import FrequencyAndPayment from "../components/FrequencyAndPayment";
 import TopSection from "../components/TopSection";
-import Section from "../components/Section";
-import ModalConfirm from "../components/ModalConfirm";
-import Notification from "../components/Notification";
+import ModalConfirm from "../components/ui/ModalConfirm";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
 
@@ -72,7 +70,7 @@ const IndexPage = () => {
     isAppLoadingInitial,
     isAppLoading,
     showModalPause,
-    showModalDeactivate,
+    showModalCancel,
     showShippingAddressForm,
     showBillingAddressForm,
     showIntervalForm,
@@ -116,8 +114,6 @@ const IndexPage = () => {
     <DefaultLayout>
       <Container>
 
-        <Notification />
-
         {showSpinner && (
           <StyledFullPageSpinner>
             <LoadingSpinner />
@@ -143,9 +139,7 @@ const IndexPage = () => {
               <TopSection />
             </StyledTopSectionContainer>
 
-            <Section>
-              <Tabs tabs={tabs} />
-            </Section>
+            <Tabs tabs={tabs} />
 
             {/* <StyledFormContainer
               showForm={showAnyForm}
@@ -191,7 +185,7 @@ const IndexPage = () => {
               />
             )}
 
-            {showModalDeactivate && (
+            {showModalCancel && (
               <ModalConfirm
                 title="Are you sure you want to cancel this subscription?"
                 description="This will cancel your subscription and all unprocessed orders"

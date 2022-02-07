@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
 import { Button, InputField, SelectField } from "@boldcommerce/stacks-ui";
-import Section from "./Section";
+import Section from "./ui/Section";
 import FormLayout from "./FormLayout";
 import FieldsLayout from "./FieldsLayout";
 import AppContext from "../contexts/AppContext";

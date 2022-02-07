@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import { SubscriptionStatus, SubscriptionAddress } from "../const";
+import { SubscriptionAddress, SubscriptionStatus } from "../const";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
 import AppContext from "../contexts/AppContext";
 

@@ -1,9 +1,8 @@
 import { useContext } from "react";
 import styled from "styled-components";
-import Section from "./Section";
+import Section from "./ui/Section";
 import ProductCard from "./ProductCard";
 import AppContext from "../contexts/AppContext";
-
 
 const StyledProductList = styled.div`
   display: grid;

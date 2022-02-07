@@ -1,7 +1,7 @@
 import PT from "prop-types";
 import styled from "styled-components";
 import { Button } from "@boldcommerce/stacks-ui";
-import Modal from "../components/Modal";
+import Modal from "./Modal";
 
 const ModalConfirmPropTypes = {
   title: PT.string,

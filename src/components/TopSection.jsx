@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { SelectField } from "@boldcommerce/stacks-ui";
-import { SubscriptionStatus, SubscriptionAction } from "../const";
+import { SubscriptionAction, SubscriptionStatus } from "../const";
 import formatSubscriptionOption from "../utils/formatSubscriptionOption";
 import formatSubscriptionName from "../utils/formatSubscriptionName";
 import formatSubscriptionNextOrderDatetime from "../utils/formatSubscriptionNextOrderDatetime";
@@ -87,13 +87,13 @@ const TopSection = () => {
 
   const menuItems = [
     { name: "Pause subscription", value: SubscriptionAction.PAUSE },
-    { type: "alert", name: "Cancel subscription", value: SubscriptionAction.DEACTIVATE }
+    { type: "alert", name: "Cancel subscription", value: SubscriptionAction.CANCEL }
   ];
 
   const handleMenuItemClick = (item) => {
     const action = item.value;
     if (action === SubscriptionAction.PAUSE) startPauseSubscription();
-    if (action === SubscriptionAction.DEACTIVATE) startCancelSubscription();
+    if (action === SubscriptionAction.CANCEL) startCancelSubscription();
   };
 
   return (

@@ -1,16 +1,10 @@
 import { useEffect } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-
-const ChildType = PT.oneOfType([
-  PT.bool,
-  PT.number,
-  PT.string,
-  PT.node
-]);
+import { ChildrenType } from "../../const";
 
 const ModalPropTypes = {
-  children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired,
+  children: ChildrenType.isRequired,
   disabled: PT.bool,
   onClose: PT.func
 };
