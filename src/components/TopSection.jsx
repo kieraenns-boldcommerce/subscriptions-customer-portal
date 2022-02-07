@@ -1,18 +1,13 @@
 import { useContext } from "react";
-import PT from "prop-types";
-import { SelectField } from "@boldcommerce/stacks-ui";
-import Menu from "./Menu";
-import Message from "./Message";
 import styled from "styled-components";
+import { SelectField } from "@boldcommerce/stacks-ui";
+import { SubscriptionStatus, SubscriptionAction } from "../const";
+import formatSubscriptionOption from "../utils/formatSubscriptionOption";
+import formatSubscriptionName from "../utils/formatSubscriptionName";
+import formatSubscriptionNextOrderDatetime from "../utils/formatSubscriptionNextOrderDatetime";
 import AppContext from "../contexts/AppContext";
-
-
-const TopSectionPropTypes = {
-  label: PT.string.isRequired,
-  onMessageButtonClick: PT.func,
-  onSubscriptionChange: PT.func,
-  onMenuItemChange: PT.func
-};
+import Menu from "./ui/Menu";
+import Message from "./ui/Message";
 
 const StyledTopSection = styled.div`
   display: grid;
@@ -59,50 +54,47 @@ const StyledSubscriptionMessage = styled.div`
   margin-top: 14px;
 `;
 
-const TopSection = (props) => {
-  const {
-    label,
-    onMessageButtonClick,
-    onSubscriptionChange,
-    onMenuItemChange
-  } = props;
-
-  const { state, methods } = useContext(AppContext);
+const TopSection = () => {
+  const { state, actions } = useContext(AppContext);
 
   const {
-    activeSubscription,
-    activeSubscriptionOption,
     subscriptions,
-    subscriptionOptions,
-    messageProps,
+    subscription,
+    subscriptionID,
     isAppLoading
   } = state;
+
   const {
-    setActiveSubscriptionId
-  } = methods;
+    viewSubscription,
+    startPauseSubscription,
+    startCancelSubscription,
+    activateSubscription
+  } = actions;
 
-  const showMenu = activeSubscription?.status !== "inactive";
-  const showMessage = activeSubscription?.status !== "active";
+  const subscriptionOptions = subscriptions.map(formatSubscriptionOption);
 
-  const showSubscriptionsSelect = subscriptionOptions.length > 1;
+  const subscriptionName = formatSubscriptionName(subscription);
+  const subscriptionNextOrderDatetime = formatSubscriptionNextOrderDatetime(subscription);
 
-  const onOptionChange = (event) => {
-    const { target } = event;
+  const subscriptionStatus = subscription?.status;
+  const isSubscriptionActive = subscriptionStatus === SubscriptionStatus.ACTIVE;
+  const isSubscriptionInactive = subscriptionStatus === SubscriptionStatus.INACTIVE;
+  const isSubscriptionPaused = subscriptionStatus === SubscriptionStatus.PAUSED;
 
-    const matchOption = subscriptionOptions?.find((option) => option.value === target.value);
-    const matchSubscription = subscriptions?.find((subscription) => String(subscription.id) === target.value);
+  const showSubscriptionsSelect = subscriptions.length > 1;
 
-    setActiveSubscriptionId(matchSubscription?.id);
+  const handleSubscriptionChange = (event) => viewSubscription(Number(event.target.value));
 
-    onSubscriptionChange && onSubscriptionChange(matchOption);
-  };
-
-  const onMenuItemClick = (item) => onMenuItemChange(item);
-
-  const MENU_ITEMS = [
-    { name: `${showMessage ? "Resume" : "Pause"} subscription`, value: showMessage ? "resume" : "pause" },
-    { type: "alert", name: "Cancel subscription", value: "inactive" }
+  const menuItems = [
+    { name: "Pause subscription", value: SubscriptionAction.PAUSE },
+    { type: "alert", name: "Cancel subscription", value: SubscriptionAction.DEACTIVATE }
   ];
+
+  const handleMenuItemClick = (item) => {
+    const action = item.value;
+    if (action === SubscriptionAction.PAUSE) startPauseSubscription();
+    if (action === SubscriptionAction.DEACTIVATE) startCancelSubscription();
+  };
 
   return (
     <StyledTopSection>
@@ -110,44 +102,60 @@ const TopSection = (props) => {
         <SelectField
           className="subscription-select-TopSection"
           options={subscriptionOptions}
-          value={activeSubscriptionOption?.value}
-          label={label}
+          value={subscriptionID}
+          label="Subscriptions"
           disabled={isAppLoading}
-          onChange={onOptionChange}
+          onChange={handleSubscriptionChange}
         />
       )}
 
       <StyledSubscriptionInfo>
         <StyledSubscriptionInfoTop>
           <StyledSubscriptionName>
-            { activeSubscriptionOption?.title }
+            { subscriptionName }
           </StyledSubscriptionName>
 
-          {showMenu && (
-            <Menu items={MENU_ITEMS} onItemChange={onMenuItemClick} />
+          {isSubscriptionActive && (
+            <Menu
+              items={menuItems}
+              disabled={isAppLoading}
+              onItemClick={handleMenuItemClick}
+            />
           )}
         </StyledSubscriptionInfoTop>
 
-        {showMessage ? (
+        {isSubscriptionActive && (
           <StyledSubscriptionInfoBottom>
-            <StyledSubscriptionMessage>
-              <Message
-                {...messageProps}
-                onButtonClick={onMessageButtonClick}
-              />
-            </StyledSubscriptionMessage>
-          </StyledSubscriptionInfoBottom>
-        ) : (
-          <StyledSubscriptionInfoBottom>
-            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate> { activeSubscriptionOption?.date }
+            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate>
+            { subscriptionNextOrderDatetime }
           </StyledSubscriptionInfoBottom>
         )}
+
+        {isSubscriptionInactive && (
+          <StyledSubscriptionMessage>
+            <Message
+              text="This subscription has been canceled"
+              buttonText="Reactivate subscription"
+              buttonDisabled={isAppLoading}
+              onButtonClick={activateSubscription}
+            />
+          </StyledSubscriptionMessage>
+        )}
+
+        {isSubscriptionPaused && (
+          <StyledSubscriptionMessage>
+            <Message
+              text="This subscription has been paused"
+              buttonText="Resume subscription"
+              buttonDisabled={isAppLoading}
+              onButtonClick={activateSubscription}
+            />
+          </StyledSubscriptionMessage>
+        )}
+
       </StyledSubscriptionInfo>
     </StyledTopSection>
   );
 };
 
-TopSection.propTypes = TopSectionPropTypes;
-
 export default TopSection;
-

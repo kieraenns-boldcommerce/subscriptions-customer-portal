@@ -1,28 +1,32 @@
-import { useRef, useEffect, useState, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import PT from "prop-types";
 import styled, { css } from "styled-components";
-import AppContext from "../contexts/AppContext";
-import ellipsis from "../assets/icons/ellipsis.svg";
+import ellipsis from "../../assets/icons/ellipsis.svg";
 
+const MenuItemTypeType = PT.oneOf(["default", "alert"]);
 
-const MenuItemPropTypes = {
-  type: PT.oneOf(["default", "alert"]),
+const MenuItemType = {
+  type: MenuItemTypeType,
   name: PT.string.isRequired,
   value: PT.string.isRequired
 };
 
 const MenuPropTypes = {
-  items: PT.arrayOf(PT.shape(MenuItemPropTypes)).isRequired,
-  onItemChange: PT.func
+  items: PT.arrayOf(PT.shape(MenuItemType)).isRequired,
+  disabled: PT.bool,
+  onItemClick: PT.func
 };
 
+const MenuDefaultProps = {
+  disabled: false
+};
 
 const StyledMenu = styled.div`
   position: relative;
   z-index: 2;
 `;
 
-const StyledMenuList = styled.div`
+const StyledItems = styled.div`
   position: absolute;
   top: calc(100% + 20px);
   right: -12px;
@@ -58,13 +62,14 @@ const StyledMenuList = styled.div`
   }
 `;
 
-const StyledMenuItem = styled.button`
+const StyledItem = styled.button`
   width: 100%;
   padding: 20px 24px;
 
   text-align: left;
   font-size: 14px;
   line-height: 24px;
+
   ${({ type }) => {
     switch (type) {
     case "alert":
@@ -103,62 +108,60 @@ const StyledIcon = styled.img`
   height: 14px;
 `;
 
-
 const Menu = (props) => {
-  const { items, onItemChange } = props;
-
-  const [showMenuList, setShowMenuList] = useState(false);
-
-  const { state } = useContext(AppContext);
-  const { isAppLoading } = state;
-
-  const menuListRef = useRef(null);
-
-  const onShowMenuListButtonClick = () => setShowMenuList((v) => !v);
-  const onMenuItemClick = (item) => {
-    onItemChange && onItemChange(item);
-    setShowMenuList(false);
-  };
+  const { items, disabled, onItemClick } = props;
+  const [showItems, setShowItems] = useState(false);
+  const itemsRef = useRef(null);
 
   useEffect(() => {
-    const onClose = (event) => menuListRef.current && !menuListRef.current.contains(event.target) && showMenuList && setShowMenuList(false);
+    const onOutsideClick = (event) => {
+      if (showItems && !itemsRef.current?.contains(event.target)) setShowItems(false);
+    };
 
-    document.addEventListener("click", onClose);
-    return () => document.removeEventListener("click", onClose);
-  }, [showMenuList]);
+    document.addEventListener("click", onOutsideClick);
+    return () => document.removeEventListener("click", onOutsideClick);
+  }, [showItems]);
+
+  const handleToggleButtonClick = () => setShowItems(!showItems);
+
+  const handleItemClick = (item) => {
+    setShowItems(false);
+    if (onItemClick) onItemClick(item);
+  };
 
   return (
     <StyledMenu>
       <StyledMenuButton
         type="button"
         aria-label="Subscription quick action menu"
-        disabled={isAppLoading}
-        onClick={onShowMenuListButtonClick}
+        disabled={disabled}
+        onClick={handleToggleButtonClick}
       >
         <StyledIcon src={ellipsis} />
       </StyledMenuButton>
 
-      {showMenuList && (
-        <StyledMenuList ref={menuListRef}>
+      {showItems && (
+        <StyledItems ref={itemsRef}>
           {items.map((item) => {
             const { type = "default", name, value } = item;
 
             return (
-              <StyledMenuItem
+              <StyledItem
                 key={value}
                 type={type}
-                onClick={() => onMenuItemClick(item)}
+                onClick={() => handleItemClick(item)}
               >
                 { name }
-              </StyledMenuItem>
+              </StyledItem>
             );
           })}
-        </StyledMenuList>
+        </StyledItems>
       )}
     </StyledMenu>
   );
 };
 
 Menu.propTypes = MenuPropTypes;
+Menu.defaultProps = MenuDefaultProps;
 
 export default Menu;

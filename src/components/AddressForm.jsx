@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
 import { Button, InputField, SelectField } from "@boldcommerce/stacks-ui";
@@ -6,45 +6,23 @@ import Section from "./Section";
 import FormLayout from "./FormLayout";
 import FieldsLayout from "./FieldsLayout";
 import AppContext from "../contexts/AppContext";
+import { SubscriptionAddress } from "../const";
 import getCountries from "../utils/getCountries";
 import getStatesOfCountry from "../utils/getStatesOfCountry";
 import getCitiesOfState from "../utils/getCitiesOfState";
 import getCitiesOfCountry from "../utils/getCitiesOfCountry";
+import formatCountryOption from "../utils/formatCountryOption";
+import formatStateOption from "../utils/formatStateOption";
+import formatCityOption from "../utils/formatCityOption";
 
-const formatCountryOption = (country) => {
-  const { name, code: value } = country;
-  return { name, value };
-};
-
-const formatStateOption = (state) => {
-  const { name, code: value } = state;
-  return { name, value };
-};
-
-const formatCityOption = (city) => {
-  const { name } = city;
-  return { name, value: name };
-};
+const AddressFormTypeType = PT.oneOf([
+  SubscriptionAddress.SHIPPING,
+  SubscriptionAddress.BILLING
+]);
 
 const AddressFormPropTypes = {
-  type: PT.oneOf(["shipping", "billing"]).isRequired,
-  data: PT.shape({
-    id: PT.number.isRequired,
-    customerId: PT.number.isRequired,
-    city: PT.string.isRequired,
-    company: PT.string.isRequired,
-    country: PT.string.isRequired,
-    firstName: PT.string.isRequired,
-    lastName: PT.string.isRequired,
-    phone: PT.string.isRequired,
-    province: PT.string.isRequired,
-    lineFirst: PT.string.isRequired,
-    lineSecond: PT.string.isRequired,
-    zip: PT.string.isRequired
-  }).isRequired,
-  onCancel: PT.func
+  type: AddressFormTypeType.isRequired
 };
-
 
 const StyledAddressForm = styled.div`
   padding-bottom: 30px;
@@ -66,23 +44,23 @@ const StyledAddressFormSecondRow = styled.div`
 `;
 
 const AddressForm = (props) => {
-  const { type, data, onCancel } = props;
+  const { type } = props;
 
-  const { state, methods } = useContext(AppContext);
+  const { state, actions } = useContext(AppContext);
+  const { subscription, addressFormErrors, isAppLoading } = state;
 
   const {
-    shopID,
-    addressFormErrors,
-    isAddressUpdating
-  } = state;
+    stopUpdateAddressShipping,
+    finishUpdateAddressShipping,
+    stopUpdateAddressBilling,
+    finishUpdateAddressBilling
+  } = actions;
 
-  const { setAddressFormErrors, updateAddress } = methods;
+  const isShipping = type === SubscriptionAddress.SHIPPING;
+  const address = isShipping ? subscription.shippingAddress : subscription.billingAddress;
+  const title = isShipping ? "Editing shipping address" : "Editing billing address";
 
-  const [addressDataForm, setAddressDataForm] = useState(data);
-
-  useEffect(() => {
-    return () => setAddressFormErrors(null);
-  }, []);
+  const [form, setForm] = useState(address);
 
   const {
     company,
@@ -95,7 +73,7 @@ const AddressForm = (props) => {
     lineFirst,
     lineSecond,
     zip
-  } = addressDataForm;
+  } = form;
 
   const countries = getCountries();
   const states = getStatesOfCountry(countryCode);
@@ -110,19 +88,10 @@ const AddressForm = (props) => {
   const stateOptions = states.map(formatStateOption);
   const cityOptions = cities.map(formatCityOption);
 
-  const isStateFieldDisabled = isAddressUpdating || stateOptions.length === 0;
-  const isCityFieldDisabled = isAddressUpdating || cityOptions.length === 0;
+  const isStateFieldDisabled = isAppLoading || stateOptions.length === 0;
+  const isCityFieldDisabled = isAppLoading || cityOptions.length === 0;
 
-  const title = type === "shipping"
-    ? "Editing shipping address"
-    : "Editing billing address";
-
-  const onConfirmAddressButtonClick = () => updateAddress({
-    shopID,
-    address: addressDataForm
-  });
-
-  const onFormFieldChange = (event, key) => setAddressDataForm((prev) => ({
+  const onFormFieldChange = (event, key) => setForm((prev) => ({
     ...prev,
     [key]: event.target.value
   }));
@@ -134,7 +103,7 @@ const AddressForm = (props) => {
       name: country
     } = countryOptions.find((countryOption) => countryOption.value === countryCode);
 
-    setAddressDataForm((prev) => ({
+    setForm((prev) => ({
       ...prev,
       country,
       countryCode,
@@ -151,12 +120,22 @@ const AddressForm = (props) => {
       name: state
     } = stateOptions.find((stateOption) => stateOption.value === stateCode);
 
-    setAddressDataForm((prev) => ({
+    setForm((prev) => ({
       ...prev,
       state,
       stateCode,
       city: ""
     }));
+  };
+
+  const handleConfirmButtonClick = () => {
+    if (isShipping) finishUpdateAddressShipping(form);
+    else finishUpdateAddressBilling(form);
+  };
+
+  const handleCancelButtonClick = () => {
+    if (isShipping) stopUpdateAddressShipping();
+    else stopUpdateAddressBilling();
   };
 
   return (
@@ -171,7 +150,7 @@ const AddressForm = (props) => {
               placeholder="Enter first name"
               messageType={addressFormErrors?.firstName && "alert"}
               messageText={addressFormErrors?.firstName}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "firstName")}
             />
             <InputField
@@ -180,7 +159,7 @@ const AddressForm = (props) => {
               placeholder="Enter last name"
               messageType={addressFormErrors?.lastName && "alert"}
               messageText={addressFormErrors?.lastName}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "lastName")}
             />
             <InputField
@@ -189,7 +168,7 @@ const AddressForm = (props) => {
               placeholder="Enter address line 1"
               messageType={addressFormErrors?.lineFirst && "alert"}
               messageText={addressFormErrors?.lineFirst}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "lineFirst")}
             />
             <InputField
@@ -198,7 +177,7 @@ const AddressForm = (props) => {
               placeholder="Enter address line 2"
               messageType={addressFormErrors?.lineSecond && "alert"}
               messageText={addressFormErrors?.lineSecond}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "lineSecond")}
             />
           </FieldsLayout>
@@ -212,7 +191,7 @@ const AddressForm = (props) => {
                 placeholder={countryCode ? "" : "Select country"}
                 messageType={addressFormErrors?.country && "alert"}
                 messageText={addressFormErrors?.country}
-                disabled={isAddressUpdating}
+                disabled={isAppLoading}
                 onChange={onCountryChange}
               />
               <SelectField
@@ -245,7 +224,7 @@ const AddressForm = (props) => {
               placeholder="Enter zip/postal code"
               messageType={addressFormErrors?.zip && "alert"}
               messageText={addressFormErrors?.zip}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "zip")}
             />
             <InputField
@@ -254,7 +233,7 @@ const AddressForm = (props) => {
               placeholder="Enter phone number"
               messageType={addressFormErrors?.phone && "alert"}
               messageText={addressFormErrors?.phone}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "phone")}
             />
             <InputField
@@ -263,22 +242,22 @@ const AddressForm = (props) => {
               placeholder="Enter company name"
               messageType={addressFormErrors?.company && "alert"}
               messageText={addressFormErrors?.company}
-              disabled={isAddressUpdating}
+              disabled={isAppLoading}
               onInput={(event) => onFormFieldChange(event, "company")}
             />
           </FieldsLayout>
 
           <StyledButtonsWrapper>
             <Button
-              disabled={isAddressUpdating}
-              onClick={onCancel}
+              disabled={isAppLoading}
+              onClick={handleCancelButtonClick}
             >
               Discard changes
             </Button>
             <Button
               primary
-              disabled={isAddressUpdating}
-              onClick={onConfirmAddressButtonClick}
+              disabled={isAppLoading}
+              onClick={handleConfirmButtonClick}
             >
               Save changes
             </Button>

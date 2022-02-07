@@ -11,14 +11,13 @@ const ChildType = PT.oneOfType([
 
 const ModalPropTypes = {
   children: PT.oneOfType([ChildType, PT.arrayOf(ChildType)]).isRequired,
-  onClose: PT.func,
-  isVisible: PT.bool
+  disabled: PT.bool,
+  onClose: PT.func
 };
 
 const ModalDefaultProps = {
-  isVisible: false
+  disabled: false
 };
-
 
 const StyledModal = styled.div`
   position: fixed;
@@ -28,8 +27,6 @@ const StyledModal = styled.div`
   bottom: 0;
   z-index: 7;
 
-  display: ${({ isVisible }) => !isVisible && "none"};
-
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
 
@@ -37,7 +34,7 @@ const StyledModal = styled.div`
 
   &::after {
     content: "";
-    
+
     display: inline-block;
     height: 100%;
 
@@ -59,25 +56,31 @@ const StyledModalContent = styled.div`
   padding: 32px;
 
   border-radius: 8px;
-  
+
   background-color: #ffffff;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.12);
 `;
 
 const Modal = (props) => {
-  const { isVisible, onClose, children } = props;
+  const { children, disabled, onClose } = props;
 
-  const onOverlayClick = (event) => event.target === event.currentTarget && onClose();
+  const handleOverlayClick = (event) => {
+    const { target, currentTarget } = event;
+    if (!disabled && target === currentTarget) onClose();
+  };
 
   useEffect(() => {
-    const handleKeydown = (event) => event.key === "Escape" && onClose();
+    const handleKeydown = (event) => {
+      const { key } = event;
+      if (!disabled && key === "Escape") onClose();
+    };
 
-    if (isVisible) document.addEventListener("keydown", handleKeydown);
+    document.addEventListener("keydown", handleKeydown);
     return () => document.removeEventListener("keydown", handleKeydown);
-  }, [isVisible]);
+  }, []);
 
   return (
-    <StyledModal isVisible={isVisible} onClick={onOverlayClick}>
+    <StyledModal onClick={handleOverlayClick}>
       <StyledModalContainer>
         <StyledModalContent>
           { children }

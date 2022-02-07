@@ -13,7 +13,7 @@ import useUpdateAddress from "../hooks/queries/subscriptions/useUpdateAddress";
 import useUpdateInterval from "../hooks/queries/subscriptions/useUpdateInterval";
 
 import { toast } from "react-toastify";
-import Message from "../components/Message";
+import Message from "../components/ui/Message";
 
 const ChildType = PT.oneOfType([
   PT.bool,
@@ -29,32 +29,59 @@ const AppStateProviderPropTypes = {
 const AppStateProvider = (props) => {
   const { children } = props;
 
-  // * States
-  const [activeSubscriptionId, setActiveSubscriptionId] = useState(null);
+  // States
+  const [subscriptionID, setSubscriptionID] = useState(null);
   const [addressFormErrors, setAddressFormErrors] = useState(null);
 
-  // * Handlers
-  const onSuccessPauseSubscription = () => refetchSubscriptions();
-  const onSuccessCancelSubscription = () => refetchSubscriptions();
-  const onSuccessUpdateAddress = () => {
-    refetchSubscriptions();
-    toast(<Message text="Address changed successfully" type="success" />);
-  };
-  const onErrorUpdateAddress = (error) => {
-    const { message, fieldErrors } = error;
-    toast(<Message text={message} type="alert" />);
-    setAddressFormErrors(fieldErrors);
-  };
-  const onSuccessActivateSubscription = () => {
-    refetchSubscriptions();
-    toast(<Message text="Subscription reactivated successfully" type="success" />);
-  };
-  const onSuccessUpdateInterval = () => {
-    refetchSubscriptions();
-    toast(<Message text="Frequency changed successfully" type="success" />);
+  const [showShippingAddressForm, setShowShippingAddressForm] = useState(false);
+  const [showBillingAddressForm, setShowBillingAddressForm] = useState(false);
+  const [showIntervalForm, setShowIntervalForm] = useState(false);
+  const [showPaymentMethodForm, setShowPaymentMethodForm] = useState(false);
+
+  const [showModalPause, setShowModalPause] = useState(false);
+  const [showModalDeactivate, setShowModalDeactivate] = useState(false);
+
+  // Handlers
+  const handleGetSubscriptionsSuccess = () => {
+    setShowShippingAddressForm(false);
+    setShowBillingAddressForm(false);
+    setShowIntervalForm(false);
+    setShowPaymentMethodForm(false);
+
+    setShowModalPause(false);
+    setShowModalDeactivate(false);
   };
 
-  // * Hooks
+  const handlePauseSubscriptionSuccess = () => {
+    refetchSubscriptions();
+  };
+
+  const handleCancelSubscriptionSuccess = () => {
+    refetchSubscriptions();
+  };
+
+  const handleActivateSubscriptionSuccess = () => {
+    toast(<Message text="Subscription reactivated successfully" type="success" />);
+    refetchSubscriptions();
+  };
+
+  const handleUpdateAddressSuccess = () => {
+    toast(<Message text="Address changed successfully" type="success" />);
+    refetchSubscriptions();
+  };
+
+  const handleUpdateAddressError = (error) => {
+    const { message, fieldErrors } = error;
+    setAddressFormErrors(fieldErrors);
+    toast(<Message text={message} type="alert" />);
+  };
+
+  const handleUpdateIntervalSuccess = () => {
+    toast(<Message text="Frequency changed successfully" type="success" />);
+    refetchSubscriptions();
+  };
+
+  // Hooks
   const { shop, isShopLoading } = useGetShop();
   const shopID = shop?.shopID;
 
@@ -62,94 +89,63 @@ const AppStateProvider = (props) => {
     subscriptions,
     areSubscriptionsLoading,
     refetchSubscriptions
-  } = useGetSubscriptions({ shopID });
+  } = useGetSubscriptions({
+    shopID,
+    onSuccess: handleGetSubscriptionsSuccess
+  });
 
   const {
     intervals,
     // eslint-disable-next-line no-unused-vars
     areIntervalsLoading
-  } = useGetIntervals({
-    shopID,
-    subscriptionID: activeSubscriptionId
-  });
+  } = useGetIntervals({ shopID, subscriptionID });
 
   const {
     paymentMethod,
     isPaymentMethodLoading
-  } = useGetPaymentMethod({
-    shopID,
-    subscriptionID: activeSubscriptionId
-  });
+  } = useGetPaymentMethod({ shopID, subscriptionID });
 
   const {
     isSubscriptionPausing,
     pauseSubscription
   } = usePauseSubscription({
-    onSuccess: onSuccessPauseSubscription
+    onSuccess: handlePauseSubscriptionSuccess
   });
 
   const {
     isSubscriptionCancelling,
     cancelSubscription
   } = useCancelSubscription({
-    onSuccess: onSuccessCancelSubscription
+    onSuccess: handleCancelSubscriptionSuccess
   });
 
   const {
     isSubscriptionActivating,
     activateSubscription
   } = useActivateSubscription({
-    onSuccess: onSuccessActivateSubscription
+    onSuccess: handleActivateSubscriptionSuccess
   });
 
   const {
     isAddressUpdating,
     updateAddress
   } = useUpdateAddress({
-    onSuccess: onSuccessUpdateAddress,
-    onError: onErrorUpdateAddress
+    onSuccess: handleUpdateAddressSuccess,
+    onError: handleUpdateAddressError
   });
 
   const {
     isIntervalUpdating,
     updateInterval
   } = useUpdateInterval({
-    onSuccess: onSuccessUpdateInterval
+    onSuccess: handleUpdateIntervalSuccess
   });
 
   useEffect(() => {
-    if (!activeSubscriptionId && subscriptions?.length) setActiveSubscriptionId(subscriptions[0].id);
-  }, [activeSubscriptionId, subscriptions]);
+    if (!subscriptionID && subscriptions?.length) setSubscriptionID(subscriptions[0].id);
+  }, [subscriptionID, subscriptions]);
 
-  const subscriptionOptions = subscriptions?.map((subscription) => {
-    const { id, nextOrderDatetime, products } = subscription;
-
-    const nextOrder = new Date(nextOrderDatetime).toLocaleString(
-      "en-US",
-      {
-        month: "long",
-        year: "numeric",
-        day: "numeric"
-      });
-
-    const optionName = products.length > 1 ? `${products.length} Product` : products[0].name;
-
-    return {
-      name: `${optionName} Subscription - ${String(id)}`,
-      title: `${optionName} Subscription - #${String(id)}`,
-      value: String(id),
-      date: nextOrder
-    };
-  });
-
-  const activeSubscription = subscriptions?.find((subscription) => subscription.id === activeSubscriptionId);
-  const activeSubscriptionOption = subscriptionOptions?.find((option) => option.value === String(activeSubscriptionId));
-
-  const isSubscriptionPaused = activeSubscription?.status === "paused";
-  const messageProps = {
-    text: `This subscription has been ${isSubscriptionPaused ? "paused" : "canceled"}.`,
-    buttonText: `${isSubscriptionPaused ? "Resume" : "Reactivate"} subscription`
-  };
+  const subscription = subscriptions?.find((subscription) => subscription.id === subscriptionID);
 
   const isAppLoadingInitial = isShopLoading || areSubscriptionsLoading;
 
@@ -161,33 +157,121 @@ const AppStateProvider = (props) => {
     isAddressUpdating ||
     isIntervalUpdating;
 
+  const actions = {
+    viewSubscription: (subscriptionID) => {
+      setSubscriptionID(subscriptionID);
+
+      setAddressFormErrors(null);
+
+      setShowShippingAddressForm(false);
+      setShowBillingAddressForm(false);
+      setShowIntervalForm(false);
+      setShowPaymentMethodForm(false);
+    },
+
+    startPauseSubscription: () => {
+      setShowModalPause(true);
+    },
+    stopPauseSubscription: () => {
+      setShowModalPause(false);
+    },
+    finishPauseSubscription: () => {
+      pauseSubscription({ shopID, subscriptionID });
+    },
+
+    startCancelSubscription: () => {
+      setShowModalDeactivate(true);
+    },
+    stopCancelSubscription: () => {
+      setShowModalDeactivate(false);
+    },
+    finishCancelSubscription: () => {
+      cancelSubscription({ shopID, subscriptionID });
+    },
+
+    activateSubscription: () => activateSubscription({ shopID, subscriptionID }),
+
+    startUpdateAddressShipping: () => {
+      setAddressFormErrors(null);
+
+      setShowShippingAddressForm(true);
+      setShowBillingAddressForm(false);
+      setShowIntervalForm(false);
+      setShowPaymentMethodForm(false);
+    },
+    stopUpdateAddressShipping: () => {
+      setAddressFormErrors(null);
+
+      setShowShippingAddressForm(false);
+    },
+    finishUpdateAddressShipping: (address) => {
+      updateAddress({ shopID, address });
+    },
+
+    startUpdateAddressBilling: () => {
+      setAddressFormErrors(null);
+
+      setShowShippingAddressForm(false);
+      setShowBillingAddressForm(true);
+      setShowIntervalForm(false);
+      setShowPaymentMethodForm(false);
+    },
+    stopUpdateAddressBilling: () => {
+      setAddressFormErrors(null);
+
+      setShowBillingAddressForm(false);
+    },
+    finishUpdateAddressBilling: (address) => {
+      updateAddress({ shopID, address });
+    },
+
+    startUpdateInterval: () => {
+      setAddressFormErrors(null);
+
+      setShowShippingAddressForm(false);
+      setShowBillingAddressForm(false);
+      setShowIntervalForm(true);
+      setShowPaymentMethodForm(false);
+    },
+    stopUpdateInterval: () => {
+      setShowIntervalForm(false);
+    },
+    finishUpdateInterval: (intervalID) => {
+      updateInterval({ shopID, subscriptionID, intervalID });
+    },
+
+    startUpdatePaymentMethod: () => {
+      setAddressFormErrors(null);
+
+      setShowShippingAddressForm(false);
+      setShowBillingAddressForm(false);
+      setShowIntervalForm(false);
+      setShowPaymentMethodForm(true);
+    }
+  };
+
   const state = {
     state: {
       shopID,
-      activeSubscription,
-      activeSubscriptionOption,
-      activeSubscriptionId,
+      subscription,
+      subscriptionID,
       subscriptions,
-      subscriptionOptions,
       intervals,
       addressFormErrors,
-      messageProps,
       paymentMethod,
       isAppLoadingInitial,
       isAppLoading,
       isAddressUpdating,
       isIntervalUpdating,
-      isPaymentMethodLoading
+      isPaymentMethodLoading,
+      showModalPause,
+      showModalDeactivate,
+      showShippingAddressForm,
+      showBillingAddressForm,
+      showIntervalForm,
+      showPaymentMethodForm
     },
-    methods: {
-      setActiveSubscriptionId,
-      setAddressFormErrors,
-      updateAddress,
-      pauseSubscription,
-      activateSubscription,
-      cancelSubscription,
-      updateInterval
-    }
+    actions
   };
 
   return (

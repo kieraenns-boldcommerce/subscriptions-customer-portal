@@ -1,30 +1,18 @@
+import { useContext } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import TitleWithEditButton from "./TitleWithEditButton";
+import { SubscriptionStatus, SubscriptionAddress } from "../const";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
+import AppContext from "../contexts/AppContext";
+
+const AddressTypeType = PT.oneOf([
+  SubscriptionAddress.SHIPPING,
+  SubscriptionAddress.BILLING
+]);
 
 const AddressPropTypes = {
-  type: PT.oneOf(["shipping", "billing"]).isRequired,
-  data: PT.shape({
-    city: PT.string.isRequired,
-    company: PT.string,
-    country: PT.string.isRequired,
-    firstName: PT.string.isRequired,
-    lastName: PT.string.isRequired,
-    phone: PT.string,
-    state: PT.string.isRequired,
-    lineFirst: PT.string.isRequired,
-    lineSecond: PT.string,
-    zip: PT.string.isRequired
-  }),
-  showEditButton: PT.bool,
-  altTextEditButton: PT.string,
-  onEdit: PT.func
+  type: AddressTypeType.isRequired
 };
-
-const AddressDefaultProps = {
-  showEditButton: false
-};
-
 
 const StyledAddress = styled.div`
   font-size: 13px;
@@ -46,30 +34,46 @@ const StyledFullName = styled.div`
 `;
 
 const Address = (props) => {
-  const {
-    type,
-    data,
-    showEditButton,
-    altTextEditButton,
-    onEdit
-  } = props;
+  const { type } = props;
 
-  const title = type === "shipping" ? "Shipping address" : "Billing address";
-
-  if (!data) return null;
+  const { state: appState, actions } = useContext(AppContext);
 
   const {
-    city,
-    company,
-    country,
+    subscription,
+    isAppLoading,
+    showShippingAddressForm,
+    showBillingAddressForm
+  } = appState;
+
+  const { startUpdateAddressShipping, startUpdateAddressBilling } = actions;
+
+  if (!subscription) return null;
+
+  const isShipping = type === SubscriptionAddress.SHIPPING;
+  const title = isShipping ? "Shipping address" : "Billing address";
+  const editButtonLabel = isShipping ? "Edit shipping address" : "Edit billing address";
+  const isSubscriptionActive = subscription.status === SubscriptionStatus.ACTIVE;
+  const showForm = isShipping ? showShippingAddressForm : showBillingAddressForm;
+  const showEditButton = isSubscriptionActive && !showForm;
+  const address = isShipping ? subscription.shippingAddress : subscription.billingAddress;
+
+  const {
     firstName,
     lastName,
-    phone,
-    state,
     lineFirst,
     lineSecond,
-    zip
-  } = data;
+    city,
+    state,
+    zip,
+    country,
+    company,
+    phone
+  } = address;
+
+  const handleEditButtonClick = () => {
+    if (isShipping) startUpdateAddressShipping();
+    else startUpdateAddressBilling();
+  };
 
   return (
     <StyledAddress>
@@ -77,9 +81,10 @@ const Address = (props) => {
       <StyledTitle>
         <TitleWithEditButton
           title={title}
+          editButtonLabel={editButtonLabel}
           showEditButton={showEditButton}
-          altTextButton={altTextEditButton}
-          onEdit={onEdit}
+          editButtonDisabled={isAppLoading}
+          onEditButtonClick={handleEditButtonClick}
         />
       </StyledTitle>
 
@@ -99,6 +104,5 @@ const Address = (props) => {
 };
 
 Address.propTypes = AddressPropTypes;
-Address.defaultProps = AddressDefaultProps;
 
 export default Address;

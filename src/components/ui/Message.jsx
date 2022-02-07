@@ -1,18 +1,26 @@
-import { useContext } from "react";
 import PT from "prop-types";
+import styled, { css } from "styled-components";
 import { Button } from "@boldcommerce/stacks-ui";
-import styled,  { css } from "styled-components";
-import AppContext from "../contexts/AppContext";
+
+const MessageTypeType = PT.oneOf([
+  "default",
+  "success",
+  "warning",
+  "alert",
+  "info"
+]);
 
 const MessagePropTypes = {
+  type: MessageTypeType,
   text: PT.string.isRequired,
-  type: PT.oneOf(["alert", "warning", "info", "success", "default"]),
   buttonText: PT.string,
+  buttonDisabled: PT.bool,
   onButtonClick: PT.func
 };
 
 const MessageDefaultProps = {
-  type: "default"
+  type: "default",
+  buttonDisabled: false
 };
 
 const StyledMessage = styled.div`
@@ -21,7 +29,7 @@ const StyledMessage = styled.div`
   display: grid;
   row-gap: 4px;
 
-  padding: 12px 11px 12px 13px;
+  padding: 12px;
 
   font-weight: 400;
   font-size: 14px;
@@ -34,28 +42,33 @@ const StyledMessage = styled.div`
     switch (type) {
     case "alert":
       return css`
-        background-color: #fff3f4;
         border-color: #fc2036;
+
+        background-color: #fff3f4;
       `;
     case "warning":
       return css`
-        background-color: #fefdf4;
         border-color: #f9e53a;
+
+        background-color: #fefdf4;
       `;
     case "info":
       return css`
-        background-color: #f2f6ff;
         border-color: #1964fb;
+
+        background-color: #f2f6ff;
       `;
     case "success":
       return css`
-        background-color: #f7fef4;
         border-color: #6ff03b;
+
+        background-color: #f7fef4;
       `;
     default:
       return css`
-        background-color: #f8f8f8;
         border-color: #6b6b6b;
+
+        background-color: #f8f8f8;
       `;
     }
   }}
@@ -67,13 +80,8 @@ const StyledMessage = styled.div`
   }
 `;
 
-
 const Message = (props) => {
-  const { type, text, buttonText, onButtonClick } = props;
-
-  const { state } = useContext(AppContext);
-  const { isAppLoading } = state;
-
+  const { type, text, buttonText, buttonDisabled, onButtonClick } = props;
   const showButton = Boolean(buttonText);
 
   return (
@@ -81,10 +89,7 @@ const Message = (props) => {
       { text }
 
       {showButton && (
-        <Button
-          disabled={isAppLoading}
-          onClick={onButtonClick}
-        >
+        <Button disabled={buttonDisabled} onClick={onButtonClick}>
           { buttonText }
         </Button>
       )}

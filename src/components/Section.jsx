@@ -1,6 +1,6 @@
 import PT from "prop-types";
 import styled from "styled-components";
-import TitleWithEditButton from "./TitleWithEditButton";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
 
 const ChildType = PT.oneOfType([
   PT.bool,

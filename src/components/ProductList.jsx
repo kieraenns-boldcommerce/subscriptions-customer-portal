@@ -46,12 +46,12 @@ const StyledProduct = styled.div`
 
 const ProductList = () => {
   const { state } = useContext(AppContext);
-  const { activeSubscription } = state;  
+  const { subscription } = state;
 
   return (
     <Section title="Products in my subscription">
       <StyledProductList>
-        {activeSubscription?.products.map((product) => {
+        {subscription?.products.map((product) => {
           const { id, image, name, variant, price, quantity } = product;
 
           return (

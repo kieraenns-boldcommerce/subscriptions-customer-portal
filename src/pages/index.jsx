@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useContext } from "react";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/Container";
@@ -14,7 +14,6 @@ import ModalConfirm from "../components/ModalConfirm";
 import Notification from "../components/Notification";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
-
 
 const StyledTitle = styled.h1`
   margin-bottom: 38px;
@@ -34,16 +33,16 @@ const StyledPaymentContent = styled.div`
   background-color: rgba(0, 0, 0, 0.2);
 `;
 
-const StyledFormContainer = styled.div`
-  max-height: ${({ showForm }) => showForm ? 960 : 0}px;
+// const StyledFormContainer = styled.div`
+//   max-height: ${({ showForm }) => showForm ? 960 : 0}px;
 
-  transition: max-height 0.4s;
-  overflow: hidden;
+//   transition: max-height 0.4s;
+//   overflow: hidden;
 
-  @media (min-width: 768px) {
-    max-height: ${({ showForm }) => showForm ? 450 : 0}px;
-  }
-`;
+//   @media (min-width: 768px) {
+//     max-height: ${({ showForm }) => showForm ? 450 : 0}px;
+//   }
+// `;
 
 const StyledTopSectionContainer = styled.div`
   margin-bottom: 30px;
@@ -64,162 +63,48 @@ const StyledFullPageSpinner = styled.div`
 
 const IndexPage = () => {
   // * States
-  const [activeMenuValue, setActiveMenuValue] = useState(null);
-  const [showBillingAddress, setShowBillingAddress] = useState(false);
-  const [showShippingAddress, setShowShippingAddress] = useState(false);
-  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
-  const [showOrderFrequency, setShowOrderFrequency] = useState(false);
-  const [showAnyForm, setShowAnyForm] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
-  const formContainerRef = useRef(null);
+  // const formContainerRef = useRef(null);
 
-  const { state, methods } = useContext(AppContext);
+  const { state, actions } = useContext(AppContext);
   const {
-    shopID,
-    activeSubscription,
-    activeSubscriptionId,
     subscriptions,
-    isAppLoadingInitial
+    isAppLoadingInitial,
+    isAppLoading,
+    showModalPause,
+    showModalDeactivate,
+    showShippingAddressForm,
+    showBillingAddressForm,
+    showIntervalForm,
+    showPaymentMethodForm
   } = state;
-  const {
-    pauseSubscription,
-    activateSubscription,
-    cancelSubscription
-  } = methods;
 
-  const isSubscriptionActive = activeSubscription?.status === "active";
+  const {
+    stopPauseSubscription,
+    finishPauseSubscription,
+    stopCancelSubscription,
+    finishCancelSubscription
+  } = actions;
 
   // * Handlers
-  const onMenuItemChange = (item) => {
-    setActiveMenuValue(item.value);
-    setShowModal(true);
-  };
 
-  const onCancelFormButtonClick = () => setShowAnyForm(false);
-
-  const onCancelModalButtonClick = () => setShowModal(false);
-
-  const onConfirmModalButtonClick = () => {
-    setShowModal(false);
-    setShowAnyForm(false);
-    setActiveMenuValue(null);
-
-    if (activeMenuValue === "resume") {
-      activateSubscription({
-        shopID,
-        subscriptionID: activeSubscriptionId
-      });
-
-      return;
-    }
-
-    if (activeMenuValue === "inactive") {
-      cancelSubscription({
-        shopID,
-        subscriptionID: activeSubscriptionId
-      });
-
-      return;
-    }
-
-    pauseSubscription({
-      shopID,
-      subscriptionID: activeSubscriptionId
-    });
-  };
-
-  const onEditShippingAddress = () => {
-    setShowAnyForm(true);
-    setShowBillingAddress(false);
-    setShowShippingAddress(true);
-
-    setShowOrderFrequency(false);
-    setShowPaymentMethod(false);
-  };
-
-  const onEditBillingAddress = () => {
-    setShowAnyForm(true);
-    setShowShippingAddress(false);
-    setShowBillingAddress(true);
-
-    setShowOrderFrequency(false);
-    setShowPaymentMethod(false);
-  };
-
-  const onEditPaymentMethod = () => {
-    setShowAnyForm(true);
-    setShowPaymentMethod(true);
-    setShowShippingAddress(false);
-    setShowBillingAddress(false);
-    setShowOrderFrequency(false);
-  };
-
-  const onEditOrderFrequency = () => {
-    setShowOrderFrequency(true);
-    setShowAnyForm(false);
-  };
-
-  const onFormCollapse = () => {
-    if (showAnyForm) return;
-
-    setShowBillingAddress(false);
-    setShowPaymentMethod(false);
-    setShowShippingAddress(false);
-  };
-
-  const onMessageButtonClick = () => {
-    activateSubscription({
-      shopID: shopID,
-      subscriptionID: activeSubscriptionId
-    });
-
-  };
-
-  useEffect(() => {
-    if (!activeSubscriptionId) return;
-
-    setShowAnyForm(false);
-    setShowOrderFrequency(false);
-  }, [activeSubscriptionId]);
-
-  useEffect(() => setShowAnyForm(false), [subscriptions]);
+  const handlePauseModalConfirm = () => finishPauseSubscription();
+  const handlePauseModalCancel = () => stopPauseSubscription();
+  const handleCancelModalConfirm = () => finishCancelSubscription();
+  const handleCancelModalCancel = () => stopCancelSubscription();
 
   const tabs = [
     {
-      content: (
-        <Address
-          type="shipping"
-          data={activeSubscription?.shippingAddress}
-          showEditButton={!showShippingAddress && isSubscriptionActive}
-          altTextEditButton="Edit shipping address"
-          onEdit={onEditShippingAddress}
-        />
-      ),
-      isActive: showShippingAddress
+      content: <Address type="shipping" />,
+      isActive: showShippingAddressForm
     },
     {
-      content: (
-        <Address
-          type="billing"
-          data={activeSubscription?.billingAddress}
-          showEditButton={!showBillingAddress && isSubscriptionActive}
-          altTextEditButton="Edit billing address"
-          onEdit={onEditBillingAddress}
-        />
-      ),
-      isActive: showBillingAddress
+      content: <Address type="billing" />,
+      isActive: showBillingAddressForm
     },
     {
-      content: (
-        <FrequencyAndPayment
-          editModeFrequency={showOrderFrequency}
-          editModePayment={!showPaymentMethod && isSubscriptionActive}
-          onEditFrequency={onEditOrderFrequency}
-          onEditPayment={onEditPaymentMethod}
-        />
-      ),
-      isActive: showPaymentMethod || showOrderFrequency
+      content: <FrequencyAndPayment />,
+      isActive: showIntervalForm || showPaymentMethodForm
     }
   ];
 
@@ -255,18 +140,14 @@ const IndexPage = () => {
             <StyledTitle>My Subscriptions</StyledTitle>
 
             <StyledTopSectionContainer>
-              <TopSection
-                label="Subscriptions"
-                onMenuItemChange={onMenuItemChange}
-                onMessageButtonClick={onMessageButtonClick}
-              />
+              <TopSection />
             </StyledTopSectionContainer>
 
             <Section>
               <Tabs tabs={tabs} />
             </Section>
 
-            <StyledFormContainer
+            {/* <StyledFormContainer
               showForm={showAnyForm}
               ref={formContainerRef}
               onTransitionEnd={onFormCollapse}
@@ -274,56 +155,51 @@ const IndexPage = () => {
               {showBillingAddress && (
                 <AddressForm
                   type="billing"
-                  data={activeSubscription?.billingAddress}
+                  data={subscription?.billingAddress}
                   onCancel={onCancelFormButtonClick}
                 />
               )}
               {showShippingAddress && (
                 <AddressForm
                   type="shipping"
-                  data={activeSubscription?.shippingAddress}
+                  data={subscription?.shippingAddress}
                   onCancel={onCancelFormButtonClick}
                 />
               )}
               {showPaymentMethod && (
                 <StyledPaymentContent />
               )}
-            </StyledFormContainer>
+            </StyledFormContainer> */}
+
+            { showShippingAddressForm && <AddressForm type="shipping" /> }
+
+            { showBillingAddressForm && <AddressForm type="billing" /> }
+
+            { showPaymentMethodForm && <StyledPaymentContent /> }
 
             <ProductList />
 
-            {activeMenuValue === "pause" && (
+            {showModalPause && (
               <ModalConfirm
-                isVisible={showModal}
                 title="Are you sure you want to pause this subscription?"
-                description="This will pause all orders until the subscription is resumed."
+                description="This will pause all orders until the subscription is resumed"
                 textButtonCancel="No, don’t pause"
                 textButtonConfirm="Yes, pause"
-                onCancel={onCancelModalButtonClick}
-                onConfirm={onConfirmModalButtonClick}
+                disabled={isAppLoading}
+                onConfirm={handlePauseModalConfirm}
+                onCancel={handlePauseModalCancel}
               />
             )}
 
-            {activeMenuValue === "inactive" && (
+            {showModalDeactivate && (
               <ModalConfirm
-                isVisible={showModal}
                 title="Are you sure you want to cancel this subscription?"
-                description="This will cancel your subscription and all unprocessed orders."
+                description="This will cancel your subscription and all unprocessed orders"
                 textButtonCancel="No, don’t cancel"
                 textButtonConfirm="Yes, cancel"
-                onCancel={onCancelModalButtonClick}
-                onConfirm={onConfirmModalButtonClick}
-              />
-            )}
-
-            {activeMenuValue === "resume" && (
-              <ModalConfirm
-                isVisible={showModal}
-                title="Are you sure you want to resume this subscription?"
-                textButtonCancel="No, don’t resume"
-                textButtonConfirm="Yes, resume"
-                onCancel={onCancelModalButtonClick}
-                onConfirm={onConfirmModalButtonClick}
+                disabled={isAppLoading}
+                onConfirm={handleCancelModalConfirm}
+                onCancel={handleCancelModalCancel}
               />
             )}
 
