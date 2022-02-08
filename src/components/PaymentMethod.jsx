@@ -2,10 +2,10 @@ import { useContext } from "react";
 import styled from "styled-components";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import { SubscriptionPaymentType, SubscriptionPaymentSystem } from "../const";
-import AppContext from "../contexts/AppContext";
+import { AppStateContext } from "../AppState";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
-import mastercardIcon from "../assets/icons/cards/mastercard.svg";
-import visaIcon from "../assets/icons/cards/visa.svg";
+import mastercardIcon from "../assets/icons/mastercard.svg";
+import visaIcon from "../assets/icons/visa.svg";
 
 const StyledTitle = styled.div`
   margin-bottom: 8px;
@@ -28,39 +28,46 @@ const StyledPaymentCardIcon = styled.img`
 `;
 
 const PaymentMethod = () => {
-  const { appState, appActions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppStateContext);
 
   const {
     paymentMethod,
     isAppLoading,
     isPaymentMethodLoading,
-    showPaymentMethodForm,
-    isSubscriptionActive
+    isSubscriptionActive,
+    showPaymentMethodForm
   } = appState;
 
-  const { startUpdatePaymentMethod } = appActions;
+  const {
+    startUpdatePaymentMethod
+  } = appActions;
+
+  const type = paymentMethod?.type;
+  const system = paymentMethod?.system;
+  const lastFourDigits = paymentMethod?.lastFourDigits;
+  const expirationDate = paymentMethod?.expiration.date;
+
+  let formattedType;
+  let systemIcon;
+
+  switch (type) {
+  case SubscriptionPaymentType.CREDIT_CARD:
+    formattedType = "Credit card";
+    break;
+  }
+
+  switch (system) {
+  case SubscriptionPaymentSystem.MASTERCARD:
+    systemIcon = mastercardIcon;
+    break;
+  case SubscriptionPaymentSystem.VISA:
+    systemIcon = visaIcon;
+    break;
+  }
 
   const showEditButton = !isPaymentMethodLoading && isSubscriptionActive && !showPaymentMethodForm;
 
   const handleEditButtonClick = () => startUpdatePaymentMethod();
-
-  let cardIcon;
-  let innerCardType;
-
-  switch (paymentMethod?.system) {
-  case SubscriptionPaymentSystem.MASTERCARD:
-    cardIcon = mastercardIcon;
-    break;
-  case SubscriptionPaymentSystem.VISA:
-    cardIcon = visaIcon;
-    break;
-  }
-
-  switch (paymentMethod?.type) {
-  case SubscriptionPaymentType.CREDIT_CARD:
-    innerCardType = "Credit card";
-    break;
-  }
 
   return (
     <div>
@@ -79,9 +86,9 @@ const PaymentMethod = () => {
         <LoadingSpinner />
       ) : (
         <StyledPaymentContent>
-          { innerCardType } -
-          <StyledPaymentCardIcon src={cardIcon} />
-          ending in { paymentMethod?.lastFourDigits } - Expires { paymentMethod?.expiration.date }
+          { formattedType } -
+          <StyledPaymentCardIcon src={systemIcon} />
+          ending in { lastFourDigits } - Expires { expirationDate }
         </StyledPaymentContent>
       )}
 

@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import styled from "styled-components";
+import { AppStateContext } from "../AppState";
 import Section from "./ui/Section";
 import ProductCard from "./ui/ProductCard";
-import AppContext from "../contexts/AppContext";
 
 const StyledProductList = styled.div`
   display: grid;
@@ -44,13 +44,16 @@ const StyledProduct = styled.div`
 `;
 
 const ProductList = () => {
-  const { appState } = useContext(AppContext);
-  const { subscription } = appState;
+  const { appState } = useContext(AppStateContext);
+
+  const {
+    subscription
+  } = appState;
 
   return (
     <Section title="Products in my subscription">
       <StyledProductList>
-        {subscription?.products.map((product) => {
+        {subscription.products.map((product) => {
           const { id, image, name, variant, price, quantity } = product;
 
           return (

@@ -37,3 +37,8 @@ export const ChildrenType = PT.oneOfType([
   ChildType,
   PT.arrayOf(ChildType)
 ]);
+
+export const AddressType = PT.oneOf([
+  SubscriptionAddress.SHIPPING,
+  SubscriptionAddress.BILLING
+]);

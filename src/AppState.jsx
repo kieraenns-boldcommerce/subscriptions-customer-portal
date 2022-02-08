@@ -1,25 +1,23 @@
-import { useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
+import { SubscriptionStatus, ChildrenType } from "./const";
+import useGetShop from "./hooks/queries/shops/useGetShop";
+import useGetSubscriptions from "./hooks/queries/subscriptions/useGetSubscriptions";
+import useGetIntervals from "./hooks/queries/subscriptions/useGetIntervals";
+import useGetPaymentMethod from "./hooks/queries/subscriptions/useGetPaymentMethod";
+import usePauseSubscription from "./hooks/queries/subscriptions/usePauseSubscription";
+import useCancelSubscription from "./hooks/queries/subscriptions/useCancelSubscription";
+import useActivateSubscription from "./hooks/queries/subscriptions/useActivateSubscription";
+import useUpdateAddress from "./hooks/queries/subscriptions/useUpdateAddress";
+import useUpdateInterval from "./hooks/queries/subscriptions/useUpdateInterval";
+import { Notify } from "./components/ui/Notification";
 
-import { SubscriptionStatus, ChildrenType } from "../const";
-
-import useGetShop from "../hooks/queries/shops/useGetShop";
-import useGetSubscriptions from "../hooks/queries/subscriptions/useGetSubscriptions";
-import useGetIntervals from "../hooks/queries/subscriptions/useGetIntervals";
-import useGetPaymentMethod from "../hooks/queries/subscriptions/useGetPaymentMethod";
-import usePauseSubscription from "../hooks/queries/subscriptions/usePauseSubscription";
-import useCancelSubscription from "../hooks/queries/subscriptions/useCancelSubscription";
-import useActivateSubscription from "../hooks/queries/subscriptions/useActivateSubscription";
-import useUpdateAddress from "../hooks/queries/subscriptions/useUpdateAddress";
-import useUpdateInterval from "../hooks/queries/subscriptions/useUpdateInterval";
-
-import AppContext from "../contexts/AppContext";
-import { Notify } from "../components/ui/Notification";
+export const AppStateContext = createContext(null);
 
 const AppStateProviderPropTypes = {
   children: ChildrenType.isRequired
 };
 
-const AppStateProvider = (props) => {
+export const AppStateProvider = (props) => {
   const { children } = props;
 
   // states
@@ -191,6 +189,7 @@ const AppStateProvider = (props) => {
   };
 
   const appActions = {
+    // active subscription
     viewSubscription: (subscriptionID) => {
       setSubscriptionID(subscriptionID);
 
@@ -227,6 +226,7 @@ const AppStateProvider = (props) => {
     // activate
     activateSubscription: () => activateSubscription({ shopID, subscriptionID }),
 
+    // shipping address
     startUpdateAddressShipping: () => {
       setAddressFormErrors(null);
 
@@ -244,6 +244,7 @@ const AppStateProvider = (props) => {
       updateAddress({ shopID, address });
     },
 
+    // billing address
     startUpdateAddressBilling: () => {
       setAddressFormErrors(null);
 
@@ -261,6 +262,7 @@ const AppStateProvider = (props) => {
       updateAddress({ shopID, address });
     },
 
+    // interval
     startUpdateInterval: () => {
       setAddressFormErrors(null);
 
@@ -276,6 +278,7 @@ const AppStateProvider = (props) => {
       updateInterval({ shopID, subscriptionID, intervalID });
     },
 
+    // payment
     startUpdatePaymentMethod: () => {
       setAddressFormErrors(null);
 
@@ -289,12 +292,10 @@ const AppStateProvider = (props) => {
   const value = { appState, appActions };
 
   return (
-    <AppContext.Provider value={value}>
+    <AppStateContext.Provider value={value}>
       { children }
-    </AppContext.Provider>
+    </AppStateContext.Provider>
   );
 };
 
 AppStateProvider.propTypes = AppStateProviderPropTypes;
-
-export default AppStateProvider;

@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Resets, Vars, Fonts } from "./globalStyles";
-import AppStateProvider from "./providers/AppStateProvider";
+import { Resets, Fonts, Vars } from "./globalStyles";
+import { AppStateProvider } from "./AppState";
 import IndexPage from "./pages/index";
 import { NotificationContainer } from "./components/ui/Notification";
 

@@ -1,17 +1,11 @@
 import { useContext } from "react";
-import PT from "prop-types";
 import styled from "styled-components";
-import { SubscriptionAddress } from "../const";
+import { SubscriptionAddress, AddressType } from "../const";
+import { AppStateContext } from "../AppState";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
-import AppContext from "../contexts/AppContext";
-
-const AddressTypeType = PT.oneOf([
-  SubscriptionAddress.SHIPPING,
-  SubscriptionAddress.BILLING
-]);
 
 const AddressPropTypes = {
-  type: AddressTypeType.isRequired
+  type: AddressType.isRequired
 };
 
 const StyledAddress = styled.div`
@@ -35,26 +29,22 @@ const StyledFullName = styled.div`
 
 const Address = (props) => {
   const { type } = props;
-
-  const { appState, appActions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppStateContext);
 
   const {
     subscription,
     isAppLoading,
+    isSubscriptionActive,
     showShippingAddressForm,
-    showBillingAddressForm,
-    isSubscriptionActive
+    showBillingAddressForm
   } = appState;
 
-  const { startUpdateAddressShipping, startUpdateAddressBilling } = appActions;
-
-  if (!subscription) return null;
+  const {
+    startUpdateAddressShipping,
+    startUpdateAddressBilling
+  } = appActions;
 
   const isShipping = type === SubscriptionAddress.SHIPPING;
-  const title = isShipping ? "Shipping address" : "Billing address";
-  const editButtonLabel = isShipping ? "Edit shipping address" : "Edit billing address";
-  const showForm = isShipping ? showShippingAddressForm : showBillingAddressForm;
-  const showEditButton = isSubscriptionActive && !showForm;
   const address = isShipping ? subscription.shippingAddress : subscription.billingAddress;
 
   const {
@@ -69,6 +59,11 @@ const Address = (props) => {
     company,
     phone
   } = address;
+
+  const title = isShipping ? "Shipping address" : "Billing address";
+  const editButtonLabel = isShipping ? "Edit shipping address" : "Edit billing address";
+  const showForm = isShipping ? showShippingAddressForm : showBillingAddressForm;
+  const showEditButton = isSubscriptionActive && !showForm;
 
   const handleEditButtonClick = () => {
     if (isShipping) startUpdateAddressShipping();

@@ -1,6 +1,6 @@
 import { ChildrenType } from "../const";
 
-export const DefaultLayoutPropTypes = {
+const DefaultLayoutPropTypes = {
   children: ChildrenType.isRequired
 };
 

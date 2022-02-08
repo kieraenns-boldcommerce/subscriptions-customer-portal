@@ -5,8 +5,8 @@ import { SubscriptionAction } from "../const";
 import formatSubscriptionOption from "../utils/formatSubscriptionOption";
 import formatSubscriptionName from "../utils/formatSubscriptionName";
 import formatSubscriptionNextOrderDatetime from "../utils/formatSubscriptionNextOrderDatetime";
-import AppContext from "../contexts/AppContext";
-import Menu from "./ui/Menu";
+import { AppStateContext } from "../AppState";
+import Menu, { MenuItemType } from "./ui/Menu";
 import Message from "./ui/Message";
 
 const StyledTopSection = styled.div`
@@ -55,7 +55,7 @@ const StyledSubscriptionMessage = styled.div`
 `;
 
 const TopSection = () => {
-  const { appState, appActions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppStateContext);
 
   const {
     subscriptions,
@@ -75,18 +75,26 @@ const TopSection = () => {
   } = appActions;
 
   const subscriptionOptions = subscriptions.map(formatSubscriptionOption);
-
+  const showSubscriptionsSelect = subscriptionOptions.length > 1;
   const subscriptionName = formatSubscriptionName(subscription);
   const subscriptionNextOrderDatetime = formatSubscriptionNextOrderDatetime(subscription);
 
-  const showSubscriptionsSelect = subscriptions.length > 1;
-
-  const handleSubscriptionChange = (event) => viewSubscription(Number(event.target.value));
-
   const menuItems = [
-    { name: "Pause subscription", value: SubscriptionAction.PAUSE },
-    { type: "alert", name: "Cancel subscription", value: SubscriptionAction.CANCEL }
+    {
+      name: "Pause subscription",
+      value: SubscriptionAction.PAUSE
+    },
+    {
+      type: MenuItemType.ALERT,
+      name: "Cancel subscription",
+      value: SubscriptionAction.CANCEL
+    }
   ];
+
+  const handleSubscriptionChange = (event) => {
+    const subscriptionID = Number(event.target.value);
+    viewSubscription(subscriptionID);
+  };
 
   const handleMenuItemClick = (item) => {
     const action = item.value;
@@ -96,6 +104,7 @@ const TopSection = () => {
 
   return (
     <StyledTopSection>
+
       {showSubscriptionsSelect && (
         <SelectField
           className="subscription-select-TopSection"
@@ -112,7 +121,6 @@ const TopSection = () => {
           <StyledSubscriptionName>
             { subscriptionName }
           </StyledSubscriptionName>
-
           {isSubscriptionActive && (
             <Menu
               items={menuItems}
@@ -121,14 +129,12 @@ const TopSection = () => {
             />
           )}
         </StyledSubscriptionInfoTop>
-
         {isSubscriptionActive && (
           <StyledSubscriptionInfoBottom>
-            <StyledSubscriptionDate>Next Order:</StyledSubscriptionDate>
+            <StyledSubscriptionDate>Next Order: </StyledSubscriptionDate>
             { subscriptionNextOrderDatetime }
           </StyledSubscriptionInfoBottom>
         )}
-
         {isSubscriptionInactive && (
           <StyledSubscriptionMessage>
             <Message
@@ -139,7 +145,6 @@ const TopSection = () => {
             />
           </StyledSubscriptionMessage>
         )}
-
         {isSubscriptionPaused && (
           <StyledSubscriptionMessage>
             <Message
@@ -150,8 +155,8 @@ const TopSection = () => {
             />
           </StyledSubscriptionMessage>
         )}
-
       </StyledSubscriptionInfo>
+
     </StyledTopSection>
   );
 };
