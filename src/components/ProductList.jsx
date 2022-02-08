@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import Section from "./ui/Section";
-import ProductCard from "./ProductCard";
+import ProductCard from "./ui/ProductCard";
 import AppContext from "../contexts/AppContext";
 
 const StyledProductList = styled.div`
@@ -44,8 +44,8 @@ const StyledProduct = styled.div`
 `;
 
 const ProductList = () => {
-  const { state } = useContext(AppContext);
-  const { subscription } = state;
+  const { appState } = useContext(AppContext);
+  const { subscription } = appState;
 
   return (
     <Section title="Products in my subscription">

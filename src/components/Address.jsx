@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import { SubscriptionAddress, SubscriptionStatus } from "../const";
+import { SubscriptionAddress } from "../const";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
 import AppContext from "../contexts/AppContext";
 
@@ -36,23 +36,23 @@ const StyledFullName = styled.div`
 const Address = (props) => {
   const { type } = props;
 
-  const { state: appState, actions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppContext);
 
   const {
     subscription,
     isAppLoading,
     showShippingAddressForm,
-    showBillingAddressForm
+    showBillingAddressForm,
+    isSubscriptionActive
   } = appState;
 
-  const { startUpdateAddressShipping, startUpdateAddressBilling } = actions;
+  const { startUpdateAddressShipping, startUpdateAddressBilling } = appActions;
 
   if (!subscription) return null;
 
   const isShipping = type === SubscriptionAddress.SHIPPING;
   const title = isShipping ? "Shipping address" : "Billing address";
   const editButtonLabel = isShipping ? "Edit shipping address" : "Edit billing address";
-  const isSubscriptionActive = subscription.status === SubscriptionStatus.ACTIVE;
   const showForm = isShipping ? showShippingAddressForm : showBillingAddressForm;
   const showEditButton = isSubscriptionActive && !showForm;
   const address = isShipping ? subscription.shippingAddress : subscription.billingAddress;
