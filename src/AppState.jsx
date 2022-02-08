@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 import { SubscriptionStatus, ChildrenType } from "./const";
-import useGetShop from "./hooks/queries/shops/useGetShop";
 import useGetSubscriptions from "./hooks/queries/subscriptions/useGetSubscriptions";
 import useGetIntervals from "./hooks/queries/subscriptions/useGetIntervals";
 import useGetPaymentMethod from "./hooks/queries/subscriptions/useGetPaymentMethod";
@@ -74,27 +73,23 @@ export const AppStateProvider = (props) => {
   };
 
   // queries and mutations
-  const { shop, isShopLoading } = useGetShop();
-  const shopID = shop?.shopID;
-
   const {
     subscriptions,
     areSubscriptionsLoading,
     refetchSubscriptions
   } = useGetSubscriptions({
-    shopID,
     onSuccess: handleGetSubscriptionsSuccess
   });
 
   const {
     intervals,
     areIntervalsLoading
-  } = useGetIntervals({ shopID, subscriptionID });
+  } = useGetIntervals({ subscriptionID });
 
   const {
     paymentMethod,
     isPaymentMethodLoading
-  } = useGetPaymentMethod({ shopID, subscriptionID });
+  } = useGetPaymentMethod({ subscriptionID });
 
   const {
     isSubscriptionPausing,
@@ -140,7 +135,7 @@ export const AppStateProvider = (props) => {
   }, [subscriptions, subscriptionID]);
 
   // derived data
-  const isAppLoadingInitial = isShopLoading || areSubscriptionsLoading;
+  const isAppLoadingInitial = areSubscriptionsLoading;
 
   const isAppLoading =
     areSubscriptionsLoading ||
@@ -209,7 +204,7 @@ export const AppStateProvider = (props) => {
       setShowModalPause(false);
     },
     finishPauseSubscription: () => {
-      pauseSubscription({ shopID, subscriptionID });
+      pauseSubscription({ subscriptionID });
     },
 
     // cancel
@@ -220,11 +215,13 @@ export const AppStateProvider = (props) => {
       setShowModalCancel(false);
     },
     finishCancelSubscription: () => {
-      cancelSubscription({ shopID, subscriptionID });
+      cancelSubscription({ subscriptionID });
     },
 
     // activate
-    activateSubscription: () => activateSubscription({ shopID, subscriptionID }),
+    activateSubscription: () => {
+      activateSubscription({ subscriptionID });
+    },
 
     // shipping address
     startUpdateAddressShipping: () => {
@@ -241,7 +238,7 @@ export const AppStateProvider = (props) => {
       setShowShippingAddressForm(false);
     },
     finishUpdateAddressShipping: (address) => {
-      updateAddress({ shopID, address });
+      updateAddress({ address });
     },
 
     // billing address
@@ -259,7 +256,7 @@ export const AppStateProvider = (props) => {
       setShowBillingAddressForm(false);
     },
     finishUpdateAddressBilling: (address) => {
-      updateAddress({ shopID, address });
+      updateAddress({ address });
     },
 
     // interval
@@ -275,7 +272,7 @@ export const AppStateProvider = (props) => {
       setShowIntervalForm(false);
     },
     finishUpdateInterval: (intervalID) => {
-      updateInterval({ shopID, subscriptionID, intervalID });
+      updateInterval({ subscriptionID, intervalID });
     },
 
     // payment

@@ -2,12 +2,12 @@ import { useQuery } from "react-query";
 import SubscriptionsService from "../../../api/services/SubscriptionsService";
 
 const useGetPaymentMethod = (params) => {
-  const { shopID, subscriptionID } = params;
+  const { subscriptionID } = params;
 
   const { data, isLoading } = useQuery(
     ["paymentMethod", params],
     () => SubscriptionsService.getPaymentMethod(params),
-    { enabled: Boolean(shopID && subscriptionID) }
+    { enabled: Boolean(subscriptionID) }
   );
 
   return {
