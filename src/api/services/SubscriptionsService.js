@@ -13,7 +13,7 @@ class SubscriptionsService extends ServiceBase {
 
     const {
       jwt: platformToken,
-      customer: customerID
+      customerId: customerID
     } = value;
 
     const { subscriptionsWebToken: boldToken } = await this.callAPI({
