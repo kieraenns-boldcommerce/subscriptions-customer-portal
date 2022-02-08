@@ -16,7 +16,7 @@ class SubscriptionsService extends ServiceBase {
       customerId: customerID
     } = value;
 
-    const { subscriptionsWebToken: boldToken } = await this.callAPI({
+    const { bold_platform_jwt: boldToken } = await this.callAPI({
       method: Method.GET,
       url: `/login?platform_customer_id=${customerID}&customer_jwt=${platformToken}&shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`
     });
