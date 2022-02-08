@@ -16,7 +16,6 @@ const StyledFieldsLayout = styled.div`
 
 const FieldsLayout = (props) => {
   const { children } = props;
-
   const fieldsAmount = Array.isArray(children) ? children.length : 1;
 
   return (

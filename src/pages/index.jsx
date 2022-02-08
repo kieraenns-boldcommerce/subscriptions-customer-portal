@@ -1,19 +1,19 @@
 import { useContext } from "react";
+import styled from "styled-components";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import { SubscriptionAddress } from "../const";
+import { AppStateContext } from "../AppState";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/ui/Container";
 import NoSubscriptions from "../components/ui/NoSubscriptions";
 import Tabs from "../components/ui/Tabs";
+import ModalConfirm from "../components/ui/ModalConfirm";
+import TopSection from "../components/TopSection";
 import Address from "../components/Address";
+import Interval from "../components/Interval";
+import PaymentMethod from "../components/PaymentMethod";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
-import OrderFrequency from "../components/OrderFrequency";
-import PaymentMethod from "../components/PaymentMethod";
-import TopSection from "../components/TopSection";
-import ModalConfirm from "../components/ui/ModalConfirm";
-import styled from "styled-components";
-import AppContext from "../contexts/AppContext";
 
 const StyledTitle = styled.div`
   margin-bottom: 38px;
@@ -45,25 +45,27 @@ const StyledFullPageSpinner = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-const StyledIntervalAndPayment = styled.div`
+const StyledIntervalAndPaymentMethod = styled.div`
   display: grid;
   align-content: space-between;
   row-gap: 32px;
 `;
 
 const IndexPage = () => {
-  const { appState, appActions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppStateContext);
 
   const {
-    subscriptions,
+    subscription,
+
+    // subscriptions,
     isAppLoadingInitial,
     isAppLoading,
-    showModalPause,
-    showModalCancel,
     showShippingAddressForm,
     showBillingAddressForm,
     showIntervalForm,
-    showPaymentMethodForm
+    showPaymentMethodForm,
+    showModalPause,
+    showModalCancel
   } = appState;
 
   const {
@@ -73,15 +75,13 @@ const IndexPage = () => {
     finishCancelSubscription
   } = appActions;
 
-  // * Handlers
-
   const handlePauseModalConfirm = () => finishPauseSubscription();
   const handlePauseModalCancel = () => stopPauseSubscription();
   const handleCancelModalConfirm = () => finishCancelSubscription();
   const handleCancelModalCancel = () => stopCancelSubscription();
 
   const showSpinner = isAppLoadingInitial;
-  const showNoSubscriptions = !showSpinner && subscriptions.length === 0;
+  const showNoSubscriptions = !showSpinner && !subscription;
   const showSubscriptions = !showSpinner && !showNoSubscriptions;
 
   return (
@@ -96,23 +96,17 @@ const IndexPage = () => {
 
         {showNoSubscriptions && (
           <>
-
             <StyledTitle>My Subscriptions</StyledTitle>
-
             <NoSubscriptions />
-
           </>
         )}
 
         {showSubscriptions && (
           <>
-
             <StyledTitle>My Subscriptions</StyledTitle>
-
             <StyledTopSectionContainer>
               <TopSection />
             </StyledTopSectionContainer>
-
             <Tabs
               tabs={[
                 {
@@ -125,49 +119,50 @@ const IndexPage = () => {
                 },
                 {
                   content: (
-                    <StyledIntervalAndPayment>
-                      <OrderFrequency />
+                    <StyledIntervalAndPaymentMethod>
+                      <Interval />
                       <PaymentMethod />
-                    </StyledIntervalAndPayment>
+                    </StyledIntervalAndPaymentMethod>
                   ),
                   isActive: showIntervalForm || showPaymentMethodForm
                 }
               ]}
             />
-
-            { showShippingAddressForm && <AddressForm type={SubscriptionAddress.SHIPPING} /> }
-
-            { showBillingAddressForm && <AddressForm type={SubscriptionAddress.BILLING} /> }
-
-            { showPaymentMethodForm && <StyledPaymentContent /> }
-
+            {showShippingAddressForm && (
+              <AddressForm type={SubscriptionAddress.SHIPPING} />
+            )}
+            {showBillingAddressForm && (
+              <AddressForm type={SubscriptionAddress.BILLING} />
+            )}
+            {showPaymentMethodForm && (
+              <StyledPaymentContent />
+            )}
             <ProductList />
-
-            {showModalPause && (
-              <ModalConfirm
-                title="Are you sure you want to pause this subscription?"
-                description="This will pause all orders until the subscription is resumed"
-                textButtonCancel="No, don’t pause"
-                textButtonConfirm="Yes, pause"
-                disabled={isAppLoading}
-                onConfirm={handlePauseModalConfirm}
-                onCancel={handlePauseModalCancel}
-              />
-            )}
-
-            {showModalCancel && (
-              <ModalConfirm
-                title="Are you sure you want to cancel this subscription?"
-                description="This will cancel your subscription and all unprocessed orders"
-                textButtonCancel="No, don’t cancel"
-                textButtonConfirm="Yes, cancel"
-                disabled={isAppLoading}
-                onConfirm={handleCancelModalConfirm}
-                onCancel={handleCancelModalCancel}
-              />
-            )}
-
           </>
+        )}
+
+        {showModalPause && (
+          <ModalConfirm
+            title="Are you sure you want to pause this subscription?"
+            description="This will pause all orders until the subscription is resumed"
+            textButtonCancel="No, don’t pause"
+            textButtonConfirm="Yes, pause"
+            disabled={isAppLoading}
+            onConfirm={handlePauseModalConfirm}
+            onCancel={handlePauseModalCancel}
+          />
+        )}
+
+        {showModalCancel && (
+          <ModalConfirm
+            title="Are you sure you want to cancel this subscription?"
+            description="This will cancel your subscription and all unprocessed orders"
+            textButtonCancel="No, don’t cancel"
+            textButtonConfirm="Yes, cancel"
+            disabled={isAppLoading}
+            onConfirm={handleCancelModalConfirm}
+            onCancel={handleCancelModalCancel}
+          />
         )}
 
       </Container>

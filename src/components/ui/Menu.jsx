@@ -1,18 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import PT from "prop-types";
 import styled, { css } from "styled-components";
-import ellipsis from "../../assets/icons/ellipsis.svg";
+import ellipsisIcon from "../../assets/icons/ellipsis.svg";
 
-const MenuItemTypeType = PT.oneOf(["default", "alert"]);
+export const MenuItemType = {
+  DEFAULT: "default",
+  ALERT: "alert"
+};
 
-const MenuItemType = {
-  type: MenuItemTypeType,
+const ItemTypeType = PT.oneOf([
+  MenuItemType.DEFAULT,
+  MenuItemType.ALERT
+]);
+
+const ItemType = {
+  type: ItemTypeType,
   name: PT.string.isRequired,
   value: PT.string.isRequired
 };
 
 const MenuPropTypes = {
-  items: PT.arrayOf(PT.shape(MenuItemType)).isRequired,
+  items: PT.arrayOf(PT.shape(ItemType)).isRequired,
   disabled: PT.bool,
   onItemClick: PT.func
 };
@@ -72,7 +80,7 @@ const StyledItem = styled.button`
 
   ${({ type }) => {
     switch (type) {
-    case "alert":
+    case MenuItemType.ALERT:
       return css`
         color: #d91626;
       `;
@@ -115,7 +123,8 @@ const Menu = (props) => {
 
   useEffect(() => {
     const onOutsideClick = (event) => {
-      if (showItems && !itemsRef.current?.contains(event.target)) setShowItems(false);
+      const { target } = event;
+      if (showItems && !itemsRef.current?.contains(target)) setShowItems(false);
     };
 
     document.addEventListener("click", onOutsideClick);
@@ -124,32 +133,33 @@ const Menu = (props) => {
 
   const handleToggleButtonClick = () => setShowItems(!showItems);
 
-  const handleItemClick = (item) => {
-    setShowItems(false);
-    if (onItemClick) onItemClick(item);
-  };
-
   return (
     <StyledMenu>
+
       <StyledMenuButton
         type="button"
         aria-label="Subscription quick action menu"
         disabled={disabled}
         onClick={handleToggleButtonClick}
       >
-        <StyledIcon src={ellipsis} />
+        <StyledIcon src={ellipsisIcon} />
       </StyledMenuButton>
 
       {showItems && (
         <StyledItems ref={itemsRef}>
-          {items.map((item) => {
-            const { type = "default", name, value } = item;
+          {items.map((item, index) => {
+            const { type = MenuItemType.DEFAULT, name } = item;
+
+            const handleClick = () => {
+              setShowItems(false);
+              if (onItemClick) onItemClick(item);
+            };
 
             return (
               <StyledItem
-                key={value}
+                key={index}
                 type={type}
-                onClick={() => handleItemClick(item)}
+                onClick={handleClick}
               >
                 { name }
               </StyledItem>
@@ -157,6 +167,7 @@ const Menu = (props) => {
           })}
         </StyledItems>
       )}
+
     </StyledMenu>
   );
 };

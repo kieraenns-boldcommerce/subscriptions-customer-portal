@@ -42,29 +42,29 @@ const StyledMessage = styled.div`
 
   ${({ type }) => {
     switch (type) {
-    case "alert":
+    case MessageType.SUCCESS:
       return css`
-        border-color: #fc2036;
+        border-color: #6ff03b;
 
-        background-color: #fff3f4;
+        background-color: #f7fef4;
       `;
-    case "warning":
+    case MessageType.WARNING:
       return css`
         border-color: #f9e53a;
 
         background-color: #fefdf4;
       `;
-    case "info":
+    case MessageType.ALERT:
+      return css`
+        border-color: #fc2036;
+
+        background-color: #fff3f4;
+      `;
+    case MessageType.INFO:
       return css`
         border-color: #1964fb;
 
         background-color: #f2f6ff;
-      `;
-    case "success":
-      return css`
-        border-color: #6ff03b;
-
-        background-color: #f7fef4;
       `;
     default:
       return css`

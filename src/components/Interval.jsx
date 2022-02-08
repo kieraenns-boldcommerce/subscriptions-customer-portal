@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { Button, SelectField, LoadingSpinner } from "@boldcommerce/stacks-ui";
-import TitleWithEditButton from "./ui/TitleWithEditButton";
-import AppContext from "../contexts/AppContext";
 import formatIntervalOption from "../utils/formatIntervalOption";
+import { AppStateContext } from "../AppState";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
 
 const StyledTitle = styled.div`
   margin-bottom: 10px;
@@ -34,11 +34,6 @@ const StyledDescription = styled.div`
   line-height: 24px;
 `;
 
-// const StyledSpinner = styled.div`
-//   display: flex;
-//   align-items: center;
-// `;
-
 const StyledButtons = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -53,27 +48,40 @@ const StyledButtons = styled.div`
   }
 `;
 
-const OrderFrequency = () => {
-  const { appState, appActions } = useContext(AppContext);
+const Interval = () => {
+  const { appState, appActions } = useContext(AppStateContext);
 
   const {
-    intervals,
     subscription,
-    areIntervalsLoading,
+    intervals,
     isAppLoading,
-    showIntervalForm,
-    isSubscriptionActive
+    areIntervalsLoading,
+    isSubscriptionActive,
+    showIntervalForm
   } = appState;
 
-  const { startUpdateInterval, stopUpdateInterval, finishUpdateInterval } = appActions;
-
-  const intervalOptions = intervals?.map(formatIntervalOption);
+  const {
+    startUpdateInterval,
+    stopUpdateInterval,
+    finishUpdateInterval
+  } = appActions;
 
   const [intervalID, setIntervalID] = useState(null);
 
+  useEffect(() => {
+    if (!subscription || !intervals) return;
+
+    const { id } = intervals.find((interval) => interval.name === subscription.interval);
+    setIntervalID(id);
+  }, [subscription, intervals]);
+
+  const intervalOptions = intervals?.map(formatIntervalOption);
   const showEditButton = !areIntervalsLoading && isSubscriptionActive && !showIntervalForm;
 
-  const onChangeOption = (event) => setIntervalID(event.target.value);
+  const handleIntervalChange = (event) => {
+    const intervalID = Number(event.target.value);
+    setIntervalID(intervalID);
+  };
 
   const handleEditButtonClick = () => startUpdateInterval();
   const handleConfirmButtonClick = () => finishUpdateInterval(intervalID);
@@ -81,6 +89,7 @@ const OrderFrequency = () => {
 
   return (
     <div>
+
       <StyledTitle>
         <TitleWithEditButton
           title="Order frequency"
@@ -100,7 +109,7 @@ const OrderFrequency = () => {
             value={intervalID}
             options={intervalOptions}
             disabled={isAppLoading}
-            onChange={onChangeOption}
+            onChange={handleIntervalChange}
           />
           <StyledButtons>
             <Button
@@ -122,11 +131,12 @@ const OrderFrequency = () => {
         </StyledForm>
       ) : (
         <StyledDescription>
-          { subscription?.frequency }
+          { subscription.interval }
         </StyledDescription>
       )}
+
     </div>
   );
 };
 
-export default OrderFrequency;
+export default Interval;

@@ -25,7 +25,7 @@ class SubscriptionsAdapter {
         "nextOrderDatetime",
         "shippingAddress",
         "billingAddress",
-        "frequency",
+        "interval",
         "products"
       ]
     );

@@ -58,11 +58,6 @@ const StyledModalContent = styled.div`
 const Modal = (props) => {
   const { children, disabled, onClose } = props;
 
-  const handleOverlayClick = (event) => {
-    const { target, currentTarget } = event;
-    if (!disabled && target === currentTarget) onClose();
-  };
-
   useEffect(() => {
     const handleKeydown = (event) => {
       const { key } = event;
@@ -72,6 +67,11 @@ const Modal = (props) => {
     document.addEventListener("keydown", handleKeydown);
     return () => document.removeEventListener("keydown", handleKeydown);
   }, []);
+
+  const handleOverlayClick = (event) => {
+    const { target, currentTarget } = event;
+    if (!disabled && target === currentTarget) onClose();
+  };
 
   return (
     <StyledModal onClick={handleOverlayClick}>
