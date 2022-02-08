@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ChildrenType } from "../const";
+import { ChildrenType } from "../../const";
 
 export const FieldsLayoutPropTypes = {
   children: ChildrenType.isRequired

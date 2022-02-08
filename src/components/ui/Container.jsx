@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ChildrenType } from "../const";
+import { ChildrenType } from "../../const";
 
 const ContainerPropTypes = {
   children: ChildrenType.isRequired

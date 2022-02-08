@@ -1,10 +1,9 @@
-import { Button, SelectField } from "@boldcommerce/stacks-ui";
-import TitleWithEditButton from "./ui/TitleWithEditButton";
-import styled from "styled-components";
 import { useState, useContext } from "react";
+import styled from "styled-components";
+import { Button, SelectField, LoadingSpinner } from "@boldcommerce/stacks-ui";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
 import AppContext from "../contexts/AppContext";
 import formatIntervalOption from "../utils/formatIntervalOption";
-import { SubscriptionStatus } from "../const";
 
 const StyledTitle = styled.div`
   margin-bottom: 10px;
@@ -55,23 +54,24 @@ const StyledButtons = styled.div`
 `;
 
 const OrderFrequency = () => {
-  const { state, actions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppContext);
 
   const {
     intervals,
     subscription,
+    areIntervalsLoading,
     isAppLoading,
-    showIntervalForm
-  } = state;
+    showIntervalForm,
+    isSubscriptionActive
+  } = appState;
 
-  const { startUpdateInterval, stopUpdateInterval, finishUpdateInterval } = actions;
+  const { startUpdateInterval, stopUpdateInterval, finishUpdateInterval } = appActions;
 
   const intervalOptions = intervals?.map(formatIntervalOption);
 
   const [intervalID, setIntervalID] = useState(null);
 
-  const isSubscriptionActive = subscription?.status === SubscriptionStatus.ACTIVE;
-  const showEditButton = isSubscriptionActive && !showIntervalForm;
+  const showEditButton = !areIntervalsLoading && isSubscriptionActive && !showIntervalForm;
 
   const onChangeOption = (event) => setIntervalID(event.target.value);
 
@@ -91,7 +91,9 @@ const OrderFrequency = () => {
         />
       </StyledTitle>
 
-      {showIntervalForm ? (
+      {areIntervalsLoading ? (
+        <LoadingSpinner />
+      ) : showIntervalForm ? (
         <StyledForm>
           <SelectField
             placeholder={intervalID ? "" : "Select interval"}

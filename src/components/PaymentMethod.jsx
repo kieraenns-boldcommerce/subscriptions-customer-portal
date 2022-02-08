@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import TitleWithEditButton from "./ui/TitleWithEditButton";
-import visaIcon from "../assets/icons/cards/visa.svg";
-import mastercardIcon from "../assets/icons/cards/mastercard.svg";
 import styled from "styled-components";
+import { LoadingSpinner } from "@boldcommerce/stacks-ui";
+import { SubscriptionPaymentType, SubscriptionPaymentSystem } from "../const";
 import AppContext from "../contexts/AppContext";
-import { SubscriptionStatus } from "../const";
+import TitleWithEditButton from "./ui/TitleWithEditButton";
+import mastercardIcon from "../assets/icons/cards/mastercard.svg";
+import visaIcon from "../assets/icons/cards/visa.svg";
 
 const StyledTitle = styled.div`
   margin-bottom: 8px;
@@ -27,26 +27,20 @@ const StyledPaymentCardIcon = styled.img`
   margin-left: 4px;
 `;
 
-const StyledSpinner = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
 const PaymentMethod = () => {
-  const { state, actions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppContext);
 
   const {
-    subscription,
     paymentMethod,
     isAppLoading,
     isPaymentMethodLoading,
-    showPaymentMethodForm
-  } = state;
+    showPaymentMethodForm,
+    isSubscriptionActive
+  } = appState;
 
-  const { startUpdatePaymentMethod } = actions;
+  const { startUpdatePaymentMethod } = appActions;
 
-  const isSubscriptionActive = subscription?.status === SubscriptionStatus.ACTIVE;
-  const showEditButton = isSubscriptionActive && !showPaymentMethodForm;
+  const showEditButton = !isPaymentMethodLoading && isSubscriptionActive && !showPaymentMethodForm;
 
   const handleEditButtonClick = () => startUpdatePaymentMethod();
 
@@ -54,16 +48,16 @@ const PaymentMethod = () => {
   let innerCardType;
 
   switch (paymentMethod?.system) {
-  case "mastercard":
+  case SubscriptionPaymentSystem.MASTERCARD:
     cardIcon = mastercardIcon;
     break;
-  case "visa":
+  case SubscriptionPaymentSystem.VISA:
     cardIcon = visaIcon;
     break;
   }
 
   switch (paymentMethod?.type) {
-  case "credit_card":
+  case SubscriptionPaymentType.CREDIT_CARD:
     innerCardType = "Credit card";
     break;
   }
@@ -82,9 +76,7 @@ const PaymentMethod = () => {
       </StyledTitle>
 
       {isPaymentMethodLoading ? (
-        <StyledSpinner>
-          <LoadingSpinner />
-        </StyledSpinner>
+        <LoadingSpinner />
       ) : (
         <StyledPaymentContent>
           { innerCardType } -

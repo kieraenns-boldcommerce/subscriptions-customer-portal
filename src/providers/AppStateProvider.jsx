@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { ChildrenType } from "../const";
+import { SubscriptionStatus, ChildrenType } from "../const";
 
 import useGetShop from "../hooks/queries/shops/useGetShop";
 import useGetSubscriptions from "../hooks/queries/subscriptions/useGetSubscriptions";
@@ -90,7 +90,6 @@ const AppStateProvider = (props) => {
 
   const {
     intervals,
-    // eslint-disable-next-line no-unused-vars
     areIntervalsLoading
   } = useGetIntervals({ shopID, subscriptionID });
 
@@ -136,11 +135,13 @@ const AppStateProvider = (props) => {
   });
 
   useEffect(() => {
-    if (!subscriptionID && subscriptions?.length) setSubscriptionID(subscriptions[0].id);
-  }, [subscriptionID, subscriptions]);
+    if (subscriptions?.length && !subscriptionID) {
+      const { id } = subscriptions[0];
+      setSubscriptionID(id);
+    }
+  }, [subscriptions, subscriptionID]);
 
-  const subscription = subscriptions?.find((subscription) => subscription.id === subscriptionID);
-
+  // derived data
   const isAppLoadingInitial = isShopLoading || areSubscriptionsLoading;
 
   const isAppLoading =
@@ -151,7 +152,45 @@ const AppStateProvider = (props) => {
     isAddressUpdating ||
     isIntervalUpdating;
 
-  const actions = {
+  const subscription = subscriptions?.find((subscription) => {
+    const { id } = subscription;
+    return id === subscriptionID;
+  });
+
+  const subscriptionStatus = subscription?.status;
+  const isSubscriptionActive = subscriptionStatus === SubscriptionStatus.ACTIVE;
+  const isSubscriptionInactive = subscriptionStatus === SubscriptionStatus.INACTIVE;
+  const isSubscriptionPaused = subscriptionStatus === SubscriptionStatus.PAUSED;
+
+  // app state and actions
+  const appState = {
+    subscriptions,
+    subscription,
+    subscriptionID,
+
+    intervals,
+    paymentMethod,
+
+    addressFormErrors,
+
+    isAppLoadingInitial,
+    isAppLoading,
+    areIntervalsLoading,
+    isPaymentMethodLoading,
+
+    isSubscriptionActive,
+    isSubscriptionInactive,
+    isSubscriptionPaused,
+
+    showShippingAddressForm,
+    showBillingAddressForm,
+    showIntervalForm,
+    showPaymentMethodForm,
+    showModalPause,
+    showModalCancel
+  };
+
+  const appActions = {
     viewSubscription: (subscriptionID) => {
       setSubscriptionID(subscriptionID);
 
@@ -247,31 +286,10 @@ const AppStateProvider = (props) => {
     }
   };
 
-  const state = {
-    state: {
-      subscription,
-      subscriptionID,
-      subscriptions,
-      intervals,
-      addressFormErrors,
-      paymentMethod,
-      isAppLoadingInitial,
-      isAppLoading,
-      isAddressUpdating,
-      isIntervalUpdating,
-      isPaymentMethodLoading,
-      showModalPause,
-      showModalCancel,
-      showShippingAddressForm,
-      showBillingAddressForm,
-      showIntervalForm,
-      showPaymentMethodForm
-    },
-    actions
-  };
+  const value = { appState, appActions };
 
   return (
-    <AppContext.Provider value={state}>
+    <AppContext.Provider value={value}>
       { children }
     </AppContext.Provider>
   );

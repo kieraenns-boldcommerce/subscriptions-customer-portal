@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import styled from "styled-components";
 import { SelectField } from "@boldcommerce/stacks-ui";
-import { SubscriptionAction, SubscriptionStatus } from "../const";
+import { SubscriptionAction } from "../const";
 import formatSubscriptionOption from "../utils/formatSubscriptionOption";
 import formatSubscriptionName from "../utils/formatSubscriptionName";
 import formatSubscriptionNextOrderDatetime from "../utils/formatSubscriptionNextOrderDatetime";
@@ -55,31 +55,29 @@ const StyledSubscriptionMessage = styled.div`
 `;
 
 const TopSection = () => {
-  const { state, actions } = useContext(AppContext);
+  const { appState, appActions } = useContext(AppContext);
 
   const {
     subscriptions,
     subscription,
     subscriptionID,
-    isAppLoading
-  } = state;
+    isAppLoading,
+    isSubscriptionActive,
+    isSubscriptionInactive,
+    isSubscriptionPaused
+  } = appState;
 
   const {
     viewSubscription,
     startPauseSubscription,
     startCancelSubscription,
     activateSubscription
-  } = actions;
+  } = appActions;
 
   const subscriptionOptions = subscriptions.map(formatSubscriptionOption);
 
   const subscriptionName = formatSubscriptionName(subscription);
   const subscriptionNextOrderDatetime = formatSubscriptionNextOrderDatetime(subscription);
-
-  const subscriptionStatus = subscription?.status;
-  const isSubscriptionActive = subscriptionStatus === SubscriptionStatus.ACTIVE;
-  const isSubscriptionInactive = subscriptionStatus === SubscriptionStatus.INACTIVE;
-  const isSubscriptionPaused = subscriptionStatus === SubscriptionStatus.PAUSED;
 
   const showSubscriptionsSelect = subscriptions.length > 1;
 

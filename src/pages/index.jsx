@@ -1,19 +1,21 @@
 import { useContext } from "react";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
+import { SubscriptionAddress } from "../const";
 import DefaultLayout from "../layouts/default";
-import Container from "../components/Container";
-import NoSubscriptions from "../components/NoSubscriptions";
+import Container from "../components/ui/Container";
+import NoSubscriptions from "../components/ui/NoSubscriptions";
 import Tabs from "../components/ui/Tabs";
 import Address from "../components/Address";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
-import FrequencyAndPayment from "../components/FrequencyAndPayment";
+import OrderFrequency from "../components/OrderFrequency";
+import PaymentMethod from "../components/PaymentMethod";
 import TopSection from "../components/TopSection";
 import ModalConfirm from "../components/ui/ModalConfirm";
 import styled from "styled-components";
 import AppContext from "../contexts/AppContext";
 
-const StyledTitle = styled.h1`
+const StyledTitle = styled.div`
   margin-bottom: 38px;
 
   text-align: center;
@@ -31,17 +33,6 @@ const StyledPaymentContent = styled.div`
   background-color: rgba(0, 0, 0, 0.2);
 `;
 
-// const StyledFormContainer = styled.div`
-//   max-height: ${({ showForm }) => showForm ? 960 : 0}px;
-
-//   transition: max-height 0.4s;
-//   overflow: hidden;
-
-//   @media (min-width: 768px) {
-//     max-height: ${({ showForm }) => showForm ? 450 : 0}px;
-//   }
-// `;
-
 const StyledTopSectionContainer = styled.div`
   margin-bottom: 30px;
 `;
@@ -52,19 +43,17 @@ const StyledFullPageSpinner = styled.div`
   left: 50%;
 
   transform: translate(-50%, -50%);
+`;
 
-  .stx-loading-spinner {
-    width: 50px;
-    height: 50px;
-  }
+const StyledIntervalAndPayment = styled.div`
+  display: grid;
+  align-content: space-between;
+  row-gap: 32px;
 `;
 
 const IndexPage = () => {
-  // * States
+  const { appState, appActions } = useContext(AppContext);
 
-  // const formContainerRef = useRef(null);
-
-  const { state, actions } = useContext(AppContext);
   const {
     subscriptions,
     isAppLoadingInitial,
@@ -75,14 +64,14 @@ const IndexPage = () => {
     showBillingAddressForm,
     showIntervalForm,
     showPaymentMethodForm
-  } = state;
+  } = appState;
 
   const {
     stopPauseSubscription,
     finishPauseSubscription,
     stopCancelSubscription,
     finishCancelSubscription
-  } = actions;
+  } = appActions;
 
   // * Handlers
 
@@ -90,21 +79,6 @@ const IndexPage = () => {
   const handlePauseModalCancel = () => stopPauseSubscription();
   const handleCancelModalConfirm = () => finishCancelSubscription();
   const handleCancelModalCancel = () => stopCancelSubscription();
-
-  const tabs = [
-    {
-      content: <Address type="shipping" />,
-      isActive: showShippingAddressForm
-    },
-    {
-      content: <Address type="billing" />,
-      isActive: showBillingAddressForm
-    },
-    {
-      content: <FrequencyAndPayment />,
-      isActive: showIntervalForm || showPaymentMethodForm
-    }
-  ];
 
   const showSpinner = isAppLoadingInitial;
   const showNoSubscriptions = !showSpinner && subscriptions.length === 0;
@@ -139,35 +113,31 @@ const IndexPage = () => {
               <TopSection />
             </StyledTopSectionContainer>
 
-            <Tabs tabs={tabs} />
+            <Tabs
+              tabs={[
+                {
+                  content: <Address type={SubscriptionAddress.SHIPPING} />,
+                  isActive: showShippingAddressForm
+                },
+                {
+                  content: <Address type={SubscriptionAddress.BILLING} />,
+                  isActive: showBillingAddressForm
+                },
+                {
+                  content: (
+                    <StyledIntervalAndPayment>
+                      <OrderFrequency />
+                      <PaymentMethod />
+                    </StyledIntervalAndPayment>
+                  ),
+                  isActive: showIntervalForm || showPaymentMethodForm
+                }
+              ]}
+            />
 
-            {/* <StyledFormContainer
-              showForm={showAnyForm}
-              ref={formContainerRef}
-              onTransitionEnd={onFormCollapse}
-            >
-              {showBillingAddress && (
-                <AddressForm
-                  type="billing"
-                  data={subscription?.billingAddress}
-                  onCancel={onCancelFormButtonClick}
-                />
-              )}
-              {showShippingAddress && (
-                <AddressForm
-                  type="shipping"
-                  data={subscription?.shippingAddress}
-                  onCancel={onCancelFormButtonClick}
-                />
-              )}
-              {showPaymentMethod && (
-                <StyledPaymentContent />
-              )}
-            </StyledFormContainer> */}
+            { showShippingAddressForm && <AddressForm type={SubscriptionAddress.SHIPPING} /> }
 
-            { showShippingAddressForm && <AddressForm type="shipping" /> }
-
-            { showBillingAddressForm && <AddressForm type="billing" /> }
+            { showBillingAddressForm && <AddressForm type={SubscriptionAddress.BILLING} /> }
 
             { showPaymentMethodForm && <StyledPaymentContent /> }
 
