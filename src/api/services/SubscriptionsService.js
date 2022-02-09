@@ -7,26 +7,24 @@ import PaymentMethodsAdapter from "../adapters/PaymentMethodsAdapter";
 
 class SubscriptionsService extends ServiceBase {
   static async getSubscriptions() {
-    const { value } = await new Promise(
-      (resolve) => window.BOLD.subscriptions.getJWT(resolve)
-    );
+    const {
+      value: { jwt: platformToken, customerId: platformCustomerID }
+    } = await new Promise((resolve) => window.BOLD.subscriptions.getJWT(resolve));
 
     const {
-      jwt: platformToken,
-      customerId: customerID
-    } = value;
-
-    const { subscriptionsWebToken: boldToken } = await this.callAPI({
+      subscriptionsWebToken: boldToken,
+      customer: { bold_platform_id: boldCustomerID }
+    } = await this.callAPI({
       method: Method.GET,
-      url: `/login?platform_customer_id=${customerID}&customer_jwt=${platformToken}&shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`
+      url: `/login?platform_customer_id=${platformCustomerID}&customer_jwt=${platformToken}&shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`
     });
 
     Cookies.set(Cookie.TOKEN, boldToken);
-    Cookies.set(Cookie.CUSTOMER_ID, customerID);
+    Cookies.set(Cookie.CUSTOMER_ID, boldCustomerID);
 
     const { subscriptions } = await this.callAPI({
       method: Method.GET,
-      url: `/customers/${customerID}/subscriptions?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`
+      url: `/customers/${boldCustomerID}/subscriptions?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`
     });
 
     return subscriptions.map(SubscriptionsAdapter.fromServer);
