@@ -26,7 +26,7 @@ class SubscriptionsService extends ServiceBase {
 
     const { subscriptions } = await this.callAPI({
       method: Method.GET,
-      url: `/customers/${customerID}/subscriptions`
+      url: `/customers/${customerID}/subscriptions?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`
     });
 
     return subscriptions.map(SubscriptionsAdapter.fromServer);
@@ -36,7 +36,7 @@ class SubscriptionsService extends ServiceBase {
     const { subscriptionID } = params;
 
     const method = Method.GET;
-    const url = `/subscriptions/${subscriptionID}/intervals`;
+    const url = `/subscriptions/${subscriptionID}/intervals?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
 
     const { intervals } = await this.callAPI({ method, url });
 
@@ -47,7 +47,7 @@ class SubscriptionsService extends ServiceBase {
     const { subscriptionID } = params;
 
     const method = Method.GET;
-    const url = `/subscriptions/${subscriptionID}/payment_method`;
+    const url = `/subscriptions/${subscriptionID}/payment_method?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
 
     const { payment_method } = await this.callAPI({ method, url });
 
@@ -58,7 +58,7 @@ class SubscriptionsService extends ServiceBase {
     const { subscriptionID } = params;
 
     const method = Method.POST;
-    const url = `/subscriptions/${subscriptionID}/pause`;
+    const url = `/subscriptions/${subscriptionID}/pause?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
 
     await this.callAPI({ method, url });
   }
@@ -67,7 +67,7 @@ class SubscriptionsService extends ServiceBase {
     const { subscriptionID } = params;
 
     const method = Method.POST;
-    const url = `/subscriptions/${subscriptionID}/cancel`;
+    const url = `/subscriptions/${subscriptionID}/cancel?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
 
     await this.callAPI({ method, url });
   }
@@ -76,7 +76,7 @@ class SubscriptionsService extends ServiceBase {
     const { subscriptionID } = params;
 
     const method = Method.POST;
-    const url = `/subscriptions/${subscriptionID}/activate`;
+    const url = `/subscriptions/${subscriptionID}/activate?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
 
     await this.callAPI({ method, url });
   }
@@ -87,7 +87,7 @@ class SubscriptionsService extends ServiceBase {
     const customerID = Cookies.get(Cookie.CUSTOMER_ID);
 
     const method = Method.PUT;
-    const url = `/customers/${customerID}/addresses/${id}`;
+    const url = `/customers/${customerID}/addresses/${id}?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
     const data = { customer_address: AddressesAdapter.toServer(address) };
 
     try {
@@ -101,7 +101,7 @@ class SubscriptionsService extends ServiceBase {
     const { subscriptionID, intervalID } = params;
 
     const method = Method.PUT;
-    const url = `/subscriptions/${subscriptionID}/interval/${intervalID}`;
+    const url = `/subscriptions/${subscriptionID}/interval/${intervalID}?shop=${SHOP_DOMAIN}&platform_type=${PLATFORM}`;
 
     await this.callAPI({ method, url });
   }
