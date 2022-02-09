@@ -13,6 +13,7 @@ class SubscriptionsAdapter {
     return renameKeys(
       subscriptionCopy,
       [
+        "bold_platform_subscription_id",
         "subscription_status",
         "next_order_datetime",
         "shipping_address",
@@ -21,6 +22,7 @@ class SubscriptionsAdapter {
         "line_items"
       ],
       [
+        "id",
         "status",
         "nextOrderDatetime",
         "shippingAddress",
