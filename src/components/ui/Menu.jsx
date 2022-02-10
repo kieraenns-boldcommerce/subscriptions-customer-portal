@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import {useEffect, useRef, useState} from "react";
 import PT from "prop-types";
-import styled, { css } from "styled-components";
-import ellipsisIcon from "../../assets/icons/ellipsis.svg";
+import styled, {css} from "styled-components";
+import Icon from "./Icon";
 
 export const MenuItemType = {
   DEFAULT: "default",
@@ -78,7 +78,7 @@ const StyledItem = styled.button`
   font-size: 14px;
   line-height: 24px;
 
-  ${({ type }) => {
+  ${({type}) => {
     switch (type) {
     case MenuItemType.ALERT:
       return css`
@@ -90,7 +90,6 @@ const StyledItem = styled.button`
       `;
     }
   }}
-
   &:not(:last-child) {
     border-bottom: 1px solid rgba(108, 112, 114, 0.1);
   }
@@ -111,19 +110,14 @@ const StyledMenuButton = styled.button`
   }
 `;
 
-const StyledIcon = styled.img`
-  width: 14px;
-  height: 14px;
-`;
-
 const Menu = (props) => {
-  const { items, disabled, onItemClick } = props;
+  const {items, disabled, onItemClick} = props;
   const [showItems, setShowItems] = useState(false);
   const itemsRef = useRef(null);
 
   useEffect(() => {
     const onOutsideClick = (event) => {
-      const { target } = event;
+      const {target} = event;
       if (showItems && !itemsRef.current?.contains(target)) setShowItems(false);
     };
 
@@ -142,13 +136,13 @@ const Menu = (props) => {
         disabled={disabled}
         onClick={handleToggleButtonClick}
       >
-        <StyledIcon src={ellipsisIcon} />
+        <Icon name="ellipsis" width={14} height={14}/>
       </StyledMenuButton>
 
       {showItems && (
         <StyledItems ref={itemsRef}>
           {items.map((item, index) => {
-            const { type = MenuItemType.DEFAULT, name } = item;
+            const {type = MenuItemType.DEFAULT, name} = item;
 
             const handleClick = () => {
               setShowItems(false);
@@ -161,7 +155,7 @@ const Menu = (props) => {
                 type={type}
                 onClick={handleClick}
               >
-                { name }
+                {name}
               </StyledItem>
             );
           })}

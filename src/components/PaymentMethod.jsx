@@ -1,11 +1,10 @@
-import { useContext } from "react";
+import {useContext} from "react";
 import styled from "styled-components";
-import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import { SubscriptionPaymentType, SubscriptionPaymentSystem } from "../const";
-import { AppStateContext } from "../AppState";
+import {LoadingSpinner} from "@boldcommerce/stacks-ui";
+import {SubscriptionPaymentSystem, SubscriptionPaymentType} from "../const";
+import {AppStateContext} from "../AppState";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
-import mastercardIcon from "../assets/icons/mastercard.svg";
-import visaIcon from "../assets/icons/visa.svg";
+import Icon from "./ui/Icon";
 
 const StyledTitle = styled.div`
   margin-bottom: 8px;
@@ -20,15 +19,12 @@ const StyledPaymentContent = styled.div`
   line-height: 20px;
 `;
 
-const StyledPaymentCardIcon = styled.img`
-  width: 44px;
-  height: 26px;
-  margin-right: 4px;
-  margin-left: 4px;
+const StyledPaymentCardIcon = styled(Icon)`
+  margin: 0 4px;
 `;
 
 const PaymentMethod = () => {
-  const { appState, appActions } = useContext(AppStateContext);
+  const {appState, appActions} = useContext(AppStateContext);
 
   const {
     paymentMethod,
@@ -58,10 +54,10 @@ const PaymentMethod = () => {
 
   switch (system) {
   case SubscriptionPaymentSystem.MASTERCARD:
-    systemIcon = mastercardIcon;
+    systemIcon = "mastercard";
     break;
   case SubscriptionPaymentSystem.VISA:
-    systemIcon = visaIcon;
+    systemIcon = "visa";
     break;
   }
 
@@ -83,12 +79,12 @@ const PaymentMethod = () => {
       </StyledTitle>
 
       {isPaymentMethodLoading ? (
-        <LoadingSpinner />
+        <LoadingSpinner/>
       ) : (
         <StyledPaymentContent>
-          { formattedType } -
-          <StyledPaymentCardIcon src={systemIcon} />
-          ending in { lastFourDigits } - Expires { expirationDate }
+          {formattedType} -
+          <StyledPaymentCardIcon name={systemIcon} height={26} width={44}/>
+          ending in {lastFourDigits} - Expires {expirationDate}
         </StyledPaymentContent>
       )}
 

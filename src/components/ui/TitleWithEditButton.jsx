@@ -1,6 +1,6 @@
 import PT from "prop-types";
 import styled from "styled-components";
-import editIcon from "../../assets/icons/edit.svg";
+import Icon from "./Icon";
 
 const TitleWithEditButtonPropTypes = {
   title: PT.string.isRequired,
@@ -46,11 +46,6 @@ const StyledEditButton = styled.button`
   }
 `;
 
-const StyledEditIcon = styled.img`
-  width: 18px;
-  height: 19px;
-`;
-
 const TitleWithEditButton = (props) => {
   const {
     title,
@@ -67,7 +62,7 @@ const TitleWithEditButton = (props) => {
   return (
     <StyledTitleWithEditButton>
 
-      { title }
+      {title}
 
       {showEditButton && (
         <StyledEditButtonWrapper>
@@ -77,7 +72,7 @@ const TitleWithEditButton = (props) => {
             disabled={editButtonDisabled}
             onClick={handleEditButtonClick}
           >
-            <StyledEditIcon src={editIcon} />
+            <Icon name="edit" height={18} width={18}/>
           </StyledEditButton>
         </StyledEditButtonWrapper>
       )}

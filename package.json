@@ -18,7 +18,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "sprite-generate": "svg-sprite-generate -d ./src/assets/icons -o ./public/sprite.svg"
   },
   "browserslist": {
     "production": [
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "eslint": "^8.5.0",
-    "eslint-plugin-react": "^7.27.1"
+    "eslint-plugin-react": "^7.27.1",
+    "svg-sprite-generator": "^0.0.7"
   }
 }
