@@ -20,12 +20,11 @@ export const Cookie = {
 };
 
 class ServiceBase {
-  static async callAPI(params) {
-    const { method, url, data = null } = params;
-    const config = { method, baseURL: BASE_URL, url, data };
+  static async callAPI({method, url, params, data = null}) {
+    const config = {method, baseURL: BASE_URL, url, data, params};
 
     const token = Cookies.get(Cookie.TOKEN);
-    if (token) config.headers = { Authorization: `Bearer ${token}` };
+    if (token) config.headers = {Authorization: `Bearer ${token}`};
 
     const response = await axios.request(config);
     return response.data;
