@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 
-const insert2body = (html) => {
+const insert2root = (html) => {
   const div = document.createElement("div");
   div.innerHTML = html;
   div.style.display = "none";
-  const body = document.querySelector("body");
-  if (body) {
-    body.prepend(div);
+  const root = document.querySelector("#root");
+  if (root) {
+    root.prepend(div);
   }
 };
 
@@ -30,12 +30,12 @@ const insert2body = (html) => {
       await newCache.add(req);
       response = await newCache.match(spriteLink);
       html = await response.text();
-      insert2body(html || "");
+      insert2root(html || "");
       return;
     }
 
     html = await response.text();
-    insert2body(html);
+    insert2root(html);
   }
 })();
 
