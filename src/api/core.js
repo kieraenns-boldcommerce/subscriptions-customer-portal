@@ -20,24 +20,22 @@ export const Cookie = {
 };
 
 const updateCookieToken = (token, expTime) => {
-  console.log(" > expTime", expTime);
   Cookies.set(Cookie.TOKEN, token, {expires: expTime});
-  setTimeout(async () => {
-    const {
-      newToken,
-      newTokenExpTime
-    } = await this.callAPI({
-      method: Method.GET,
-      url: "/jwt/refresh",
-      params: {
-        shop: SHOP_DOMAIN,
-        platform_type: PLATFORM
-      }
-    });
-    console.log(" > newTokenExpTime", newTokenExpTime);
-    updateCookieToken(newToken, newTokenExpTime);
-  }, 1000 * 10); // refresh token in 10 seconds
-  // }, tokenExpTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
+  // setTimeout(async () => {
+  //   const {
+  //     newToken,
+  //     newTokenExpTime
+  //   } = await this.callAPI({
+  //     method: Method.GET,
+  //     url: "/jwt/refresh",
+  //     params: {
+  //       shop: SHOP_DOMAIN,
+  //       platform_type: PLATFORM
+  //     }
+  //   });
+  //   console.log(" > newTokenExpTime", newTokenExpTime);
+  //   updateCookieToken(newToken, newTokenExpTime);
+  // }, expTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
 };
 
 class ServiceBase {
@@ -71,9 +69,9 @@ class ServiceBase {
   static async callAPI({method, url, params, data = null}) {
     const config = {method, baseURL: BASE_URL, url, data, params};
 
-    if (!Cookies.get(Cookie.TOKEN) && url !== "/login") {
-      await this.obtainToken();
-    }
+    // if (!Cookies.get(Cookie.TOKEN) && url !== "/login") {
+    //   await this.obtainToken();
+    // }
     const token = Cookies.get(Cookie.TOKEN);
     if (token) config.headers = {Authorization: `Bearer ${token}`};
 
