@@ -1,28 +1,31 @@
 import renameKeys from "../../utils/renameKeys";
 
 class AddressesAdapter {
-  static fromServer(address) {
-    return renameKeys(
-      address,
-      [
-        "first_name",
-        "last_name",
-        "street1",
-        "street2",
-        "country_code",
-        "province",
-        "province_code"
-      ],
-      [
-        "firstName",
-        "lastName",
-        "lineFirst",
-        "lineSecond",
-        "countryCode",
-        "state",
-        "stateCode"
-      ]
-    );
+  static fromServer(address, addressId) {
+    return {
+      id: addressId,
+      ...renameKeys(
+        address,
+        [
+          "first_name",
+          "last_name",
+          "street1",
+          "street2",
+          "country_code",
+          "province",
+          "province_code"
+        ],
+        [
+          "firstName",
+          "lastName",
+          "lineFirst",
+          "lineSecond",
+          "countryCode",
+          "state",
+          "stateCode"
+        ]
+      )
+    };
   }
 
   static toServer(address) {
@@ -50,7 +53,7 @@ class AddressesAdapter {
   }
 
   static errorUpdate(error) {
-    const { message, errors } = error.response.data;
+    const {message, errors} = error.response.data;
 
     const adaptedError = new Error(message);
 

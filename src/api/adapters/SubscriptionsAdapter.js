@@ -6,8 +6,8 @@ class SubscriptionsAdapter {
   static fromServer(subscription) {
     const subscriptionCopy = { ...subscription };
 
-    subscriptionCopy.shipping_address = AddressesAdapter.fromServer(subscriptionCopy.shipping_address);
-    subscriptionCopy.billing_address = AddressesAdapter.fromServer(subscriptionCopy.billing_address);
+    subscriptionCopy.shipping_address = AddressesAdapter.fromServer(subscriptionCopy.shipping_address, subscriptionCopy.shipping_bold_customer_address_id);
+    subscriptionCopy.billing_address = AddressesAdapter.fromServer(subscriptionCopy.billing_address, subscriptionCopy.billing_bold_customer_address_id);
     subscriptionCopy.line_items = subscriptionCopy.line_items.map(ProductsAdapter.fromServer);
 
     return renameKeys(
