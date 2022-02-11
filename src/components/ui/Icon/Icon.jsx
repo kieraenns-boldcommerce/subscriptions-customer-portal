@@ -1,7 +1,11 @@
 import styled, {css} from "styled-components";
 import PT from "prop-types";
+import EllipsisIcon from "./icons/EllipsisIcon";
+import MastercardIcon from "./icons/MastercardIcon";
+import VisaIcon from "./icons/VisaIcon";
+import EditIcon from "./icons/EditIcon";
 
-const StyledSvg = styled.svg`
+const StyledIcon = styled.svg`
   ${({width, height}) => css`
     height: ${height}px;
     width: ${width}px;
@@ -20,10 +24,15 @@ const IconDefaultProps = {
   width: 24
 };
 
+const IconNameComponentMap = {
+  "edit": EditIcon,
+  "ellipsis": EllipsisIcon,
+  "mastercard": MastercardIcon,
+  "visa": VisaIcon
+};
+
 const Icon = ({name, height, width, className}) => {
-  return <StyledSvg width={width} height={height} className={className}>
-    <use xlinkHref={`#${name}`}/>
-  </StyledSvg>;
+  return <StyledIcon as={IconNameComponentMap[name]} width={width} height={height} className={className}/>;
 };
 
 Icon.propTypes = IconPropTypes;

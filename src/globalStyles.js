@@ -79,6 +79,7 @@ export const Fonts = createGlobalStyle`
     font-display: swap;
 
     src:
+      //local("SFProDisplay-Regular"),
       url("./assets/fonts/SFProDisplay-Regular.woff2") format("woff2"),
       url("./assets/fonts/SFProDisplay-Regular.woff") format("woff");
   }
@@ -90,6 +91,7 @@ export const Fonts = createGlobalStyle`
     font-display: swap;
 
     src:
+      //local("SFProDisplay-Bold"),
       url("./assets/fonts/SFProDisplay-Bold.woff2") format("woff2"),
       url("./assets/fonts/SFProDisplay-Bold.woff") format("woff");
   }

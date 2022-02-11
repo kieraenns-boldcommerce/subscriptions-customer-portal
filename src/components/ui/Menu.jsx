@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import PT from "prop-types";
 import styled, {css} from "styled-components";
-import Icon from "./Icon";
+import Icon from "./Icon/Icon";
 
 export const MenuItemType = {
   DEFAULT: "default",

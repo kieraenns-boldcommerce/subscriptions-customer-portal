@@ -4,7 +4,7 @@ import {LoadingSpinner} from "@boldcommerce/stacks-ui";
 import {SubscriptionPaymentSystem, SubscriptionPaymentType} from "../const";
 import {AppStateContext} from "../AppState";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
-import Icon from "./ui/Icon";
+import Icon from "./ui/Icon/Icon";
 
 const StyledTitle = styled.div`
   margin-bottom: 8px;

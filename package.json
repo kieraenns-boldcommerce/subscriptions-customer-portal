@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "eslint": "^8.5.0",
-    "eslint-plugin-react": "^7.27.1",
-    "svg-sprite-generator": "^0.0.7"
+    "eslint-plugin-react": "^7.27.1"
   }
 }

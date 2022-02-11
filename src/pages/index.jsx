@@ -1,8 +1,8 @@
-import { useContext } from "react";
+import {useContext} from "react";
 import styled from "styled-components";
-import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import { SubscriptionAddress } from "../const";
-import { AppStateContext } from "../AppState";
+import {LoadingSpinner} from "@boldcommerce/stacks-ui";
+import {SubscriptionAddress} from "../const";
+import {AppStateContext} from "../AppState";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/ui/Container";
 import NoSubscriptions from "../components/ui/NoSubscriptions";
@@ -14,19 +14,6 @@ import Interval from "../components/Interval";
 import PaymentMethod from "../components/PaymentMethod";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
-
-const StyledTitle = styled.div`
-  margin-bottom: 38px;
-
-  text-align: center;
-  font-weight: 700;
-  font-size: 32px;
-  line-height: 34px;
-
-  @media (min-width: 576px) {
-    margin-bottom: 60px;
-  }
-`;
 
 const StyledPaymentContent = styled.div`
   min-height: 120px;
@@ -52,7 +39,7 @@ const StyledIntervalAndPaymentMethod = styled.div`
 `;
 
 const IndexPage = () => {
-  const { appState, appActions } = useContext(AppStateContext);
+  const {appState, appActions} = useContext(AppStateContext);
 
   const {
     subscription,
@@ -90,38 +77,34 @@ const IndexPage = () => {
 
         {showSpinner && (
           <StyledFullPageSpinner>
-            <LoadingSpinner />
+            <LoadingSpinner/>
           </StyledFullPageSpinner>
         )}
 
         {showNoSubscriptions && (
-          <>
-            <StyledTitle>My Subscriptions</StyledTitle>
-            <NoSubscriptions />
-          </>
+          <NoSubscriptions/>
         )}
 
         {showSubscriptions && (
           <>
-            <StyledTitle>My Subscriptions</StyledTitle>
             <StyledTopSectionContainer>
-              <TopSection />
+              <TopSection/>
             </StyledTopSectionContainer>
             <Tabs
               tabs={[
                 {
-                  content: <Address type={SubscriptionAddress.SHIPPING} />,
+                  content: <Address type={SubscriptionAddress.SHIPPING}/>,
                   isActive: showShippingAddressForm
                 },
                 {
-                  content: <Address type={SubscriptionAddress.BILLING} />,
+                  content: <Address type={SubscriptionAddress.BILLING}/>,
                   isActive: showBillingAddressForm
                 },
                 {
                   content: (
                     <StyledIntervalAndPaymentMethod>
-                      <Interval />
-                      <PaymentMethod />
+                      <Interval/>
+                      <PaymentMethod/>
                     </StyledIntervalAndPaymentMethod>
                   ),
                   isActive: showIntervalForm || showPaymentMethodForm
@@ -129,15 +112,15 @@ const IndexPage = () => {
               ]}
             />
             {showShippingAddressForm && (
-              <AddressForm type={SubscriptionAddress.SHIPPING} />
+              <AddressForm type={SubscriptionAddress.SHIPPING}/>
             )}
             {showBillingAddressForm && (
-              <AddressForm type={SubscriptionAddress.BILLING} />
+              <AddressForm type={SubscriptionAddress.BILLING}/>
             )}
             {showPaymentMethodForm && (
-              <StyledPaymentContent />
+              <StyledPaymentContent/>
             )}
-            <ProductList />
+            <ProductList/>
           </>
         )}
 
