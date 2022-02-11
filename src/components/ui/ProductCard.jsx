@@ -18,8 +18,8 @@ const StyledProductCard = styled.div`
 `;
 
 const StyledImage = styled.img`
-  width: 80px;
-  height: 80px;
+  max-width: 80px !important;
+  max-height: 80px;
 
   object-fit: cover;
 `;
