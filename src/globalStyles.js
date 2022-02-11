@@ -10,7 +10,7 @@ export const Resets = createGlobalStyle`
   p,
   .stx-select,
   .stx-button,
-  .button,
+  .custom-button,
   .stx-field--with-select .stx-select,
   .stx-field--with-input .stx-input {
     margin: 0;

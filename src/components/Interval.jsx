@@ -113,7 +113,7 @@ const Interval = () => {
           />
           <StyledButtons>
             <Button
-              className="button"
+              className="custom-button"
               primary
               disabled={isAppLoading}
               onClick={handleConfirmButtonClick}
@@ -121,7 +121,7 @@ const Interval = () => {
               Save
             </Button>
             <Button
-              className="button"
+              className="custom-button"
               disabled={isAppLoading}
               onClick={handleCancelButtonClick}
             >

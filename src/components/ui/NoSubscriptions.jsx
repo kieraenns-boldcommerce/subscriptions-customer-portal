@@ -38,7 +38,7 @@ const NoSubscriptions = () => {
         Continue shopping to find and subscribe to your favorite products
       </StyledText>
 
-      <Button className="button" primary>
+      <Button className="custom-button" primary>
         Continue shopping
       </Button>
 
