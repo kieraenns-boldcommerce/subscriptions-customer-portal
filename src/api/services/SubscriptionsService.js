@@ -110,8 +110,11 @@ class SubscriptionsService extends ServiceBase {
   }
 
   static async updateAddress(params) {
+    console.log(" > params", params);
     const {address} = params;
+    console.log(" > address", address);
     const {id} = address;
+    console.log(" > id", id);
     const customerID = Cookies.get(Cookie.CUSTOMER_ID);
 
     try {

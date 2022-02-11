@@ -256,6 +256,7 @@ export const AppStateProvider = (props) => {
       setShowBillingAddressForm(false);
     },
     finishUpdateAddressBilling: (address) => {
+      console.log(" > address", address);
       updateAddress({ address });
     },
 
