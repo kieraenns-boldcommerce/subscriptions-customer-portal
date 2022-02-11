@@ -46,7 +46,7 @@ outside front preview:
       --build-arg BASIC_USER=$BASIC_USER
       --build-arg BASIC_PASS=$BASIC_PASS
       --build-arg DIST_DIR=$DIST_DIR
-      --build-arg APP_ENV=development
+      --build-arg APP_ENV=production
       -t $IMAGE_TAG -f .docker/Dockerfile .
     - docker push $IMAGE_TAG
 
