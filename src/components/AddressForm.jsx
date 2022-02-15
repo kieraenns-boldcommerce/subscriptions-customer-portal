@@ -4,11 +4,8 @@ import { Button, InputField, SelectField } from "@boldcommerce/stacks-ui";
 import { SubscriptionAddress, AddressType } from "../const";
 import getCountries from "../utils/getCountries";
 import getStatesOfCountry from "../utils/getStatesOfCountry";
-import getCitiesOfState from "../utils/getCitiesOfState";
-import getCitiesOfCountry from "../utils/getCitiesOfCountry";
 import formatCountryOption from "../utils/formatCountryOption";
 import formatStateOption from "../utils/formatStateOption";
-import formatCityOption from "../utils/formatCityOption";
 import { AppStateContext } from "../AppState";
 import Section from "./ui/Section";
 import FormLayout from "./ui/FormLayout";
@@ -76,13 +73,8 @@ const AddressForm = (props) => {
   const countries = getCountries();
   const states = getStatesOfCountry(countryCode);
 
-  const cities = countryCode && states.length === 0
-    ? getCitiesOfCountry(countryCode)
-    : getCitiesOfState(countryCode, stateCode);
-
   const countryOptions = countries.map(formatCountryOption);
   const stateOptions = states.map(formatStateOption);
-  const cityOptions = cities.map(formatCityOption);
 
   const handleFieldChange = (event, key) => setAddress((prev) => {
     const { value } = event.target;
@@ -177,15 +169,14 @@ const AddressForm = (props) => {
                 disabled={isAppLoading || stateOptions.length === 0}
                 onChange={handleStateFieldChange}
               />
-              <SelectField
-                options={cityOptions}
+              <InputField
                 value={city}
                 label="City"
-                placeholder={city ? "" : "Select city"}
+                placeholder="Enter city"
                 messageType={addressFormErrors?.city && "alert"}
                 messageText={addressFormErrors?.city}
-                disabled={isAppLoading || cityOptions.length === 0}
-                onChange={(event) => handleFieldChange(event, "city")}
+                disabled={isAppLoading}
+                onInput={(event) => handleFieldChange(event, "lineSecond")}
               />
             </FieldsLayout>
           </StyledAddressFormSecondRow>

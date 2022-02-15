@@ -20,8 +20,10 @@ export const Cookie = {
 };
 
 const updateCookieToken = (token, expTime) => {
+  console.log(" > expTime", expTime);
   Cookies.set(Cookie.TOKEN, token, {expires: expTime});
-  setTimeout(async () => {
+  const timeoutId = setTimeout(async () => {
+    console.log("timeout callback");
     const {
       newToken,
       newTokenExpTime
@@ -36,6 +38,7 @@ const updateCookieToken = (token, expTime) => {
     console.log(" > newTokenExpTime", newTokenExpTime);
     updateCookieToken(newToken, newTokenExpTime);
   }, 1000 * 5); // refresh token every 5 seconds
+  console.log(" > timeoutId", timeoutId);
   // }, expTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
 };
 
