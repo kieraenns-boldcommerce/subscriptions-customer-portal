@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Button } from "@boldcommerce/stacks-ui";
+import {Button} from "@boldcommerce/stacks-ui";
 
 const StyledNoSubscriptions = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.1);

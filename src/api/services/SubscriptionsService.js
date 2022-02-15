@@ -7,7 +7,6 @@ import PaymentMethodsAdapter from "../adapters/PaymentMethodsAdapter";
 
 class SubscriptionsService extends ServiceBase {
   static async getSubscriptions() {
-    await this.obtainToken();
     const boldCustomerID = Cookies.get(Cookie.CUSTOMER_ID);
     const {subscriptions} = await this.callAPI({
       method: Method.GET,

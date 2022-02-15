@@ -1,6 +1,10 @@
 import { createGlobalStyle } from "styled-components";
 
 export const Resets = createGlobalStyle`
+  html {
+    font-size: 62.5%;
+  }
+
   h1,
   h2,
   h3,
@@ -61,6 +65,45 @@ export const Resets = createGlobalStyle`
     .subscription-select-TopSection {
       max-width: 326px;
     }
+  }
+
+  // Override stacks-ui rems
+  .stx-button {
+    font-size: 1.4rem;
+    line-height: 2rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .stx-field__label {
+    font-size: 1.4rem;
+    line-height: 3rem;
+  }
+
+  .stx-input {
+    font-size: 1.4rem;
+    line-height: 3rem;
+
+    &__input-element {
+      font-size: inherit;
+      line-height: inherit;
+      min-width: 2.4rem;
+    }
+  }
+
+  .stx-select {
+    font-size: 1.4rem;
+    line-height: 3rem;
+
+    &__select-element {
+      font-size: inherit;
+      line-height: inherit;
+      min-width: 2.4rem;
+    }
+  }
+
+  .stx-loading-spinner {
+    width: 2rem;
+    height: 2rem;
   }
 `;
 
