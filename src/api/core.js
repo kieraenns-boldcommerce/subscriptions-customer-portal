@@ -70,7 +70,7 @@ class ServiceBase {
   static async callAPI({method, url, params, data = null}) {
     const config = {method, baseURL: BASE_URL, url, data, params};
 
-    if (!Cookies.get(Cookie.TOKEN) && url !== "/login") {
+    if (!Cookies.get(Cookie.TOKEN) && url !== "/login" && url !== "/jwt/refresh") {
       await this.obtainToken();
     }
     const token = Cookies.get(Cookie.TOKEN);
