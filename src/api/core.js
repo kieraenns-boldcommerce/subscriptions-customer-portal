@@ -41,36 +41,34 @@ const updateCookieToken = (token, expTime) => {
 
 class ServiceBase {
   static async obtainToken() {
-    if (window.BOLD && (!Cookies.get(Cookie.TOKEN) || Cookies.get(Cookie.CUSTOMER_ID))) {
-      const {
-        value: {jwt: platformToken, customerId: platformCustomerID}
-      } = await new Promise((resolve) => window.BOLD.subscriptions.getJWT(resolve));
+    const {
+      value: {jwt: platformToken, customerId: platformCustomerID}
+    } = await new Promise((resolve) => window.BOLD.subscriptions.getJWT(resolve));
 
-      const {
-        subscriptionsWebToken: boldToken,
-        subscriptionsWebTokenExpTime: tokenExpTime,
-        customer: {bold_platform_id: boldCustomerID}
-      } = await this.callAPI({
-        method: Method.GET,
-        url: "/login",
-        params: {
-          platform_customer_id: platformCustomerID,
-          customer_jwt: platformToken,
-          shop: SHOP_DOMAIN,
-          platform_type: PLATFORM
-        }
-      });
+    const {
+      subscriptionsWebToken: boldToken,
+      subscriptionsWebTokenExpTime: tokenExpTime,
+      customer: {bold_platform_id: boldCustomerID}
+    } = await this.callAPI({
+      method: Method.GET,
+      url: "/login",
+      params: {
+        platform_customer_id: platformCustomerID,
+        customer_jwt: platformToken,
+        shop: SHOP_DOMAIN,
+        platform_type: PLATFORM
+      }
+    });
 
-      Cookies.set(Cookie.CUSTOMER_ID, boldCustomerID);
+    Cookies.set(Cookie.CUSTOMER_ID, boldCustomerID);
 
-      updateCookieToken(boldToken, tokenExpTime);
-    }
+    updateCookieToken(boldToken, tokenExpTime);
   }
 
   static async callAPI({method, url, params, data = null}) {
     const config = {method, baseURL: BASE_URL, url, data, params};
 
-    if (!Cookies.get(Cookie.TOKEN) && url !== "/login") {
+    if ((!Cookies.get(Cookie.TOKEN) || !Cookies.get(Cookie.CUSTOMER_ID)) && url !== "/login") {
       await this.obtainToken();
     }
     const token = Cookies.get(Cookie.TOKEN);
