@@ -44,7 +44,8 @@ class ServiceBase {
   }
 
   static setRefreshTokenTimeout(expTime) {
-    console.log(" > expTime", expTime);
+    const timeoutMilliseconds = expTime - Date.now() - 60000; // 1minute before expiration
+    console.log("timeout date is ", new Date(timeoutMilliseconds));
     setTimeout(async () => {
       const {
         token,
@@ -58,10 +59,8 @@ class ServiceBase {
         }
       });
       this.subscriptionsToken = token;
-      console.log(" > tokenExpTime", tokenExpTime);
       this.setRefreshTokenTimeout(tokenExpTime);
-    }, 1000 * 5); // refresh token every 5 seconds
-    // }, expTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
+    }, timeoutMilliseconds);
   }
 
   static async callAPI({method, url, params, data = null}) {
