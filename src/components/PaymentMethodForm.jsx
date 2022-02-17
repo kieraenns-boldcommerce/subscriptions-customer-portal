@@ -1,6 +1,18 @@
 import { useContext } from "react";
 import { AppStateContext } from "../AppState";
+import styled from "styled-components";
 import { Button } from "@boldcommerce/stacks-ui";
+import Section from "./ui/Section";
+import { PaymentUpdateMethod } from "../api/services/SubscriptionsService";
+
+const StyledButtons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+`;
+
+const StyledPaymentIFrame = styled.iframe``;
 
 const PaymentMethodForm = () => {
   const { appState, appActions } = useContext(AppStateContext);
@@ -14,10 +26,22 @@ const PaymentMethodForm = () => {
   const handleCancelButtonClick = () => stopUpdatePaymentMethod();
 
   return (
-    <>
-      <Button onClick={handleConfirmButtonClick}>Send email</Button>
-      <Button onClick={handleCancelButtonClick}>Cancel</Button>
-    </>
+    <Section title="Editing payment method">
+      {paymentMethod.updateMethod === PaymentUpdateMethod.EMAIL ? (
+        <>
+          <span>
+            You can change the payment method by clicking on the link in the
+            email
+          </span>
+          <StyledButtons>
+            <Button onClick={handleConfirmButtonClick}>Cancel</Button>
+            <Button onClick={handleCancelButtonClick}>Send email</Button>
+          </StyledButtons>
+        </>
+      ) : (
+        <StyledPaymentIFrame src={paymentMethod.updateUrl.url} />
+      )}
+    </Section>
   );
 };
 

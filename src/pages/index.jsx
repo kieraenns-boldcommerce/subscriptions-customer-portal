@@ -15,7 +15,6 @@ import PaymentMethod from "../components/PaymentMethod";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 import PaymentMethodForm from "../components/PaymentMethodForm";
-import { PaymentUpdateMethod } from "../api/services/SubscriptionsService";
 
 const StyledTopSectionContainer = styled.div`
   margin-bottom: 30px;
@@ -35,14 +34,12 @@ const StyledIntervalAndPaymentMethod = styled.div`
   row-gap: 32px;
 `;
 
-const StyledPaymentIFrame = styled.iframe``;
 
 const IndexPage = () => {
   const { appState, appActions } = useContext(AppStateContext);
 
   const {
     subscription,
-    paymentMethod,
     isAppLoadingInitial,
     isAppLoading,
     showShippingAddressForm,
@@ -112,12 +109,7 @@ const IndexPage = () => {
             {showBillingAddressForm && (
               <AddressForm type={SubscriptionAddress.BILLING} />
             )}
-            {showPaymentMethodForm &&
-              (paymentMethod.updateMethod === PaymentUpdateMethod.EMAIL ? (
-                <PaymentMethodForm />
-              ) : (
-                <StyledPaymentIFrame src={paymentMethod.updateUrl.url} />
-              ))}
+            {showPaymentMethodForm && <PaymentMethodForm />}
             <ProductList />
           </>
         )}
