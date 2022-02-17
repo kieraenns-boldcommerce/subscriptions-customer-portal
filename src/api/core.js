@@ -13,26 +13,6 @@ export const Method = {
   DELETE: "DELETE"
 };
 
-const setRefreshTokenTimeout = (expTime) => {
-  console.log(" > expTime", expTime);
-  setTimeout(async () => {
-    const {
-      newToken,
-      newTokenExpTime
-    } = await this.callAPI({
-      method: Method.GET,
-      url: "/jwt/refresh",
-      params: {
-        shop: SHOP_DOMAIN,
-        platform_type: PLATFORM
-      }
-    });
-    console.log(" > newTokenExpTime", newTokenExpTime);
-    setRefreshTokenTimeout(newToken, newTokenExpTime);
-  }, 1000 * 5); // refresh token every 5 seconds
-  // }, expTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
-};
-
 class ServiceBase {
   static subscriptionsToken = null;
   static subscriptionsCustomerId = null;
@@ -60,7 +40,28 @@ class ServiceBase {
     this.subscriptionsToken = boldToken;
     this.subscriptionsCustomerId = boldCustomerID;
 
-    setRefreshTokenTimeout(tokenExpTime);
+    this.setRefreshTokenTimeout(tokenExpTime);
+  }
+
+  static setRefreshTokenTimeout(expTime) {
+    console.log(" > expTime", expTime);
+    setTimeout(async () => {
+      const {
+        token,
+        tokenExpTime
+      } = await this.callAPI({
+        method: Method.GET,
+        url: "/jwt/refresh",
+        params: {
+          shop: SHOP_DOMAIN,
+          platform_type: PLATFORM
+        }
+      });
+      this.subscriptionsToken = token;
+      console.log(" > tokenExpTime", tokenExpTime);
+      this.setRefreshTokenTimeout(tokenExpTime);
+    }, 1000 * 5); // refresh token every 5 seconds
+    // }, expTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
   }
 
   static async callAPI({method, url, params, data = null}) {
