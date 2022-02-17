@@ -1,8 +1,8 @@
-import {useContext} from "react";
+import { useContext } from "react";
 import styled from "styled-components";
-import {LoadingSpinner} from "@boldcommerce/stacks-ui";
-import {SubscriptionAddress} from "../const";
-import {AppStateContext} from "../AppState";
+import { LoadingSpinner } from "@boldcommerce/stacks-ui";
+import { SubscriptionAddress } from "../const";
+import { AppStateContext } from "../AppState";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/ui/Container";
 import NoSubscriptions from "../components/ui/NoSubscriptions";
@@ -15,6 +15,7 @@ import PaymentMethod from "../components/PaymentMethod";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
 import PaymentMethodForm from "../components/PaymentMethodForm";
+import { PaymentUpdateMethod } from "../api/services/SubscriptionsService";
 
 const StyledTopSectionContainer = styled.div`
   margin-bottom: 30px;
@@ -34,13 +35,14 @@ const StyledIntervalAndPaymentMethod = styled.div`
   row-gap: 32px;
 `;
 
+const StyledPaymentIFrame = styled.iframe``;
+
 const IndexPage = () => {
-  const {appState, appActions} = useContext(AppStateContext);
+  const { appState, appActions } = useContext(AppStateContext);
 
   const {
     subscription,
-
-    // subscriptions,
+    paymentMethod,
     isAppLoadingInitial,
     isAppLoading,
     showShippingAddressForm,
@@ -48,14 +50,14 @@ const IndexPage = () => {
     showIntervalForm,
     showPaymentMethodForm,
     showModalPause,
-    showModalCancel
+    showModalCancel,
   } = appState;
 
   const {
     stopPauseSubscription,
     finishPauseSubscription,
     stopCancelSubscription,
-    finishCancelSubscription
+    finishCancelSubscription,
   } = appActions;
 
   const handlePauseModalConfirm = () => finishPauseSubscription();
@@ -70,53 +72,53 @@ const IndexPage = () => {
   return (
     <DefaultLayout>
       <Container>
-
         {showSpinner && (
           <StyledFullPageSpinner>
-            <LoadingSpinner/>
+            <LoadingSpinner />
           </StyledFullPageSpinner>
         )}
 
-        {showNoSubscriptions && (
-          <NoSubscriptions/>
-        )}
+        {showNoSubscriptions && <NoSubscriptions />}
 
         {showSubscriptions && (
           <>
             <StyledTopSectionContainer>
-              <TopSection/>
+              <TopSection />
             </StyledTopSectionContainer>
             <Tabs
               tabs={[
                 {
-                  content: <Address type={SubscriptionAddress.SHIPPING}/>,
-                  isActive: showShippingAddressForm
+                  content: <Address type={SubscriptionAddress.SHIPPING} />,
+                  isActive: showShippingAddressForm,
                 },
                 {
-                  content: <Address type={SubscriptionAddress.BILLING}/>,
-                  isActive: showBillingAddressForm
+                  content: <Address type={SubscriptionAddress.BILLING} />,
+                  isActive: showBillingAddressForm,
                 },
                 {
                   content: (
                     <StyledIntervalAndPaymentMethod>
-                      <Interval/>
-                      <PaymentMethod/>
+                      <Interval />
+                      <PaymentMethod />
                     </StyledIntervalAndPaymentMethod>
                   ),
-                  isActive: showIntervalForm || showPaymentMethodForm
-                }
+                  isActive: showIntervalForm || showPaymentMethodForm,
+                },
               ]}
             />
             {showShippingAddressForm && (
-              <AddressForm type={SubscriptionAddress.SHIPPING}/>
+              <AddressForm type={SubscriptionAddress.SHIPPING} />
             )}
             {showBillingAddressForm && (
-              <AddressForm type={SubscriptionAddress.BILLING}/>
+              <AddressForm type={SubscriptionAddress.BILLING} />
             )}
-            {showPaymentMethodForm && (
-              <PaymentMethodForm />
-            )}
-            <ProductList/>
+            {showPaymentMethodForm &&
+              (paymentMethod.updateMethod === PaymentUpdateMethod.EMAIL ? (
+                <PaymentMethodForm />
+              ) : (
+                <StyledPaymentIFrame src={paymentMethod.updateUrl.url} />
+              ))}
+            <ProductList />
           </>
         )}
 
@@ -143,7 +145,6 @@ const IndexPage = () => {
             onCancel={handleCancelModalCancel}
           />
         )}
-
       </Container>
     </DefaultLayout>
   );

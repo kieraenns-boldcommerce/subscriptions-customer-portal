@@ -4,6 +4,11 @@ import AddressesAdapter from "../adapters/AddressesAdapter";
 import IntervalsAdapter from "../adapters/IntervalsAdapter";
 import PaymentMethodsAdapter from "../adapters/PaymentMethodsAdapter";
 
+export const PaymentUpdateMethod = {
+  EMAIL: "trigger_email",
+  URL: "url",
+};
+
 class SubscriptionsService extends ServiceBase {
   static async getSubscriptions() {
     if (!this.subscriptionsCustomerId) {
