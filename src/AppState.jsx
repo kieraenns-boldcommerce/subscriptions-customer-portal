@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from "react";
-import { SubscriptionStatus, ChildrenType } from "./const";
+import { createContext, useEffect, useState } from "react";
+import { ChildrenType, SubscriptionStatus } from "./const";
 import useGetSubscriptions from "./hooks/queries/subscriptions/useGetSubscriptions";
 import useGetIntervals from "./hooks/queries/subscriptions/useGetIntervals";
 import useGetPaymentMethod from "./hooks/queries/subscriptions/useGetPaymentMethod";
@@ -9,11 +9,12 @@ import useActivateSubscription from "./hooks/queries/subscriptions/useActivateSu
 import useUpdateAddress from "./hooks/queries/subscriptions/useUpdateAddress";
 import useUpdateInterval from "./hooks/queries/subscriptions/useUpdateInterval";
 import { Notify } from "./components/ui/Notification";
+import useUpdatePaymentMethod from "./hooks/queries/subscriptions/useUpdatePaymentMethod";
 
 export const AppStateContext = createContext(null);
 
 const AppStateProviderPropTypes = {
-  children: ChildrenType.isRequired
+  children: ChildrenType.isRequired,
 };
 
 export const AppStateProvider = (props) => {
@@ -61,6 +62,11 @@ export const AppStateProvider = (props) => {
     refetchSubscriptions();
   };
 
+  const handleUpdatePaymentMethod = () => {
+    Notify.success("Payment method changed successfully");
+    refetchSubscriptions();
+  };
+
   const handleUpdateAddressError = (error) => {
     const { message, fieldErrors } = error;
     setAddressFormErrors(fieldErrors);
@@ -73,59 +79,47 @@ export const AppStateProvider = (props) => {
   };
 
   // queries and mutations
-  const {
-    subscriptions,
-    areSubscriptionsLoading,
-    refetchSubscriptions
-  } = useGetSubscriptions({
-    onSuccess: handleGetSubscriptionsSuccess
+  const { subscriptions, areSubscriptionsLoading, refetchSubscriptions } =
+    useGetSubscriptions({
+      onSuccess: handleGetSubscriptionsSuccess,
+    });
+
+  const { intervals, areIntervalsLoading } = useGetIntervals({
+    subscriptionID,
   });
 
-  const {
-    intervals,
-    areIntervalsLoading
-  } = useGetIntervals({ subscriptionID });
-
-  const {
-    paymentMethod,
-    isPaymentMethodLoading
-  } = useGetPaymentMethod({ subscriptionID });
-
-  const {
-    isSubscriptionPausing,
-    pauseSubscription
-  } = usePauseSubscription({
-    onSuccess: handlePauseSubscriptionSuccess
+  const { paymentMethod, isPaymentMethodLoading } = useGetPaymentMethod({
+    subscriptionID,
   });
 
-  const {
-    isSubscriptionCancelling,
-    cancelSubscription
-  } = useCancelSubscription({
-    onSuccess: handleCancelSubscriptionSuccess
+  const { isSubscriptionPausing, pauseSubscription } = usePauseSubscription({
+    onSuccess: handlePauseSubscriptionSuccess,
   });
 
-  const {
-    isSubscriptionActivating,
-    activateSubscription
-  } = useActivateSubscription({
-    onSuccess: handleActivateSubscriptionSuccess
-  });
+  const { isSubscriptionCancelling, cancelSubscription } =
+    useCancelSubscription({
+      onSuccess: handleCancelSubscriptionSuccess,
+    });
 
-  const {
-    isAddressUpdating,
-    updateAddress
-  } = useUpdateAddress({
+  const { isSubscriptionActivating, activateSubscription } =
+    useActivateSubscription({
+      onSuccess: handleActivateSubscriptionSuccess,
+    });
+
+  const { isAddressUpdating, updateAddress } = useUpdateAddress({
     onSuccess: handleUpdateAddressSuccess,
-    onError: handleUpdateAddressError
+    onError: handleUpdateAddressError,
   });
 
-  const {
-    isIntervalUpdating,
-    updateInterval
-  } = useUpdateInterval({
-    onSuccess: handleUpdateIntervalSuccess
+  const { isIntervalUpdating, updateInterval } = useUpdateInterval({
+    onSuccess: handleUpdateIntervalSuccess,
   });
+
+  const { updatePaymentMethod, isPaymentMethodUpdating } =
+    useUpdatePaymentMethod({
+      subscriptionID,
+      onSuccess: handleUpdatePaymentMethod,
+    });
 
   useEffect(() => {
     if (subscriptions?.length && !subscriptionID) {
@@ -143,7 +137,9 @@ export const AppStateProvider = (props) => {
     isSubscriptionCancelling ||
     isSubscriptionActivating ||
     isAddressUpdating ||
-    isIntervalUpdating;
+    isIntervalUpdating ||
+    isPaymentMethodLoading ||
+    isPaymentMethodUpdating;
 
   const subscription = subscriptions?.find((subscription) => {
     const { id } = subscription;
@@ -152,7 +148,8 @@ export const AppStateProvider = (props) => {
 
   const subscriptionStatus = subscription?.status;
   const isSubscriptionActive = subscriptionStatus === SubscriptionStatus.ACTIVE;
-  const isSubscriptionInactive = subscriptionStatus === SubscriptionStatus.INACTIVE;
+  const isSubscriptionInactive =
+    subscriptionStatus === SubscriptionStatus.INACTIVE;
   const isSubscriptionPaused = subscriptionStatus === SubscriptionStatus.PAUSED;
 
   // app state and actions
@@ -180,7 +177,7 @@ export const AppStateProvider = (props) => {
     showIntervalForm,
     showPaymentMethodForm,
     showModalPause,
-    showModalCancel
+    showModalCancel,
   };
 
   const appActions = {
@@ -287,16 +284,17 @@ export const AppStateProvider = (props) => {
     stopUpdatePaymentMethod: () => {
       setShowPaymentMethodForm(false);
     },
-    finishUpdatePaymentMethod: () => {
-      updateInterval({ subscriptionID });
-    }
+    finishUpdatePaymentMethod: (updateMethod) => {
+      console.log(" > updateMethod", updateMethod);
+      updatePaymentMethod({ subscriptionID, updateMethod });
+    },
   };
 
   const value = { appState, appActions };
 
   return (
     <AppStateContext.Provider value={value}>
-      { children }
+      {children}
     </AppStateContext.Provider>
   );
 };

@@ -21,7 +21,6 @@
     "indent": ["error", 2],
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
-    "comma-dangle": ["error", "never"],
     "react/react-in-jsx-scope": "off",
     "react/display-name": "off"
   }

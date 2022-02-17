@@ -125,6 +125,7 @@ class SubscriptionsService extends ServiceBase {
 
   static async updatePaymentMethodEmail(params) {
     const {subscriptionID} = params;
+    console.log(" > subscriptionID", subscriptionID);
 
     await this.callAPI({
       method: Method.POST,

@@ -1,20 +1,21 @@
-import {useMutation, useQuery} from "react-query";
+import { useMutation } from "react-query";
 import SubscriptionsService from "../../../api/services/SubscriptionsService";
 
-const useGetPaymentMethod = (params) => {
-  const { subscriptionID, updateMethod } = params;
-
+const useUpdatePaymentMethod = (params) => {
   const { onSuccess } = params;
 
   const { isLoading, mutate } = useMutation(
-    (params) => SubscriptionsService.updateInterval(params),
+    (args) =>
+      args.updateMethod === "trigger_email"
+        ? SubscriptionsService.updatePaymentMethodEmail(args)
+        : null,
     { onSuccess }
   );
 
   return {
-    isIntervalUpdating: isLoading,
-    updateInterval: mutate
+    isPaymentMethodUpdating: isLoading,
+    updatePaymentMethod: mutate,
   };
 };
 
-export default useGetPaymentMethod;
+export default useUpdatePaymentMethod;
