@@ -1,5 +1,4 @@
-import Cookies from "js-cookie";
-import ServiceBase, {Cookie, Method, PLATFORM, SHOP_DOMAIN} from "../core";
+import ServiceBase, {Method, PLATFORM, SHOP_DOMAIN} from "../core";
 import SubscriptionsAdapter from "../adapters/SubscriptionsAdapter";
 import AddressesAdapter from "../adapters/AddressesAdapter";
 import IntervalsAdapter from "../adapters/IntervalsAdapter";
@@ -7,7 +6,7 @@ import PaymentMethodsAdapter from "../adapters/PaymentMethodsAdapter";
 
 class SubscriptionsService extends ServiceBase {
   static async getSubscriptions() {
-    const boldCustomerID = Cookies.get(Cookie.CUSTOMER_ID);
+    const boldCustomerID = this.subscriptionsCustomerId;
     const {subscriptions} = await this.callAPI({
       method: Method.GET,
       url: `/customers/${boldCustomerID}/subscriptions`,
@@ -90,12 +89,9 @@ class SubscriptionsService extends ServiceBase {
   }
 
   static async updateAddress(params) {
-    console.log(" > params", params);
     const {address} = params;
-    console.log(" > address", address);
     const {id} = address;
-    console.log(" > id", id);
-    const customerID = Cookies.get(Cookie.CUSTOMER_ID);
+    const customerID = this.subscriptionsCustomerId;
 
     try {
       await this.callAPI({
@@ -118,6 +114,19 @@ class SubscriptionsService extends ServiceBase {
     await this.callAPI({
       method: Method.PUT,
       url: `/subscriptions/${subscriptionID}/interval/${intervalID}`,
+      params: {
+        shop: SHOP_DOMAIN,
+        platform_type: PLATFORM
+      }
+    });
+  }
+
+  static async updatePaymentMethodEmail(params) {
+    const {subscriptionID} = params;
+
+    await this.callAPI({
+      method: Method.POST,
+      url: `/subscriptions/${subscriptionID}/payment_method_email`,
       params: {
         shop: SHOP_DOMAIN,
         platform_type: PLATFORM

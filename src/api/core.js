@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const BASE_URL = "https://ark.onudu.com/https://sub.boldapps.net/api/customer";
 
@@ -14,16 +13,9 @@ export const Method = {
   DELETE: "DELETE"
 };
 
-export const Cookie = {
-  TOKEN: "subscriptions_token",
-  CUSTOMER_ID: "subscriptions_customer_id"
-};
-
-const updateCookieToken = (token, expTime) => {
+const setRefreshTokenTimeout = (expTime) => {
   console.log(" > expTime", expTime);
-  Cookies.set(Cookie.TOKEN, token, {expires: expTime});
-  const timeoutId = setTimeout(async () => {
-    console.log("timeout callback");
+  setTimeout(async () => {
     const {
       newToken,
       newTokenExpTime
@@ -36,13 +28,15 @@ const updateCookieToken = (token, expTime) => {
       }
     });
     console.log(" > newTokenExpTime", newTokenExpTime);
-    updateCookieToken(newToken, newTokenExpTime);
+    setRefreshTokenTimeout(newToken, newTokenExpTime);
   }, 1000 * 5); // refresh token every 5 seconds
-  console.log(" > timeoutId", timeoutId);
   // }, expTime - 1000 * 60 * 5); // refresh token 5 minutes before expiring
 };
 
 class ServiceBase {
+  static subscriptionsToken = null;
+  static subscriptionsCustomerId = null;
+
   static async obtainToken() {
     const {
       value: {jwt: platformToken, customerId: platformCustomerID}
@@ -63,19 +57,21 @@ class ServiceBase {
       }
     });
 
-    Cookies.set(Cookie.CUSTOMER_ID, boldCustomerID);
+    this.subscriptionsToken = boldToken;
+    this.subscriptionsCustomerId = boldCustomerID;
 
-    updateCookieToken(boldToken, tokenExpTime);
+    setRefreshTokenTimeout(tokenExpTime);
   }
 
   static async callAPI({method, url, params, data = null}) {
     const config = {method, baseURL: BASE_URL, url, data, params};
 
-    if ((!Cookies.get(Cookie.TOKEN) || !Cookies.get(Cookie.CUSTOMER_ID)) && url !== "/login") {
+    if ((!this.subscriptionsToken || !this.subscriptionsCustomerId) && url !== "/login" && url !== "/jwt/refresh") {
       await this.obtainToken();
     }
-    const token = Cookies.get(Cookie.TOKEN);
-    if (token) config.headers = {Authorization: `Bearer ${token}`};
+    if (this.subscriptionsToken) {
+      config.headers = {Authorization: `Bearer ${this.subscriptionsToken}`};
+    }
 
     const response = await axios.request(config);
     return response.data;

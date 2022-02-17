@@ -14,11 +14,7 @@ import Interval from "../components/Interval";
 import PaymentMethod from "../components/PaymentMethod";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
-
-const StyledPaymentContent = styled.div`
-  min-height: 120px;
-  background-color: rgba(0, 0, 0, 0.2);
-`;
+import PaymentMethodForm from "../components/PaymentMethodForm";
 
 const StyledTopSectionContainer = styled.div`
   margin-bottom: 30px;
@@ -118,7 +114,7 @@ const IndexPage = () => {
               <AddressForm type={SubscriptionAddress.BILLING}/>
             )}
             {showPaymentMethodForm && (
-              <StyledPaymentContent/>
+              <PaymentMethodForm />
             )}
             <ProductList/>
           </>

@@ -256,7 +256,6 @@ export const AppStateProvider = (props) => {
       setShowBillingAddressForm(false);
     },
     finishUpdateAddressBilling: (address) => {
-      console.log(" > address", address);
       updateAddress({ address });
     },
 
@@ -284,6 +283,12 @@ export const AppStateProvider = (props) => {
       setShowBillingAddressForm(false);
       setShowIntervalForm(false);
       setShowPaymentMethodForm(true);
+    },
+    stopUpdatePaymentMethod: () => {
+      setShowPaymentMethodForm(false);
+    },
+    finishUpdatePaymentMethod: () => {
+      updateInterval({ subscriptionID });
     }
   };
 
