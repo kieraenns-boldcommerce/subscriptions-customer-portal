@@ -63,8 +63,7 @@ export const AppStateProvider = (props) => {
   };
 
   const handleUpdatePaymentMethod = () => {
-    Notify.success("Payment method changed successfully");
-    refetchSubscriptions();
+    Notify.success("The email has been sent successfully");
   };
 
   const handleUpdateAddressError = (error) => {
@@ -285,7 +284,6 @@ export const AppStateProvider = (props) => {
       setShowPaymentMethodForm(false);
     },
     finishUpdatePaymentMethod: (updateMethod) => {
-      console.log(" > updateMethod", updateMethod);
       updatePaymentMethod({ subscriptionID, updateMethod });
     },
   };

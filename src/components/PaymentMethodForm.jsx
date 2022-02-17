@@ -10,6 +10,7 @@ const StyledButtons = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 16px;
+  margin: 16px 0;
 `;
 
 const StyledPaymentIFrame = styled.iframe``;
@@ -34,8 +35,8 @@ const PaymentMethodForm = () => {
             email
           </span>
           <StyledButtons>
-            <Button onClick={handleConfirmButtonClick}>Cancel</Button>
-            <Button onClick={handleCancelButtonClick}>Send email</Button>
+            <Button onClick={handleCancelButtonClick}>Cancel</Button>
+            <Button primary onClick={handleConfirmButtonClick}>Send email</Button>
           </StyledButtons>
         </>
       ) : (
