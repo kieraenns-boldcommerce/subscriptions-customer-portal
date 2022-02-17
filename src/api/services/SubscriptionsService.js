@@ -6,10 +6,12 @@ import PaymentMethodsAdapter from "../adapters/PaymentMethodsAdapter";
 
 class SubscriptionsService extends ServiceBase {
   static async getSubscriptions() {
-    const boldCustomerID = this.subscriptionsCustomerId;
+    if (!this.subscriptionsCustomerId) {
+      await this.obtainToken();
+    }
     const {subscriptions} = await this.callAPI({
       method: Method.GET,
-      url: `/customers/${boldCustomerID}/subscriptions`,
+      url: `/customers/${this.subscriptionsCustomerId}/subscriptions`,
       params: {
         shop: SHOP_DOMAIN,
         platform_type: PLATFORM

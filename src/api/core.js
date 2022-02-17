@@ -44,8 +44,7 @@ class ServiceBase {
   }
 
   static setRefreshTokenTimeout(expTime) {
-    const timeoutMilliseconds = expTime - Date.now() - 60000; // 1minute before expiration
-    console.log("timeout date is ", new Date(timeoutMilliseconds));
+    const timeoutMilliseconds = expTime - Date.now() - 60000; // 1 minute before expiration
     setTimeout(async () => {
       const {
         token,
