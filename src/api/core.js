@@ -79,6 +79,8 @@ class ServiceBase {
       if (err.response?.status === 401) {
         this.subscriptionsToken = null;
         await this.callAPI(config);
+      } else {
+        throw err;
       }
     }
   }
