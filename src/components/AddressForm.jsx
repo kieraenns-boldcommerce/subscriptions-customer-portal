@@ -176,7 +176,7 @@ const AddressForm = (props) => {
                 messageType={addressFormErrors?.city && "alert"}
                 messageText={addressFormErrors?.city}
                 disabled={isAppLoading}
-                onInput={(event) => handleFieldChange(event, "lineSecond")}
+                onInput={(event) => handleFieldChange(event, "city")}
               />
             </FieldsLayout>
           </StyledAddressFormSecondRow>
