@@ -72,8 +72,15 @@ class ServiceBase {
       config.headers = {Authorization: `Bearer ${this.subscriptionsToken}`};
     }
 
-    const response = await axios.request(config);
-    return response.data;
+    try {
+      const response = await axios.request(config);
+      return response.data;
+    } catch (err) {
+      if (err.response?.status === 401) {
+        this.subscriptionsToken = null;
+        await this.callAPI(config);
+      }
+    }
   }
 }
 

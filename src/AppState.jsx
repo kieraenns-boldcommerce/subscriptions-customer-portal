@@ -64,6 +64,7 @@ export const AppStateProvider = (props) => {
 
   const handleUpdatePaymentMethod = () => {
     Notify.success("The email has been sent successfully");
+    setShowPaymentMethodForm(false);
   };
 
   const handleUpdateAddressError = (error) => {
