@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# SUBSCRIPTIONS CUSTOMER PORTAL
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Local Set-Up
 
-## Available Scripts
+### Create a GitHub account if you do not have one already
 
-In the project directory, you can run:
+- https://github.com/
 
-### `npm start`
+### Ensure you have an SSH key added to your GitHub account
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. List your ssh key files: 
+`ls -al ~/.ssh`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. You should see one called: 
+`id_rsa.pub`
 
-### `npm test`
+3. Copy the contents of the file to your clipboard: 
+`pbcopy < ~/.ssh/id_rsa.pub`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. Go to your GitHub account -> Settings -> SSH And GPG keys -> New SSH Key
 
-### `npm run build`
+5. Paste the contents of your clipboard. It should start with something like `ssh-rsa`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+6. Click `Save SSH Key`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+7. You should then be able to push/pull from the repo!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Clone the Forked Repo
 
-### `npm run eject`
+- `$ git clone https://github.com/kieraenns-boldcommerce/subscriptions-customer-portal`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Checkout the Correct Branch
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `$ git checkout shopify` // Currently the "master" branch
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Ensure you are connected to the VPN
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- check to make sure your VPN connection is on
 
-## Learn More
+### Ensure you are on the correct NODE version
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `$ nvm install 16`
+- `$ nvm use 16`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Install, build, and run yarn
 
-### Code Splitting
+- `$ yarn`
+- `$ yarn build`
+- `$ yarn start`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Navigate to window
 
-### Analyzing the Bundle Size
+- `http://localhost:3000`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### How to setup on a Shopify theme
+- Have `yarn start` running
+- Set up a [Cloudflare argo tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) to point to your local react build  
+```
+cloudflared tunnel --hostname {your-argo-tunnel} --url http://localhost:3000/
+```
+- Navigate to your argo tunnel to verify it is running and accessible
+- On your shopify theme add this line to the bottom of your `theme.liquid` before the closing `</body></html>` tags  
+```html 
+<script src="https://{your-argo-tunnel}/static/js/bundle.js" type="text/javascript"></script>
+```

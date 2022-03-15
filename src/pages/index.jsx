@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { React, useContext } from "react";
 import styled from "styled-components";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
 import { SubscriptionAddress } from "../const";
@@ -17,129 +17,128 @@ import ProductList from "../components/ProductList";
 import PaymentMethodForm from "../components/PaymentMethodForm";
 
 const StyledTopSectionContainer = styled.div`
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 `;
 
 const StyledFullPageSpinner = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
 
-  transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 `;
 
 const StyledIntervalAndPaymentMethod = styled.div`
-  display: grid;
-  align-content: space-between;
-  row-gap: 32px;
+    display: grid;
+    align-content: space-between;
+    row-gap: 32px;
 `;
 
-
 const IndexPage = () => {
-  const { appState, appActions } = useContext(AppStateContext);
+    const { appState, appActions } = useContext(AppStateContext);
 
-  const {
-    subscription,
-    isAppLoadingInitial,
-    isAppLoading,
-    showShippingAddressForm,
-    showBillingAddressForm,
-    showIntervalForm,
-    showPaymentMethodForm,
-    showModalPause,
-    showModalCancel,
-  } = appState;
+    const {
+        subscription,
+        isAppLoadingInitial,
+        isAppLoading,
+        showShippingAddressForm,
+        showBillingAddressForm,
+        showIntervalForm,
+        showPaymentMethodForm,
+        showModalPause,
+        showModalCancel,
+    } = appState;
 
-  const {
-    stopPauseSubscription,
-    finishPauseSubscription,
-    stopCancelSubscription,
-    finishCancelSubscription,
-  } = appActions;
+    const {
+        stopPauseSubscription,
+        finishPauseSubscription,
+        stopCancelSubscription,
+        finishCancelSubscription,
+    } = appActions;
 
-  const handlePauseModalConfirm = () => finishPauseSubscription();
-  const handlePauseModalCancel = () => stopPauseSubscription();
-  const handleCancelModalConfirm = () => finishCancelSubscription();
-  const handleCancelModalCancel = () => stopCancelSubscription();
+    const handlePauseModalConfirm = () => finishPauseSubscription();
+    const handlePauseModalCancel = () => stopPauseSubscription();
+    const handleCancelModalConfirm = () => finishCancelSubscription();
+    const handleCancelModalCancel = () => stopCancelSubscription();
 
-  const showSpinner = isAppLoadingInitial;
-  const showNoSubscriptions = !showSpinner && !subscription;
-  const showSubscriptions = !showSpinner && !showNoSubscriptions;
+    const showSpinner = isAppLoadingInitial;
+    const showNoSubscriptions = !showSpinner && !subscription;
+    const showSubscriptions = !showSpinner && !showNoSubscriptions;
 
-  return (
-    <DefaultLayout>
-      <Container>
-        {showSpinner && (
-          <StyledFullPageSpinner>
-            <LoadingSpinner />
-          </StyledFullPageSpinner>
-        )}
+    return (
+        <DefaultLayout>
+            <Container>
+                {showSpinner && (
+                    <StyledFullPageSpinner>
+                        <LoadingSpinner />
+                    </StyledFullPageSpinner>
+                )}
 
-        {showNoSubscriptions && <NoSubscriptions />}
+                {showNoSubscriptions && <NoSubscriptions />}
 
-        {showSubscriptions && (
-          <>
-            <StyledTopSectionContainer>
-              <TopSection />
-            </StyledTopSectionContainer>
-            <Tabs
-              tabs={[
-                {
-                  content: <Address type={SubscriptionAddress.SHIPPING} />,
-                  isActive: showShippingAddressForm,
-                },
-                {
-                  content: <Address type={SubscriptionAddress.BILLING} />,
-                  isActive: showBillingAddressForm,
-                },
-                {
-                  content: (
-                    <StyledIntervalAndPaymentMethod>
-                      <Interval />
-                      <PaymentMethod />
-                    </StyledIntervalAndPaymentMethod>
-                  ),
-                  isActive: showIntervalForm || showPaymentMethodForm,
-                },
-              ]}
-            />
-            {showShippingAddressForm && (
-              <AddressForm type={SubscriptionAddress.SHIPPING} />
-            )}
-            {showBillingAddressForm && (
-              <AddressForm type={SubscriptionAddress.BILLING} />
-            )}
-            {showPaymentMethodForm && <PaymentMethodForm />}
-            <ProductList />
-          </>
-        )}
+                {showSubscriptions && (
+                    <>
+                        <StyledTopSectionContainer>
+                            <TopSection />
+                        </StyledTopSectionContainer>
+                        <Tabs
+                            tabs={[
+                                {
+                                    content: <Address type={SubscriptionAddress.SHIPPING} />,
+                                    isActive: showShippingAddressForm,
+                                },
+                                {
+                                    content: <Address type={SubscriptionAddress.BILLING} />,
+                                    isActive: showBillingAddressForm,
+                                },
+                                {
+                                    content: (
+                                        <StyledIntervalAndPaymentMethod>
+                                            <Interval />
+                                            <PaymentMethod />
+                                        </StyledIntervalAndPaymentMethod>
+                                    ),
+                                    isActive: showIntervalForm || showPaymentMethodForm,
+                                },
+                            ]}
+                        />
+                        {showShippingAddressForm && (
+                            <AddressForm type={SubscriptionAddress.SHIPPING} />
+                        )}
+                        {showBillingAddressForm && (
+                            <AddressForm type={SubscriptionAddress.BILLING} />
+                        )}
+                        {showPaymentMethodForm && <PaymentMethodForm />}
+                        <ProductList />
+                    </>
+                )}
 
-        {showModalPause && (
-          <ModalConfirm
-            title="Are you sure you want to pause this subscription?"
-            description="This will pause all orders until the subscription is resumed"
-            textButtonCancel="No, don’t pause"
-            textButtonConfirm="Yes, pause"
-            disabled={isAppLoading}
-            onConfirm={handlePauseModalConfirm}
-            onCancel={handlePauseModalCancel}
-          />
-        )}
+                {showModalPause && (
+                    <ModalConfirm
+                        title="Are you sure you want to pause this subscription?"
+                        description="This will pause all orders until the subscription is resumed"
+                        textButtonCancel="No, don’t pause"
+                        textButtonConfirm="Yes, pause"
+                        disabled={isAppLoading}
+                        onConfirm={handlePauseModalConfirm}
+                        onCancel={handlePauseModalCancel}
+                    />
+                )}
 
-        {showModalCancel && (
-          <ModalConfirm
-            title="Are you sure you want to cancel this subscription?"
-            description="This will cancel your subscription and all unprocessed orders"
-            textButtonCancel="No, don’t cancel"
-            textButtonConfirm="Yes, cancel"
-            disabled={isAppLoading}
-            onConfirm={handleCancelModalConfirm}
-            onCancel={handleCancelModalCancel}
-          />
-        )}
-      </Container>
-    </DefaultLayout>
-  );
+                {showModalCancel && (
+                    <ModalConfirm
+                        title="Are you sure you want to cancel this subscription?"
+                        description="This will cancel your subscription and all unprocessed orders"
+                        textButtonCancel="No, don’t cancel"
+                        textButtonConfirm="Yes, cancel"
+                        disabled={isAppLoading}
+                        onConfirm={handleCancelModalConfirm}
+                        onCancel={handleCancelModalCancel}
+                    />
+                )}
+            </Container>
+        </DefaultLayout>
+    );
 };
 
 export default IndexPage;
