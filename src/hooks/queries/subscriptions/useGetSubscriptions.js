@@ -4,7 +4,7 @@ import SubscriptionsService from "../../../api/services/SubscriptionsService";
 const useGetSubscriptions = (params) => {
     const { onSuccess } = params;
 
-    const { data, isLoading, refetch } = useQuery(
+    const { data, isLoading/*, refetch*/ } = useQuery(
         ["subscriptions"],
         () => SubscriptionsService.getSubscriptions(),
         { onSuccess }
@@ -13,7 +13,7 @@ const useGetSubscriptions = (params) => {
     return {
         subscriptions: data,
         areSubscriptionsLoading: isLoading,
-        refetchSubscriptions: refetch,
+        /*refetchSubscriptions: refetch,*/
     };
 };
 

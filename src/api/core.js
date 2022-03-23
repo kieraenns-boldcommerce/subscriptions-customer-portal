@@ -1,8 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = "https://ark.onudu.com/https://sub.boldapps.net/api/customer";
+// const BASE_URL = "sub.boldapps.net/api/customer";
+const BASE_URL = "https://kiera-bsub-local.bold.ninja/api/integrations/v1/shops/63192498428";
 
-export const SHOP_DOMAIN = "outside-digital.myshopify.com";
+export const SHOP_DOMAIN = "kiera-subs-local.myshopify.com";
 export const PLATFORM = "shopify";
 
 export const Method = {
@@ -15,32 +16,35 @@ export const Method = {
 
 class ServiceBase {
     static subscriptionsToken = null;
-    static subscriptionsCustomerId = null;
+    static subscriptionsCustomerId = 467120;
 
     static async obtainToken() {
-        const {
-            value: {jwt: platformToken, customerId: platformCustomerID}
-        } = await new Promise((resolve) => window.BOLD.subscriptions.getJWT(resolve));
+        console.log("hi");
+        //console.log(platformCustomerId);
+        
+        // const {
+        //     value: {jwt: platformToken, customerId: platformCustomerID}
+        // } = await new Promise((resolve) => window.BOLD.subscriptions.getJWT(resolve));
 
-        const {
-            subscriptionsWebToken: boldToken,
-            subscriptionsWebTokenExpTime: tokenExpTime,
-            customer: {bold_platform_id: boldCustomerID}
-        } = await this.callAPI({
-            method: Method.GET,
-            url: "/login",
-            params: {
-                platform_customer_id: platformCustomerID,
-                customer_jwt: platformToken,
-                shop: SHOP_DOMAIN,
-                platform_type: PLATFORM
-            }
-        });
+        // const {
+        //     subscriptionsWebToken: boldToken,
+        //     subscriptionsWebTokenExpTime: tokenExpTime,
+        //     customer: {bold_platform_id: boldCustomerID}
+        // } = await this.callAPI({
+        //     method: Method.GET,
+        //     url: "/login",
+        //     params: {
+        //         platform_customer_id: platformCustomerID,
+        //         customer_jwt: platformToken,
+        //         shop: SHOP_DOMAIN,
+        //         platform_type: PLATFORM
+        //     }
+        // });
 
-        this.subscriptionsToken = boldToken;
-        this.subscriptionsCustomerId = boldCustomerID;
+        // this.subscriptionsToken = boldToken;
+        // this.subscriptionsCustomerId = boldCustomerID;
 
-        this.setRefreshTokenTimeout(tokenExpTime);
+        // this.setRefreshTokenTimeout(tokenExpTime);
     }
 
     static setRefreshTokenTimeout(expTime) {
@@ -62,15 +66,15 @@ class ServiceBase {
         }, timeoutMilliseconds);
     }
 
-    static async callAPI({method, url, params, data = null}) {
-        const config = {method, baseURL: BASE_URL, url, data, params};
+    static async callAPI({method, url, headers, params = null, data = null}) {
+        const config = {method, baseURL: BASE_URL, url, headers, data, params};
 
-        if ((!this.subscriptionsToken || !this.subscriptionsCustomerId) && url !== "/login" && url !== "/jwt/refresh") {
-            await this.obtainToken();
-        }
-        if (this.subscriptionsToken) {
-            config.headers = {Authorization: `Bearer ${this.subscriptionsToken}`};
-        }
+        // if ((!this.subscriptionsToken || !this.subscriptionsCustomerId) && url !== "/login" && url !== "/jwt/refresh") {
+        //     await this.obtainToken();
+        // }
+        // if (this.subscriptionsToken) {
+        //     config.headers = {Authorization: `Bearer ${this.subscriptionsToken}`};
+        // }
 
         try {
             const response = await axios.request(config);
@@ -78,7 +82,7 @@ class ServiceBase {
         } catch (err) {
             if (err.response?.status === 401) {
                 this.subscriptionsToken = null;
-                await this.callAPI(config);
+                // await this.callAPI(config);
             } else {
                 throw err;
             }

@@ -11,16 +11,27 @@ export const PaymentUpdateMethod = {
 
 class SubscriptionsService extends ServiceBase {
     static async getSubscriptions() {
-        if (!this.subscriptionsCustomerId) {
-            await this.obtainToken();
-        }
+
+        // if (!this.subscriptionsCustomerId) {
+        //     await this.obtainToken();
+        // }
+        
+        this.subscriptionsCustomerId = 467120;
+        console.log("bye");
         const { subscriptions } = await this.callAPI({
             method: Method.GET,
             url: `/customers/${this.subscriptionsCustomerId}/subscriptions`,
-            params: {
-                shop: SHOP_DOMAIN,
-                platform_type: PLATFORM,
-            },
+            headers: {
+                Authorization: "bearer hUkM3afEpbKLA4QGtFhsgjPiReN4jOwt",
+                "X-Authenticated-Scope": "read_customers write_customers read_subscriptions write_subscriptions read_subscription_groups write_subscription_groups read_shop read_shop_settings write_shop_settings read_activity_logs write_activity_logs read_webhooks write_webhooks",
+                "X-Bold-Proxy-Shop-Identifier": "63192498428",
+                "X-Bold-Proxy-Auth-Key": "eehahBuk2PheepheeSh9ohtah4ve9Tei",
+                "X-Bold-Proxy-App-Guid": "kiera-bsub-local"
+            }
+            // params: {
+            //     shop: SHOP_DOMAIN,
+            //     platform_type: PLATFORM,
+            // },
         });
 
         return subscriptions.map(SubscriptionsAdapter.fromServer);
