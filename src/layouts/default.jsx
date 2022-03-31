@@ -1,17 +1,18 @@
+import React from "react";
 import { ChildrenType } from "../const";
 
 const DefaultLayoutPropTypes = {
-  children: ChildrenType.isRequired
+    children: ChildrenType.isRequired
 };
 
 const DefaultLayout = (props) => {
-  const { children } = props;
+    const { children } = props;
 
-  return (
-    <div>
-      { children }
-    </div>
-  );
+    return (
+        <div>
+            { children }
+        </div>
+    );
 };
 
 DefaultLayout.propTypes = DefaultLayoutPropTypes;

@@ -1,44 +1,36 @@
 import PT from "prop-types";
 
 export const SubscriptionAction = {
-  PAUSE: "pause",
-  CANCEL: "cancel",
-  ACTIVATE: "activate"
+    PAUSE: "pause",
+    CANCEL: "cancel",
+    ACTIVATE: "activate",
 };
 
 export const SubscriptionStatus = {
-  ACTIVE: "active",
-  INACTIVE: "inactive",
-  PAUSED: "paused"
+    ACTIVE: "active",
+    INACTIVE: "inactive",
+    PAUSED: "paused",
 };
 
 export const SubscriptionAddress = {
-  SHIPPING: "shipping",
-  BILLING: "billing"
+    SHIPPING: "shipping",
+    BILLING: "billing",
 };
 
 export const SubscriptionPaymentType = {
-  CREDIT_CARD: "credit_card"
+    CREDIT_CARD: "credit_card",
 };
 
 export const SubscriptionPaymentSystem = {
-  MASTERCARD: "mastercard",
-  VISA: "visa"
+    MASTERCARD: "mastercard",
+    VISA: "visa",
 };
 
-export const ChildType = PT.oneOfType([
-  PT.bool,
-  PT.number,
-  PT.string,
-  PT.node
-]);
+export const ChildType = PT.oneOfType([PT.bool, PT.number, PT.string, PT.node]);
 
-export const ChildrenType = PT.oneOfType([
-  ChildType,
-  PT.arrayOf(ChildType)
-]);
+export const ChildrenType = PT.oneOfType([ChildType, PT.arrayOf(ChildType)]);
 
 export const AddressType = PT.oneOf([
-  SubscriptionAddress.SHIPPING,
-  SubscriptionAddress.BILLING
+    SubscriptionAddress.SHIPPING,
+    SubscriptionAddress.BILLING,
 ]);
