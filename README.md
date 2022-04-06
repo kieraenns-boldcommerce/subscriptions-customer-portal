@@ -63,3 +63,8 @@ cloudflared tunnel --hostname {your-argo-tunnel} --url http://localhost:3000/
 ```html 
 <script src="https://{your-argo-tunnel}/static/js/bundle.js" type="text/javascript"></script>
 ```
+
+
+### Setting up variables
+
+- Copy the .env.example -> .env, and update the value if required.

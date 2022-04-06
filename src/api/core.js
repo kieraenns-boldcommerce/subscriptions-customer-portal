@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "https://sub.boldapps.net/api/customer";
+// eslint-disable-next-line no-undef
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export const SHOP_DOMAIN = window.BOLD.subscriptions.config.shopDomain;
 export const PLATFORM = "shopify";
