@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createGlobalStyle } from "styled-components";
 
 export const Resets = createGlobalStyle`
@@ -114,6 +115,21 @@ export const Vars = createGlobalStyle`
     }
 `;
 
+const localRegularFont = `local("SFProDisplay-Regular");`;
+const prodRegularFont = `
+    url("./assets/fonts/SFProDisplay-Regular.woff2") format("woff2"),
+    url("./assets/fonts/SFProDisplay-Regular.woff") format("woff");
+`;
+
+const localBoldFont =`local("SFProDisplay-Bold");`
+const prodBoldFont = `
+    url("./assets/fonts/SFProDisplay-Bold.woff2") format("woff2"),
+    url("./assets/fonts/SFProDisplay-Bold.woff") format("woff");
+`;
+
+const regularFont = process.env.REACT_APP_ENV === "local" ? localRegularFont : prodRegularFont;
+const boldFont = process.env.REACT_APP_ENV === "local" ? localBoldFont : prodBoldFont;
+
 export const Fonts = createGlobalStyle`
     @font-face {
         font-family: "SF Pro Display";
@@ -122,9 +138,7 @@ export const Fonts = createGlobalStyle`
         font-display: swap;
 
         src:
-        //local("SFProDisplay-Regular"),
-        url("./assets/fonts/SFProDisplay-Regular.woff2") format("woff2"),
-        url("./assets/fonts/SFProDisplay-Regular.woff") format("woff");
+        ${regularFont}
     }
 
     @font-face {
@@ -134,9 +148,7 @@ export const Fonts = createGlobalStyle`
         font-display: swap;
 
         src:
-        //local("SFProDisplay-Bold"),
-        url("./assets/fonts/SFProDisplay-Bold.woff2") format("woff2"),
-        url("./assets/fonts/SFProDisplay-Bold.woff") format("woff");
+        ${boldFont}
     }
 
     body {
