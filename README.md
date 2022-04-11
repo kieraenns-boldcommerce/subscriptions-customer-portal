@@ -64,6 +64,11 @@ cloudflared tunnel --hostname {your-argo-tunnel} --url http://localhost:3000/
 <script src="https://{your-argo-tunnel}/static/js/bundle.js" type="text/javascript"></script>
 ```
 
+### Insert div into subscription management page
+- Navigate to the page for managing subscriptions
+- Within the editor menu, click the insert HTML button and insert: 
+    
+    <div id="subscriptions-customer-portal-root"></div>
 
 ### Setting up variables
 

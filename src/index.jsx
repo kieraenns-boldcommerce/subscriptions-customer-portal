@@ -6,5 +6,5 @@ ReactDOM.render(
     <React.StrictMode>
         <App/>
     </React.StrictMode>,
-    document.getElementById("customer-portal-root-2")
+    document.getElementById("subscriptions-customer-portal-root")
 );
