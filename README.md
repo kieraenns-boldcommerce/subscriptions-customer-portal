@@ -29,10 +29,6 @@
 
 - `$ git clone https://github.com/kieraenns-boldcommerce/subscriptions-customer-portal`
 
-### Checkout the Correct Branch
-
-- `$ git checkout shopify` // Currently the "master" branch
-
 ### Ensure you are connected to the VPN
 
 - check to make sure your VPN connection is on
