@@ -54,12 +54,15 @@
 
 ### How to setup on a Shopify theme
 - Have `yarn start` running
-- Set up a [Cloudflare argo tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) to point to your local react build  
+- Set up a [Cloudflare argo tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) to point to your local react build
+
 ```
 cloudflared tunnel --hostname {your-argo-tunnel} --url http://localhost:3000/
 ```
+
 - Navigate to your argo tunnel to verify it is running and accessible
-- On your shopify theme add this line to the bottom of your `theme.liquid` before the closing `</body></html>` tags  
+- On your shopify theme add this line to the bottom of your `theme.liquid` before the closing `</body></html>` tags
+
 ```html 
 <script src="https://{your-argo-tunnel}/static/js/bundle.js" type="text/javascript"></script>
 ```
