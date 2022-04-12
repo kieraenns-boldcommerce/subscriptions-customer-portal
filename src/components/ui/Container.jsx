@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
     margin-right: auto;
     margin-left: auto;
     min-width: 320px;
-    max-width: 1026px;
+    max-width: 1028px;
     padding-right: 8px;
     padding-left: 8px;
 
