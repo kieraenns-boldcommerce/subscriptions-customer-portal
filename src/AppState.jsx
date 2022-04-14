@@ -1,5 +1,6 @@
 import { React, createContext, useEffect, useState } from "react";
 import { ChildrenType, SubscriptionStatus } from "./const";
+import useGetCustomer from './hooks/queries/subscriptions/useGetCustomer';
 import useGetSubscriptions from "./hooks/queries/subscriptions/useGetSubscriptions";
 import useGetIntervals from "./hooks/queries/subscriptions/useGetIntervals";
 import useGetPaymentMethod from "./hooks/queries/subscriptions/useGetPaymentMethod";
@@ -22,6 +23,7 @@ export const AppStateProvider = (props) => {
 
     // states
     const [subscriptionID, setSubscriptionID] = useState(null);
+    const [customerID, setCustomerID] = useState(null);
 
     const [addressFormErrors, setAddressFormErrors] = useState(null);
 
@@ -84,6 +86,8 @@ export const AppStateProvider = (props) => {
             onSuccess: handleGetSubscriptionsSuccess,
         });
 
+    const { customer, isCustomerLoading } = useGetCustomer();
+
     const { intervals, areIntervalsLoading } = useGetIntervals({
         subscriptionID,
     });
@@ -128,10 +132,20 @@ export const AppStateProvider = (props) => {
         }
     }, [subscriptions, subscriptionID]);
 
+    useEffect(() => {
+        if (customer && customer.id) {
+            const { id } = customer;
+            setCustomerID(id);
+        } else {
+            setCustomerID(null);
+        }
+    }, [customer]);
+
     // derived data
-    const isAppLoadingInitial = areSubscriptionsLoading;
+    const isAppLoadingInitial = isCustomerLoading || areSubscriptionsLoading;
 
     const isAppLoading =
+        isCustomerLoading ||
         areSubscriptionsLoading ||
         isSubscriptionPausing ||
         isSubscriptionCancelling ||
@@ -157,6 +171,7 @@ export const AppStateProvider = (props) => {
         subscriptions,
         subscription,
         subscriptionID,
+        customerID,
 
         intervals,
         paymentMethod,
