@@ -103,13 +103,15 @@ const AddressForm = (props) => {
         else stopUpdateAddressBilling();
     };
 
+    const capFirstName = firstName && firstName[0].toUpperCase() + firstName.slice(1);
+
     return (
         <Section title={title}>
             <StyledAddressForm>
                 <FormLayout>
                     <FieldsLayout>
                         <InputField
-                            value={firstName}
+                            value={capFirstName}
                             label="First name"
                             placeholder="Enter first name"
                             messageType={addressFormErrors?.firstName && "alert"}
