@@ -5,6 +5,7 @@ import { SubscriptionAddress } from "../const";
 import { AppStateContext } from "../AppState";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/ui/Container";
+import LoginPrompt from '../components/ui/LoginPrompt';
 import NoSubscriptions from "../components/ui/NoSubscriptions";
 import Tabs from "../components/ui/Tabs";
 import ModalConfirm from "../components/ui/ModalConfirm";
@@ -47,6 +48,7 @@ const IndexPage = () => {
         showPaymentMethodForm,
         showModalPause,
         showModalCancel,
+        customerID,
     } = appState;
 
     const {
@@ -62,6 +64,7 @@ const IndexPage = () => {
     const handleCancelModalCancel = () => stopCancelSubscription();
 
     const showSpinner = isAppLoadingInitial;
+    const showLoginPrompt = !showSpinner && !customerID;
     const showNoSubscriptions = !showSpinner && !subscription;
     const showSubscriptions = !showSpinner && !showNoSubscriptions;
 
@@ -74,7 +77,11 @@ const IndexPage = () => {
                     </StyledFullPageSpinner>
                 )}
 
-                {showNoSubscriptions && <NoSubscriptions />}
+                {
+                    showLoginPrompt ? <LoginPrompt /> :
+                        showNoSubscriptions ? <NoSubscriptions /> :
+                            null
+                }
 
                 {showSubscriptions && (
                     <>
