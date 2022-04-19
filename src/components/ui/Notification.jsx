@@ -10,7 +10,7 @@ const StyledNotificationContainer = styled(ToastContainer)`
     }
 
     .Toastify__toast {
-        background-color: transparent;
+        background-color: #f7fef4;
         box-shadow: none;
     }
 `;
@@ -19,7 +19,7 @@ export const NotificationContainer = () => {
     return (
         <StyledNotificationContainer
             position="bottom-center"
-            closeButton={false}
+            closeButton={true}
             draggable={false}
             hideProgressBar
             newestOnTop
