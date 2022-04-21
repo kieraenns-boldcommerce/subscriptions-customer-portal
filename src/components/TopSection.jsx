@@ -12,6 +12,8 @@ import Message from "./ui/Message";
 const StyledTopSection = styled.div`
     display: grid;
     row-gap: 20px;
+    color: #000000CC;
+    opacity: 98%;
 
     @media (min-width: 576px) {
         row-gap: 26px;
@@ -21,6 +23,8 @@ const StyledTopSection = styled.div`
 const StyledSubscriptionInfo = styled.div`
     display: grid;
     row-gap: 10px;
+    color: #000000CC;
+    opacity: 98%;
 
     @media (min-width: 576px) {
         display: block;
@@ -39,6 +43,8 @@ const StyledSubscriptionName = styled.h2`
     font-weight: 700;
     font-size: 20px;
     line-height: 24px;
+    color: #000000CC;
+    opacity: 98%;
 `;
 
 const StyledSubscriptionInfoBottom = styled.div`
