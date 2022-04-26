@@ -19,7 +19,6 @@ export const Resets = createGlobalStyle`
     .stx-field--with-select .stx-select,
     .stx-field--with-input .stx-input {
         margin: 0;
-
         text-transform: none;
     }
 
@@ -32,7 +31,7 @@ export const Resets = createGlobalStyle`
         cursor: pointer;
 
         &:disabled {
-        cursor: not-allowed;
+            cursor: not-allowed;
         }
     }
 
@@ -56,15 +55,15 @@ export const Resets = createGlobalStyle`
         .button-ModalConfirm {
         width: max-content;
 
-        &:not(:last-child) {
-            margin-right: 8px;
-        }
+            &:not(:last-child) {
+                margin-right: 8px;
+            }
         }
     }
 
     @media (min-width: 576px) {
         .subscription-select-TopSection {
-        max-width: 326px;
+            max-width: 326px;
         }
     }
 
@@ -78,8 +77,6 @@ export const Resets = createGlobalStyle`
     .stx-field__label {
         font-size: 1.4rem;
         line-height: 3rem;
-        color: #000000CC;
-        opacity: 98%;
     }
 
     .stx-input {
@@ -87,9 +84,9 @@ export const Resets = createGlobalStyle`
         line-height: 3rem;
 
         &__input-element {
-        font-size: inherit;
-        line-height: inherit;
-        min-width: 2.4rem;
+            font-size: inherit;
+            line-height: inherit;
+            min-width: 2.4rem;
         }
     }
 
@@ -99,11 +96,9 @@ export const Resets = createGlobalStyle`
         
 
         &__select-element {
-        font-size: inherit;
-        line-height: inherit;
-        min-width: 2.4rem;
-        color: #000000CC;
-        opacity: 98%;
+            font-size: inherit;
+            line-height: inherit;
+            min-width: 2.4rem;
         }
     }
 
