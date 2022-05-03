@@ -78,8 +78,8 @@ export const Resets = createGlobalStyle`
     .stx-field__label {
         font-size: 1.4rem;
         line-height: 3rem;
-        color: #000000CC;
-        opacity: 98%;
+        color: #000000;
+        opacity: 80%;
     }
 
     .stx-input {
@@ -102,8 +102,8 @@ export const Resets = createGlobalStyle`
         font-size: inherit;
         line-height: inherit;
         min-width: 2.4rem;
-        color: #000000CC;
-        opacity: 98%;
+        color: #000000;
+        opacity: 80%;
         }
     }
 
