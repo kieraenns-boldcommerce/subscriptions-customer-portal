@@ -90,6 +90,7 @@ export const Resets = createGlobalStyle`
         font-size: inherit;
         line-height: inherit;
         min-width: 2.4rem;
+        z-index: -1;
         }
     }
 
