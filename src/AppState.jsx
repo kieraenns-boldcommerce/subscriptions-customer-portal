@@ -1,5 +1,6 @@
 import { React, createContext, useEffect, useState } from "react";
-import { ChildrenType, SubscriptionStatus } from "./const";
+import { SubscriptionStatus } from "./const";
+import { ChildrenType } from "./customPropTypes";
 import useGetCustomer from './hooks/queries/subscriptions/useGetCustomer';
 import useGetSubscriptions from "./hooks/queries/subscriptions/useGetSubscriptions";
 import useGetIntervals from "./hooks/queries/subscriptions/useGetIntervals";
@@ -28,7 +29,7 @@ export const AppStateProvider = (props) => {
     const [addressFormErrors, setAddressFormErrors] = useState(null);
 
     const [showShippingAddressForm, setShowShippingAddressForm] = useState(false);
-    const [showBillingAddressForm, setShowBillingAddressForm] = useState(false);
+    const [showPaymentBillingAddressForm, setShowPaymentBillingAddressForm] = useState(false);
     const [showIntervalForm, setShowIntervalForm] = useState(false);
     const [showPaymentMethodForm, setShowPaymentMethodForm] = useState(false);
 
@@ -38,7 +39,7 @@ export const AppStateProvider = (props) => {
     // handlers for queries and mutations
     const handleGetSubscriptionsSuccess = () => {
         setShowShippingAddressForm(false);
-        setShowBillingAddressForm(false);
+        setShowPaymentBillingAddressForm(false);
         setShowIntervalForm(false);
         setShowPaymentMethodForm(false);
 
@@ -188,7 +189,7 @@ export const AppStateProvider = (props) => {
         isSubscriptionPaused,
 
         showShippingAddressForm,
-        showBillingAddressForm,
+        showPaymentBillingAddressForm,
         showIntervalForm,
         showPaymentMethodForm,
         showModalPause,
@@ -203,7 +204,7 @@ export const AppStateProvider = (props) => {
             setAddressFormErrors(null);
 
             setShowShippingAddressForm(false);
-            setShowBillingAddressForm(false);
+            setShowPaymentBillingAddressForm(false);
             setShowIntervalForm(false);
             setShowPaymentMethodForm(false);
         },
@@ -240,7 +241,7 @@ export const AppStateProvider = (props) => {
             setAddressFormErrors(null);
 
             setShowShippingAddressForm(true);
-            setShowBillingAddressForm(false);
+            setShowPaymentBillingAddressForm(false);
             setShowIntervalForm(false);
             setShowPaymentMethodForm(false);
         },
@@ -257,17 +258,14 @@ export const AppStateProvider = (props) => {
             setAddressFormErrors(null);
 
             setShowShippingAddressForm(false);
-            setShowBillingAddressForm(true);
+            setShowPaymentBillingAddressForm(true);
             setShowIntervalForm(false);
             setShowPaymentMethodForm(false);
         },
         stopUpdateAddressBilling: () => {
             setAddressFormErrors(null);
 
-            setShowBillingAddressForm(false);
-        },
-        finishUpdateAddressBilling: (address) => {
-            updateAddress({ address });
+            setShowPaymentBillingAddressForm(false);
         },
 
         // interval
@@ -275,7 +273,7 @@ export const AppStateProvider = (props) => {
             setAddressFormErrors(null);
 
             setShowShippingAddressForm(false);
-            setShowBillingAddressForm(false);
+            setShowPaymentBillingAddressForm(false);
             setShowIntervalForm(true);
             setShowPaymentMethodForm(false);
         },
@@ -291,7 +289,7 @@ export const AppStateProvider = (props) => {
             setAddressFormErrors(null);
 
             setShowShippingAddressForm(false);
-            setShowBillingAddressForm(false);
+            setShowPaymentBillingAddressForm(false);
             setShowIntervalForm(false);
             setShowPaymentMethodForm(true);
         },
