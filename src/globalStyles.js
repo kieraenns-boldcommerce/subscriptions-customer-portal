@@ -32,7 +32,7 @@ export const Resets = createGlobalStyle`
         cursor: pointer;
 
         &:disabled {
-        cursor: not-allowed;
+            cursor: not-allowed;
         }
     }
 
@@ -54,17 +54,17 @@ export const Resets = createGlobalStyle`
 
     @media (min-width: 375px) {
         .button-ModalConfirm {
-        width: max-content;
+            width: max-content;
 
-        &:not(:last-child) {
-            margin-right: 8px;
-        }
+            &:not(:last-child) {
+                margin-right: 8px;
+            }
         }
     }
 
     @media (min-width: 576px) {
         .subscription-select-TopSection {
-        max-width: 326px;
+            max-width: 326px;
         }
     }
 
@@ -87,10 +87,10 @@ export const Resets = createGlobalStyle`
         line-height: 3rem;
 
         &__input-element {
-        font-size: inherit;
-        line-height: inherit;
-        min-width: 2.4rem;
-        z-index: -1;
+            font-size: inherit;
+            line-height: inherit;
+            min-width: 2.4rem;
+            z-index: -1;
         }
     }
 
@@ -100,11 +100,12 @@ export const Resets = createGlobalStyle`
         
 
         &__select-element {
-        font-size: inherit;
-        line-height: inherit;
-        min-width: 2.4rem;
-        color: #000000;
-        opacity: 80%;
+            font-size: inherit;
+            line-height: inherit;
+            min-width: 2.4rem;
+            color: #000000;
+            opacity: 80%;
+            z-index: 1;
         }
     }
 
