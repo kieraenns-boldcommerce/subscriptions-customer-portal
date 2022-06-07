@@ -6,36 +6,11 @@
 
 - https://github.com/
 
-### Ensure you have an SSH key added to your GitHub account
+### Fork and Clone the Repo
 
-1. List your ssh key files: 
-`ls -al ~/.ssh`
-
-2. You should see one called: 
-`id_rsa.pub`
-
-3. Copy the contents of the file to your clipboard: 
-`pbcopy < ~/.ssh/id_rsa.pub`
-
-4. Go to your GitHub account -> Settings -> SSH And GPG keys -> New SSH Key
-
-5. Paste the contents of your clipboard. It should start with something like `ssh-rsa`
-
-6. Click `Save SSH Key`
-
-7. You should then be able to push/pull from the repo!
-
-### Clone the Forked Repo
-
-- `$ git clone https://github.com/kieraenns-boldcommerce/subscriptions-customer-portal`
-
-### Checkout the Correct Branch
-
-- `$ git checkout shopify` // Currently the "master" branch
-
-### Ensure you are connected to the VPN
-
-- check to make sure your VPN connection is on
+- Fork the repo into your workspace https://github.com/bold-commerce/subscriptions-customer-portal/tree/shopify
+- Clone your copy of the repo:
+- `$ git clone https://github.com/path/to/your/forked/version`
 
 ### Ensure you are on the correct NODE version
 
@@ -53,18 +28,10 @@
 - `http://localhost:3000`
 
 ### How to setup on a Shopify theme
-- Have `yarn start` running
-- Set up a [Cloudflare argo tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) to point to your local react build
-
-```
-cloudflared tunnel --hostname {your-argo-tunnel} --url http://localhost:3000/
-```
-
-- Navigate to your argo tunnel to verify it is running and accessible
 - On your shopify theme add this line to the bottom of your `theme.liquid` before the closing `</body></html>` tags
 
 ```html 
-<script src="https://{your-argo-tunnel}/static/js/bundle.js" type="text/javascript"></script>
+<script src="http://localhost:3000/static/js/bundle.js" type="text/javascript"></script>
 ```
 
 ### Insert div into subscription management page

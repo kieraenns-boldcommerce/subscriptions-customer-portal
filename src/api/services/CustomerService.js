@@ -1,4 +1,3 @@
-//import CustomerAdapter from '../adapters/CustomerAdapter';
 import ServiceBase, { Method, PLATFORM, SHOP_DOMAIN } from "../core";
 
 class CustomerService extends ServiceBase {
