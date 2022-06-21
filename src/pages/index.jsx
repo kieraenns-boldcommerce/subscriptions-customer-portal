@@ -78,8 +78,8 @@ const IndexPage = () => {
                 )}
 
                 {
-                    showLoginPrompt ? <LoginPrompt /> :
-                        showNoSubscriptions ? <NoSubscriptions /> :
+                    showLoginPrompt ? (<LoginPrompt />) :
+                        showNoSubscriptions ? (<NoSubscriptions />) :
                             null
                 }
 

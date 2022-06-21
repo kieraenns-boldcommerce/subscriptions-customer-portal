@@ -3,7 +3,7 @@ import axios from "axios";
 // eslint-disable-next-line no-undef
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-export const SHOP_DOMAIN = window.BOLD.subscriptions.config.shopDomain;
+export const SHOP_DOMAIN = window?.BOLD?.subscriptions?.config?.shopDomain ?? null;
 export const PLATFORM = "shopify";
 
 export const Method = {
