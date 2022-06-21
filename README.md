@@ -1,78 +1,67 @@
-# SUBSCRIPTIONS CUSTOMER PORTAL
+# Subscriptions Customer Portal
 
-## Local Set-Up
+## Description
 
-### Create a GitHub account if you do not have one already
+This open-source project serves as a starting point for developers creating a customer portal from scratch that is integrated with Bold Subscriptions.
 
-- https://github.com/
+## Installation
 
-### Ensure you have an SSH key added to your GitHub account
+Use the following steps to set up and configure this project:
 
-1. List your ssh key files: 
-`ls -al ~/.ssh`
+1. Fork the repo into your workspace.
 
-2. You should see one called: 
-`id_rsa.pub`
+2. Clone your copy of the repo using the following command:
 
-3. Copy the contents of the file to your clipboard: 
-`pbcopy < ~/.ssh/id_rsa.pub`
+    ```
+    $ git clone https://github.com/path/to/your/forked/version
+    ```
 
-4. Go to your GitHub account -> Settings -> SSH And GPG keys -> New SSH Key
+3. Copy the `.env.example` file using the following command and update any values as necessary:
 
-5. Paste the contents of your clipboard. It should start with something like `ssh-rsa`
+    ```
+    $ cp .env.example .env
+    ```
 
-6. Click `Save SSH Key`
+4. Ensure you are on the correct Node version using the following commands:
 
-7. You should then be able to push/pull from the repo!
+    ```
+    $ nvm install 16
+    $ nvm use 16
+    ```
 
-### Clone the Forked Repo
+5. Install, build, and run yarn using the following commands:
 
-- `$ git clone https://github.com/kieraenns-boldcommerce/subscriptions-customer-portal`
+    ```
+    $ yarn
+    $ yarn build
+    $ yarn start
+    ```
 
-### Checkout the Correct Branch
+6. Navigate to the window with your local preview: 
 
-- `$ git checkout shopify` // Currently the "master" branch
+    http://localhost:3000
 
-### Ensure you are connected to the VPN
+## Configuration on a Shopify theme
 
-- check to make sure your VPN connection is on
+1. In your shopify theme, add the following line to the bottom of your `theme.liquid` file before the closing `</body></html>` tags:
 
-### Ensure you are on the correct NODE version
+    ```html 
+    <script src="http://localhost:3000/static/js/bundle.js" type="text/javascript"></script>
+    ```
 
-- `$ nvm install 16`
-- `$ nvm use 16`
+2.  Insert the following `<div>` into the subscription management page:
 
-### Install, build, and run yarn
+    1. Navigate to the page for managing subscriptions.
 
-- `$ yarn`
-- `$ yarn build`
-- `$ yarn start`
-
-### Navigate to window
-
-- `http://localhost:3000`
-
-### How to setup on a Shopify theme
-- Have `yarn start` running
-- Set up a [Cloudflare argo tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/) to point to your local react build
-
-```
-cloudflared tunnel --hostname {your-argo-tunnel} --url http://localhost:3000/
-```
-
-- Navigate to your argo tunnel to verify it is running and accessible
-- On your shopify theme add this line to the bottom of your `theme.liquid` before the closing `</body></html>` tags
-
-```html 
-<script src="https://{your-argo-tunnel}/static/js/bundle.js" type="text/javascript"></script>
-```
-
-### Insert div into subscription management page
-- Navigate to the page for managing subscriptions
-- Within the editor menu, click the insert HTML button and insert: 
+    2. Within the editor menu, click the **Insert HTML** button and insert: 
     
+    ```html
     <div id="subscriptions-customer-portal-root"></div>
+    ```
 
-### Setting up variables
+## Documentation
 
-- Copy the .env.example -> .env, and update the value if required.
+For more information, refer to the following resources:
+
+* [Build a Customer Portal](https://developer.boldcommerce.com/default/guides/subscriptions-v2/customer-portals)
+* [Bold Subscriptions API Specification](https://developer.boldcommerce.com/default/api/subscriptions)
