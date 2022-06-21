@@ -1,7 +1,7 @@
 import React from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import { ChildrenType } from "../../customPropTypes";
+import { ChildrenType } from "../../const";
 import TitleWithEditButton from "./TitleWithEditButton";
 
 const SectionPropTypes = {

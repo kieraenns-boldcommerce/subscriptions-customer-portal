@@ -1,15 +1,9 @@
 import { React, useContext } from "react";
 import { AppStateContext } from "../AppState";
 import styled from "styled-components";
-import { Payment } from "../const";
-import { PaymentType } from "../customPropTypes";
 import { Button } from "@boldcommerce/stacks-ui";
 import Section from "./ui/Section";
 import { PaymentUpdateMethod } from "../api/services/SubscriptionsService";
-
-const PaymentFormPropTypes = {
-    type: PaymentType.isRequired
-};
 
 const StyledButtons = styled.div`
   display: flex;
@@ -21,38 +15,23 @@ const StyledButtons = styled.div`
 
 const StyledPaymentIFrame = styled.iframe``;
 
-const PaymentForm = (props) => {
-    const { type } = props;
+const PaymentMethodForm = () => {
     const { appState, appActions } = useContext(AppStateContext);
 
     const { paymentMethod } = appState;
 
-    const { 
-        stopUpdatePaymentMethod, 
-        finishUpdatePaymentMethod, 
-        stopUpdateAddressBilling
-    } = appActions;
+    const { stopUpdatePaymentMethod, finishUpdatePaymentMethod } = appActions;
 
-    const isMethod = type === Payment.METHOD;
-    const title = isMethod ? "Editing payment method" : "Editing payment billing address";
-
-    const handleConfirmButtonClick = () => {
+    const handleConfirmButtonClick = () =>
         finishUpdatePaymentMethod(paymentMethod.updateMethod);
-    };
-    const handleCancelButtonClick = () => {
-        if (isMethod) {
-            stopUpdatePaymentMethod();
-        } else {
-            stopUpdateAddressBilling();
-        }
-    }
+    const handleCancelButtonClick = () => stopUpdatePaymentMethod();
 
     return (
-        <Section title={title}>
+        <Section title="Editing payment method">
             {paymentMethod.updateMethod === PaymentUpdateMethod.EMAIL ? (
                 <>
                     <span>
-                        You can change the payment {type} by clicking on the link in the
+                        You can change the payment method by clicking on the link in the
                         email
                     </span>
                     <StyledButtons>
@@ -67,6 +46,4 @@ const PaymentForm = (props) => {
     );
 };
 
-PaymentForm.propTypes = PaymentFormPropTypes;
-
-export default PaymentForm;
+export default PaymentMethodForm;

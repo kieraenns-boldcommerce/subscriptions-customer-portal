@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { ChildrenType } from "../../customPropTypes";
+import { ChildrenType } from "../../const";
 
 const ContainerPropTypes = {
     children: ChildrenType.isRequired

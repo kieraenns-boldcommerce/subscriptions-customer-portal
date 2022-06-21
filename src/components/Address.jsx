@@ -1,7 +1,6 @@
 import { React, useContext } from "react";
 import styled from "styled-components";
-import { SubscriptionAddress } from "../const";
-import { AddressType } from "../customPropTypes";
+import { SubscriptionAddress, AddressType } from "../const";
 import { AppStateContext } from "../AppState";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
 
@@ -37,7 +36,7 @@ const Address = (props) => {
         isAppLoading,
         isSubscriptionActive,
         showShippingAddressForm,
-        showPaymentBillingAddressForm
+        showBillingAddressForm
     } = appState;
 
     const {
@@ -63,15 +62,12 @@ const Address = (props) => {
 
     const title = isShipping ? "Shipping address" : "Billing address";
     const editButtonLabel = isShipping ? "Edit shipping address" : "Edit billing address";
-    const showForm = isShipping ? showShippingAddressForm : showPaymentBillingAddressForm;
+    const showForm = isShipping ? showShippingAddressForm : showBillingAddressForm;
     const showEditButton = isSubscriptionActive && !showForm;
 
     const handleEditButtonClick = () => {
-        if (isShipping) {
-            startUpdateAddressShipping();
-        } else {
-            startUpdateAddressBilling();
-        }
+        if (isShipping) startUpdateAddressShipping();
+        else startUpdateAddressBilling();
     };
 
     return (

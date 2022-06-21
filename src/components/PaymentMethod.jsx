@@ -1,8 +1,7 @@
 import { React, useContext } from "react";
 import styled from "styled-components";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import { SubscriptionPaymentSystem } from "../const";
-import { SubscriptionPaymentType } from "../customPropTypes";
+import { SubscriptionPaymentSystem, SubscriptionPaymentType } from "../const";
 import { AppStateContext } from "../AppState";
 import TitleWithEditButton from "./ui/TitleWithEditButton";
 import Icon from "./ui/Icon/Icon";

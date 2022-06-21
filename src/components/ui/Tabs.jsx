@@ -1,7 +1,7 @@
 import React from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import { ChildType } from "../../customPropTypes";
+import { ChildType } from "../../const";
 import Section from "./Section";
 
 const TabType = {

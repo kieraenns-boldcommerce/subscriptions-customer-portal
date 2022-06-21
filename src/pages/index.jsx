@@ -1,7 +1,7 @@
 import { React, useContext } from "react";
 import styled from "styled-components";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import { SubscriptionAddress, Payment } from "../const";
+import { SubscriptionAddress } from "../const";
 import { AppStateContext } from "../AppState";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/ui/Container";
@@ -15,7 +15,7 @@ import Interval from "../components/Interval";
 import PaymentMethod from "../components/PaymentMethod";
 import AddressForm from "../components/AddressForm";
 import ProductList from "../components/ProductList";
-import PaymentForm from "../components/PaymentForm";
+import PaymentMethodForm from "../components/PaymentMethodForm";
 
 const StyledTopSectionContainer = styled.div`
     margin-bottom: 30px;
@@ -43,7 +43,7 @@ const IndexPage = () => {
         isAppLoadingInitial,
         isAppLoading,
         showShippingAddressForm,
-        showPaymentBillingAddressForm,
+        showBillingAddressForm,
         showIntervalForm,
         showPaymentMethodForm,
         showModalPause,
@@ -96,7 +96,7 @@ const IndexPage = () => {
                                 },
                                 {
                                     content: <Address type={SubscriptionAddress.BILLING} />,
-                                    isActive: showPaymentBillingAddressForm,
+                                    isActive: showBillingAddressForm,
                                 },
                                 {
                                     content: (
@@ -109,9 +109,13 @@ const IndexPage = () => {
                                 },
                             ]}
                         />
-                        {showShippingAddressForm && <AddressForm />}
-                        {showPaymentBillingAddressForm && <PaymentForm type={Payment.BILLING_ADDRESS}/>}
-                        {showPaymentMethodForm && <PaymentForm type={Payment.METHOD} />}
+                        {showShippingAddressForm && (
+                            <AddressForm type={SubscriptionAddress.SHIPPING} />
+                        )}
+                        {showBillingAddressForm && (
+                            <AddressForm type={SubscriptionAddress.BILLING} />
+                        )}
+                        {showPaymentMethodForm && <PaymentMethodForm />}
                         <ProductList />
                     </>
                 )}
