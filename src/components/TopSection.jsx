@@ -39,11 +39,15 @@ const StyledSubscriptionName = styled.h2`
     font-weight: 700;
     font-size: 20px;
     line-height: 24px;
+    color: #000000;
+    opacity: 80%;
 `;
 
 const StyledSubscriptionInfoBottom = styled.div`
     font-size: 14px;
     line-height: 20px;
+    color: #000000;
+    opacity: 80%;
 `;
 
 const StyledSubscriptionDate = styled.span`
