@@ -1,7 +1,6 @@
 import { React, useState, useContext } from "react";
 import styled from "styled-components";
 import { Button, InputField, SelectField } from "@boldcommerce/stacks-ui";
-import { SubscriptionAddress, AddressType } from "../const";
 import getCountries from "../utils/getCountries";
 import getStatesOfCountry from "../utils/getStatesOfCountry";
 import formatCountryOption from "../utils/formatCountryOption";
@@ -10,10 +9,6 @@ import { AppStateContext } from "../AppState";
 import Section from "./ui/Section";
 import FormLayout from "./ui/FormLayout";
 import FieldsLayout from "./ui/FieldsLayout";
-
-const AddressFormPropTypes = {
-    type: AddressType.isRequired
-};
 
 const StyledAddressForm = styled.div`
     padding-bottom: 30px;
@@ -34,8 +29,7 @@ const StyledAddressFormSecondRow = styled.div`
     }
 `;
 
-const AddressForm = (props) => {
-    const { type } = props;
+const AddressForm = () => {
     const { appState, appActions } = useContext(AppStateContext);
 
     const {
@@ -46,13 +40,10 @@ const AddressForm = (props) => {
 
     const {
         stopUpdateAddressShipping,
-        finishUpdateAddressShipping,
-        stopUpdateAddressBilling,
-        finishUpdateAddressBilling
+        finishUpdateAddressShipping
     } = appActions;
 
-    const isShipping = type === SubscriptionAddress.SHIPPING;
-    const initialAddress = isShipping ? subscription.shippingAddress : subscription.billingAddress;
+    const initialAddress = subscription.shippingAddress;
     const [address, setAddress] = useState(initialAddress);
 
     const {
@@ -68,7 +59,7 @@ const AddressForm = (props) => {
         company
     } = address;
 
-    const title = isShipping ? "Editing shipping address" : "Editing billing address";
+    const title = "Editing shipping address";
 
     const countries = getCountries();
     const states = getStatesOfCountry(countryCode);
@@ -94,13 +85,11 @@ const AddressForm = (props) => {
     };
 
     const handleConfirmButtonClick = () => {
-        if (isShipping) finishUpdateAddressShipping(address);
-        else finishUpdateAddressBilling(address);
+        finishUpdateAddressShipping(address);
     };
 
     const handleCancelButtonClick = () => {
-        if (isShipping) stopUpdateAddressShipping();
-        else stopUpdateAddressBilling();
+        stopUpdateAddressShipping();
     };
 
     const capFirstName = firstName && firstName[0].toUpperCase() + firstName.slice(1);
@@ -233,7 +222,5 @@ const AddressForm = (props) => {
         </Section>
     );
 };
-
-AddressForm.propTypes = AddressFormPropTypes;
 
 export default AddressForm;

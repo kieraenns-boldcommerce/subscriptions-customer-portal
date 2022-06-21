@@ -1,7 +1,7 @@
 import { React, useEffect } from "react";
 import PT from "prop-types";
 import styled from "styled-components";
-import { ChildrenType } from "../../const";
+import { ChildrenType } from "../../customPropTypes";
 
 const ModalPropTypes = {
     children: ChildrenType.isRequired,

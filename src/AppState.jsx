@@ -1,5 +1,6 @@
 import { React, createContext, useEffect, useState } from "react";
-import { ChildrenType, SubscriptionStatus } from "./const";
+import { SubscriptionStatus } from "./const";
+import { ChildrenType } from "./customPropTypes";
 import useGetCustomer from './hooks/queries/subscriptions/useGetCustomer';
 import useGetSubscriptions from "./hooks/queries/subscriptions/useGetSubscriptions";
 import useGetIntervals from "./hooks/queries/subscriptions/useGetIntervals";
@@ -67,6 +68,7 @@ export const AppStateProvider = (props) => {
     const handleUpdatePaymentMethod = () => {
         Notify.success("The email has been sent successfully");
         setShowPaymentMethodForm(false);
+        setShowBillingAddressForm(false);
     };
 
     const handleUpdateAddressError = (error) => {
@@ -265,9 +267,6 @@ export const AppStateProvider = (props) => {
             setAddressFormErrors(null);
 
             setShowBillingAddressForm(false);
-        },
-        finishUpdateAddressBilling: (address) => {
-            updateAddress({ address });
         },
 
         // interval

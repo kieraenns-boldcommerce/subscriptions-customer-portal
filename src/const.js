@@ -1,5 +1,3 @@
-import PT from "prop-types";
-
 export const SubscriptionAction = {
     PAUSE: "pause",
     CANCEL: "cancel",
@@ -17,20 +15,12 @@ export const SubscriptionAddress = {
     BILLING: "billing",
 };
 
-export const SubscriptionPaymentType = {
-    CREDIT_CARD: "credit_card",
+export const Payment = {
+    METHOD: "method",
+    BILLING_ADDRESS: "billing address"
 };
 
 export const SubscriptionPaymentSystem = {
     MASTERCARD: "mastercard",
     VISA: "visa",
 };
-
-export const ChildType = PT.oneOfType([PT.bool, PT.number, PT.string, PT.node]);
-
-export const ChildrenType = PT.oneOfType([ChildType, PT.arrayOf(ChildType)]);
-
-export const AddressType = PT.oneOf([
-    SubscriptionAddress.SHIPPING,
-    SubscriptionAddress.BILLING,
-]);

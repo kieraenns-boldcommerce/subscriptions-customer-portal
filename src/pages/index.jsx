@@ -1,7 +1,7 @@
 import { React, useContext } from "react";
 import styled from "styled-components";
 import { LoadingSpinner } from "@boldcommerce/stacks-ui";
-import { SubscriptionAddress } from "../const";
+import { SubscriptionAddress, Payment } from "../const";
 import { AppStateContext } from "../AppState";
 import DefaultLayout from "../layouts/default";
 import Container from "../components/ui/Container";
@@ -109,13 +109,13 @@ const IndexPage = () => {
                                 },
                             ]}
                         />
-                        {showShippingAddressForm && (
-                            <AddressForm type={SubscriptionAddress.SHIPPING} />
-                        )}
+                        {showShippingAddressForm && <AddressForm />}
                         {showBillingAddressForm && (
-                            <AddressForm type={SubscriptionAddress.BILLING} />
+                            <PaymentMethodForm type={Payment.BILLING_ADDRESS}/>
                         )}
-                        {showPaymentMethodForm && <PaymentMethodForm />}
+                        {showPaymentMethodForm && (
+                            <PaymentMethodForm type={Payment.METHOD}/>
+                        )}
                         <ProductList />
                     </>
                 )}

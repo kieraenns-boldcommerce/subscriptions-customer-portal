@@ -1,5 +1,5 @@
 import React from "react";
-import { ChildrenType } from "../const";
+import { ChildrenType } from "../customPropTypes";
 
 const DefaultLayoutPropTypes = {
     children: ChildrenType.isRequired
